@@ -215,7 +215,18 @@ export default {
       this.visualMode = !this.visualMode;
     },
     upload() {
-      // todo
+      const element = document.createElement("input");
+      element.type = "file";
+      element.onchange = async (evt) => {
+        this.data = await new Response(evt.target?.files[0]).json();
+
+        document.body.removeChild(element);
+
+        // todo: notify the user that the upload was successful.
+      };
+      element.style.display = "none";
+      document.body.appendChild(element);
+      element.click();
     },
     download() {
       const element = document.createElement("a");
