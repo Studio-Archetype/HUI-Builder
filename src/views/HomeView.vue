@@ -25,8 +25,20 @@ main {
       @apply flex flex-col items-center p-2;
       background-color: lighten(#000, 4);
 
+      .divider {
+        @apply border-neutral-700 border-[1px] rounded-sm w-full;
+
+        &:not(:first-child) {
+          @apply mt-2;
+        }
+      }
+
       .buttonItem {
         @apply p-2 bg-white bg-opacity-0 rounded leading-5 transition-[background-color] w-full;
+
+        &:not(:first-child) {
+          @apply mt-2;
+        }
 
         &:hover {
           @apply bg-opacity-25;
@@ -55,6 +67,23 @@ main {
     }
   }
 }
+
+::-webkit-scrollbar {
+  @apply w-2;
+  pointer-events: none;
+
+  &-track {
+    @apply bg-transparent;
+  }
+
+  &-thumb {
+    @apply bg-neutral-400 w-1/2;
+
+    &:hover {
+      @apply bg-neutral-300 w-full;
+    }
+  }
+}
 </style>
 
 <template>
@@ -73,10 +102,19 @@ main {
             icon="cubes"
           ></font-awesome-icon>
         </button>
+
+        <div class="divider" />
+
         <button class="buttonItem" @click="upload()">
           <font-awesome-icon
               fixed-width
               icon="upload"
+          ></font-awesome-icon>
+        </button>
+        <button class="buttonItem" @click="download()">
+          <font-awesome-icon
+              fixed-width
+              icon="save"
           ></font-awesome-icon>
         </button>
       </nav>
@@ -123,7 +161,7 @@ main {
       <div v-else class="viewport">
         <div class="content">
           <Codemirror
-            v-model:value="file"
+            v-model:value="dataJson"
             :options="cmOptions"
             width="100%"
             height="100%"
@@ -160,7 +198,7 @@ export default {
   data() {
     return {
       visualMode: true,
-      file: '{"": ""}',
+      data: { test: "mode" },
       cmOptions: {
         mode: { name: "javascript", json: true }, // Language mode
         theme: "base16-dark", // Theme
@@ -177,10 +215,30 @@ export default {
       this.visualMode = !this.visualMode;
     },
     upload() {
+      // todo
+    },
+    download() {
+      const element = document.createElement("a");
+      element.setAttribute("href", `data:application/json;charset=utf-8,${encodeURIComponent(this.dataJson)}`);
+      element.setAttribute("download", "hui-project.json");
 
+      element.style.display = "none";
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
     },
     elementClickedInTreeView(elementName: string) {
       console.log(`Clicked element: ${elementName}`);
+    },
+  },
+  computed: {
+    dataJson: {
+      get(): string {
+        return JSON.stringify(this.data);
+      },
+      set(newValue: string): void {
+        this.data = JSON.parse(newValue);
+      },
     },
   },
 };

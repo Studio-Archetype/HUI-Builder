@@ -67,14 +67,14 @@ export default {
   @apply transition block truncate;
 
   &:not(.root) {
-    @apply border-l-2 border-gray-400 pl-2 ml-2;
+    @apply border-l-2 border-neutral-600 pl-2 ml-2;
   }
 
   > .title {
     @apply cursor-pointer;
 
     &:hover {
-      @apply bg-gray-100;
+      @apply bg-neutral-800;
     }
   }
 
