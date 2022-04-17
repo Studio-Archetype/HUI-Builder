@@ -47,7 +47,12 @@ main {
     }
 
     .viewport {
-      @apply flex flex-grow divide-x divide-neutral-700 bg-neutral-900;
+      @apply flex flex-grow divide-x divide-neutral-700 bg-neutral-900 relative;
+
+      .errorMessage {
+        @apply absolute bottom-2 right-2 bg-red-600 px-3 py-2 rounded shadow-md;
+        z-index: 1000;
+      }
 
       .content {
         @apply flex flex-col w-full;
@@ -106,28 +111,24 @@ main {
         <div class="divider" />
 
         <button class="buttonItem" @click="upload()">
-          <font-awesome-icon
-              fixed-width
-              icon="upload"
-          ></font-awesome-icon>
+          <font-awesome-icon fixed-width icon="upload"></font-awesome-icon>
         </button>
         <button class="buttonItem" @click="download()">
-          <font-awesome-icon
-              fixed-width
-              icon="save"
-          ></font-awesome-icon>
+          <font-awesome-icon fixed-width icon="save"></font-awesome-icon>
         </button>
       </nav>
 
       <div v-if="visualMode" class="viewport">
-        <div class="content">
-
+        <div class="errorMessage" v-if="showErrorMessage">
+          {{ errorMessage }}
         </div>
+
+        <div class="content"></div>
         <aside class="right">
           <div class="treePanel">
             <TreeView>
               <TreeItem root toggleable>
-                Elements
+                Components
 
                 <template #closedIcon>
                   <font-awesome-icon
@@ -144,27 +145,32 @@ main {
                 </template>
 
                 <template #children>
-                  <TreeItem @click="elementClickedInTreeView('test')">
-                    Element
-                  </TreeItem>
+                  <ComponentTreeItem
+                    v-for="component in data.components"
+                    :key="component.id"
+                    :component="component"
+                    @click="componentClickedInTreeView(component)"
+                  />
                 </template>
               </TreeItem>
             </TreeView>
           </div>
 
-          <div class="detailPanel">
-
-          </div>
+          <div class="detailPanel"></div>
         </aside>
       </div>
 
       <div v-else class="viewport">
+        <div class="errorMessage" v-if="showErrorMessage">
+          {{ errorMessage }}
+        </div>
         <div class="content">
           <Codemirror
             v-model:value="dataJson"
             :options="cmOptions"
             width="100%"
             height="100%"
+            @change="validate"
           ></Codemirror>
         </div>
       </div>
@@ -180,6 +186,8 @@ main {
 
 <script lang="ts">
 import Codemirror from "codemirror-editor-vue3";
+import type { EditorConfiguration } from "codemirror";
+import { v4 as uuidV4 } from "uuid";
 
 // language
 import "codemirror/mode/javascript/javascript.js";
@@ -188,25 +196,56 @@ import "codemirror/mode/javascript/javascript.js";
 import "../assets/base16-dark-modified.css";
 import TreeView from "@/components/tree/TreeView.vue";
 import TreeItem from "@/components/tree/TreeItem.vue";
+import { downloadSchema } from "../schema";
+import type { Component, HuiData } from "../schema";
+import Ajv from "ajv";
+import ComponentTreeItem from "@/components/tree/ComponentTreeItem.vue";
+
+interface Data {
+  visualMode: boolean;
+  data: HuiData;
+  errorMessageTimeout: number | null;
+  showErrorMessage: boolean;
+  errorMessage: string;
+  cmOptions: EditorConfiguration;
+}
 
 export default {
   components: {
+    ComponentTreeItem,
     TreeItem,
     TreeView,
     Codemirror,
   },
-  data() {
+  data(): Data {
     return {
       visualMode: true,
-      data: { test: "mode" },
+      data: {
+        components: [
+          {
+            id: uuidV4(),
+            offset: [0, 0, 0],
+            data: {
+              type: "decoration",
+              icon: {
+                type: "text",
+                text: "Test Text",
+              },
+            },
+          },
+        ],
+        offset: [0, 0, 0],
+        lockPosition: false,
+      },
+      errorMessageTimeout: null,
+      showErrorMessage: true, //todo: set false
+      errorMessage: "Validation Errors",
       cmOptions: {
         mode: { name: "javascript", json: true }, // Language mode
         theme: "base16-dark", // Theme
         lineNumbers: true, // Show line number
         smartIndent: true, // Smart indent
         indentUnit: 2, // The smart indent unit is 2 spaces in length
-        foldGutter: true, // Code folding
-        styleActiveLine: true, // Display the style of the selected row
       },
     };
   },
@@ -217,8 +256,10 @@ export default {
     upload() {
       const element = document.createElement("input");
       element.type = "file";
-      element.onchange = async (evt) => {
-        this.data = await new Response(evt.target?.files[0]).json();
+      element.onchange = async (evt: Event) => {
+        this.data = await new Response(
+          (evt.target as HTMLInputElement)?.files?.[0]
+        ).json();
 
         document.body.removeChild(element);
 
@@ -228,9 +269,33 @@ export default {
       document.body.appendChild(element);
       element.click();
     },
+    validate() {
+      const schema = downloadSchema();
+      const ajv = new Ajv();
+      const validateSchema = ajv.compile(schema);
+
+      if (!validateSchema(this.data)) {
+        console.log(validateSchema.errors);
+
+        this.showErrorMessage = true;
+
+        if (this.errorMessageTimeout !== null)
+          clearTimeout(this.errorMessageTimeout);
+
+        this.errorMessageTimeout = setTimeout(() => {
+          this.showErrorMessage = false;
+          this.errorMessageTimeout = null;
+        });
+      }
+    },
     download() {
       const element = document.createElement("a");
-      element.setAttribute("href", `data:application/json;charset=utf-8,${encodeURIComponent(this.dataJson)}`);
+      element.setAttribute(
+        "href",
+        `data:application/json;charset=utf-8,${encodeURIComponent(
+          this.dataJson
+        )}`
+      );
       element.setAttribute("download", "hui-project.json");
 
       element.style.display = "none";
@@ -238,8 +303,11 @@ export default {
       element.click();
       document.body.removeChild(element);
     },
-    elementClickedInTreeView(elementName: string) {
-      console.log(`Clicked element: ${elementName}`);
+    // elementClickedInTreeView(elementName: string) {
+    //   console.log(`Clicked element: ${elementName}`);
+    // },
+    componentClickedInTreeView(component: Component) {
+      console.log(component);
     },
   },
   computed: {
@@ -247,7 +315,7 @@ export default {
       get(): string {
         return JSON.stringify(this.data);
       },
-      set(newValue: string): void {
+      set(newValue: string) {
         this.data = JSON.parse(newValue);
       },
     },

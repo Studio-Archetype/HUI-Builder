@@ -26,7 +26,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "TreeItem",
   props: {
@@ -50,9 +50,10 @@ export default {
   },
 
   methods: {
-    click() {
+    click(event: Event) {
+      event.stopPropagation();
       if (this.toggleable) this.opened = !this.opened;
-      this.$emit("click");
+      this.$emit("click", event);
     },
   },
 
