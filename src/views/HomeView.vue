@@ -160,8 +160,10 @@ import ComponentTreeItem from "@/components/tree/ComponentTreeItem.vue";
 import "codemirror/mode/javascript/javascript.js";
 import "../assets/base16-dark-modified.css";
 import ImagesModal from "@/components/ImagesModal.vue";
+import { useImageStore } from "@/stores/images";
 
 // data
+const imageStore = useImageStore();
 let visualMode = ref(true);
 let data = ref<HuiData>({
   components: [
@@ -461,15 +463,31 @@ function editorChange(newData: HuiData) {
                 class="inputGroup"
               >
                 <label for="textImageIconPathInput">Path</label>
-                <input
+
+                <select
                   id="textImageIconPathInput"
-                  type="text"
+                  @change="textImageIconPathChange"
                   :value="activeComponent.data.icon.path"
-                  placeholder="/image.png"
-                  @input="textImageIconPathChange"
-                />
+                >
+                  <option
+                    v-for="image in imageStore.allImages"
+                    :key="image.path"
+                  >
+                    {{ image.path }}
+                  </option>
+                </select>
               </div>
             </template>
+
+            <div class="inputGroup">
+              <label for="componentId">ID</label>
+              <input
+                id="componentId"
+                type="text"
+                :value="activeComponent.id"
+                readonly
+              />
+            </div>
           </div>
         </aside>
       </div>

@@ -23,11 +23,29 @@
     }
 }
 
-input {
-    @apply bg-opacity-10 bg-white text-white py-1.5 px-3 rounded transition text-base leading-none align-middle;
+input, select {
+    @apply bg-opacity-10 bg-white text-white py-1 px-3 rounded transition text-base align-middle appearance-none;
 
     &:focus {
-        @apply bg-opacity-25 outline-0;
+        @apply outline-0;
+
+        &:not([readonly]) {
+            @apply bg-opacity-25;
+        }
+    }
+}
+
+select {
+    option {
+        @apply bg-neutral-900;
+
+        &:hover {
+            @apply bg-neutral-500;
+        }
+    }
+
+    &::-ms-expand {
+        display: none;
     }
 }
 
