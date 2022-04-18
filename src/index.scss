@@ -33,6 +33,26 @@ input, select {
             @apply bg-opacity-25;
         }
     }
+
+    &[type="checkbox"] {
+        @apply grid appearance-none bg-transparent m-0 w-5 h-5 border-white border-[2px] p-1 rounded-none mr-2;
+        place-content: center;
+
+        &:checked::before {
+            transform: scale(1);
+        }
+
+        + label {
+            @apply select-none;
+        }
+
+        &::before {
+            @apply w-2 h-2 transition-transform ease-in-out;
+            content: "";
+            transform: scale(0);
+            box-shadow: inset 1rem 1rem #fff;
+        }
+    }
 }
 
 select {
@@ -51,4 +71,40 @@ select {
 
 ::placeholder {
     @apply text-white text-opacity-50 text-base align-middle;
+}
+
+.divider {
+    @apply border-neutral-700 border-[1px] rounded-sm self-stretch bg-neutral-700;
+}
+
+.button {
+    @apply bg-opacity-10 bg-white text-white leading-none py-2 px-3 rounded transition text-base;
+
+    &.icon {
+        @apply px-2;
+    }
+
+    &.faint {
+        @apply bg-opacity-0;
+    }
+
+    &:hover {
+        @apply bg-opacity-25;
+    }
+}
+
+.inputGroup {
+    @apply flex items-center;
+
+    &:not(:first-child) {
+        @apply mt-4;
+    }
+
+    input:not([type="checkbox"]) {
+        @apply flex-grow;
+    }
+
+    label {
+        @apply mr-2 flex-grow-0;
+    }
 }

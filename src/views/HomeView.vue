@@ -25,24 +25,16 @@ main {
       @apply flex flex-col items-center p-2;
       background-color: lighten(#000, 4);
 
-      .divider {
-        @apply border-neutral-700 border-[1px] rounded-sm w-full bg-neutral-700;
+      > :not(.spacer) {
+        @apply flex-grow-0;
 
         &:not(:first-child) {
           @apply mt-2;
         }
       }
 
-      .buttonItem {
-        @apply p-2 bg-white bg-opacity-0 rounded leading-none transition ease-in-out w-full appearance-none;
-
-        &:not(:first-child) {
-          @apply mt-2;
-        }
-
-        &:hover {
-          @apply bg-opacity-25;
-        }
+      .spacer {
+        @apply flex-grow;
       }
     }
 
@@ -85,18 +77,6 @@ main {
 
             &:focus {
               @apply bg-neutral-800 outline-0;
-            }
-          }
-
-          .inputGroup {
-            @apply mt-4 flex items-center;
-
-            input {
-              @apply flex-grow;
-            }
-
-            label {
-              @apply mr-2 flex-grow-0;
             }
           }
 
@@ -163,10 +143,14 @@ import ImagesModal from "@/components/ImagesModal.vue";
 import { useImageStore } from "@/stores/images";
 import { useProjectStore } from "@/stores/project";
 import { storeToRefs } from "pinia";
+import { useSettingsStore } from "@/stores/settings";
+import SettingsModal from "@/components/SettingsModal.vue";
+import AboutModal from "@/components/AboutModal.vue";
 
 // data
 const imageStore = useImageStore();
 const projectStore = useProjectStore();
+const settingsStore = useSettingsStore();
 let visualMode = ref(true);
 let { project: data } = storeToRefs(projectStore);
 let line = ref(0);
@@ -184,6 +168,8 @@ let cmOptions = ref<EditorConfiguration>({
 let activeComponent = ref<Component | null>(null);
 let imageModalOpen = ref<boolean>(false);
 let imageModalSelectionMode = ref(false);
+let settingsModalOpen = ref<boolean>(false);
+let aboutModalOpen = ref<boolean>(false);
 
 // computed
 let activeComponentDisplay = computed<string>(() => {
@@ -208,9 +194,9 @@ function upload() {
   const element = document.createElement("input");
   element.type = "file";
   element.onchange = async (evt: Event) => {
-    projectStore.setProject(await new Response(
-      (evt.target as HTMLInputElement)?.files?.[0]
-    ).json());
+    projectStore.setProject(
+      await new Response((evt.target as HTMLInputElement)?.files?.[0]).json()
+    );
 
     document.body.removeChild(element);
 
@@ -322,10 +308,15 @@ function offsetChange(index: number, e: Event) {
       :selection-mode="imageModalSelectionMode"
       @close="imageModalOpen = false"
     />
+    <settings-modal
+      :open="settingsModalOpen"
+      @close="settingsModalOpen = false"
+    />
+    <about-modal :open="aboutModalOpen" @close="aboutModalOpen = false" />
 
     <section class="main">
       <nav class="sidebar">
-        <button class="buttonItem" @click="toggleMode()">
+        <button class="button icon faint" @click="toggleMode()">
           <font-awesome-icon
             fixed-width
             v-if="visualMode"
@@ -340,14 +331,23 @@ function offsetChange(index: number, e: Event) {
 
         <div class="divider" />
 
-        <button class="buttonItem" @click="upload()">
+        <button class="button icon faint" @click="upload()">
           <font-awesome-icon fixed-width icon="upload"></font-awesome-icon>
         </button>
-        <button class="buttonItem" @click="download()">
+        <button class="button icon faint" @click="download()">
           <font-awesome-icon fixed-width icon="save"></font-awesome-icon>
         </button>
-        <button class="buttonItem" @click="imageModalOpen = true">
+        <button class="button icon faint" @click="imageModalOpen = true">
           <font-awesome-icon fixed-width icon="image"></font-awesome-icon>
+        </button>
+
+        <div class="spacer" />
+
+        <button class="button icon faint" @click="settingsModalOpen = true">
+          <font-awesome-icon fixed-width icon="cog"></font-awesome-icon>
+        </button>
+        <button class="button icon faint" @click="aboutModalOpen = true">
+          <font-awesome-icon fixed-width icon="question"></font-awesome-icon>
         </button>
       </nav>
 
@@ -361,7 +361,7 @@ function offsetChange(index: number, e: Event) {
             <editor-canvas
               :data="data"
               backdrop="https://cdn.discordapp.com/attachments/897227758340542505/963623720516210738/hui_backdrop.webp"
-              show-bounds
+              :show-bounds="settingsStore.settings.debugFrames"
             />
           </div>
         </div>

@@ -2,7 +2,11 @@
 import { useImageStore } from "@/stores/images";
 import type { ImageDef } from "@/stores/images";
 import { ref } from "vue";
-import ImageList from "@/components/ImageList/ImageList.vue";
+import ImageList from "@/components/imageList/ImageList.vue";
+import Modal from "@/components/modal/Modal.vue";
+import ModalToolbar from "@/components/modal/ModalToolbar.vue";
+import ModalFooter from "@/components/modal/ModalFooter.vue";
+import ModalBody from "@/components/modal/ModalBody.vue";
 
 enum ModalPage {
   UPLOAD = "Upload",
@@ -105,21 +109,20 @@ function deleteImage(image: ImageDef) {
 </script>
 
 <template>
-  <div class="imageManagementModalContainer" :class="{ open }">
+  <modal :open="open">
     <section class="imageManagementModal">
-      <div class="toolbar">
-        <div class="title">
+      <modal-toolbar>
+        <template #title>
           Image Management {{ page !== ModalPage.LIST ? `// ${page}` : "" }}
-        </div>
-        <div class="spacer" />
-        <div class="actions">
-          <button class="action" @click="page = ModalPage.UPLOAD">
+        </template>
+        <template #actions>
+          <button class="button icon faint" @click="page = ModalPage.UPLOAD">
             <font-awesome-icon fixed-width icon="plus"></font-awesome-icon>
           </button>
           <div class="divider" />
           <button
             v-if="page !== ModalPage.LIST"
-            class="action"
+            class="button icon faint"
             @click="page = ModalPage.LIST"
           >
             <font-awesome-icon
@@ -127,12 +130,12 @@ function deleteImage(image: ImageDef) {
               icon="arrow-left"
             ></font-awesome-icon>
           </button>
-          <button class="action" @click="close">
+          <button class="button icon faint" @click="close">
             <font-awesome-icon fixed-width icon="close"></font-awesome-icon>
           </button>
-        </div>
-      </div>
-      <div class="body">
+        </template>
+      </modal-toolbar>
+      <modal-body>
         <template v-if="page === ModalPage.LIST">
           <div class="page listPage">
             <image-list
@@ -156,7 +159,7 @@ function deleteImage(image: ImageDef) {
               <label for="uploadButton">Image</label>
               <div>
                 <button
-                  class="faintButton noFill"
+                  class="button noFill"
                   id="uploadButton"
                   @click="chooseImage"
                 >
@@ -174,11 +177,11 @@ function deleteImage(image: ImageDef) {
             </aside>
           </div>
 
-          <div class="bottomBar">
-            <button class="faintButton" @click="confirmAddImage">
+          <modal-footer>
+            <button class="button" @click="confirmAddImage">
               Confirm
             </button>
-          </div>
+          </modal-footer>
         </template>
         <template v-else-if="page === ModalPage.EDIT_IMAGE">
           <div class="page editImagePage">
@@ -196,158 +199,76 @@ function deleteImage(image: ImageDef) {
             </aside>
           </div>
 
-          <div class="bottomBar">
+          <modal-footer>
             <button
-              class="faintButton"
+              class="button"
               :disabled="editImagePath === editImageOldPath"
               @click="confirmEditImage"
             >
               Confirm
             </button>
-          </div>
+          </modal-footer>
         </template>
         <template v-else-if="page === ModalPage.DELETE_CONFIRM">
           <div class="page confirmDeletePage">
-            <h3 class="heading">
-              Confirm Deletion?
-            </h3>
+            <h3 class="heading">Confirm Deletion?</h3>
             <p class="subHeading">The image will be gone <b>forever</b></p>
           </div>
 
-          <div class="bottomBar">
-            <button
-                class="faintButton"
-                @click="confirmDeleteImage"
-            >
+          <modal-footer>
+            <button class="button" @click="confirmDeleteImage">
               Confirm
             </button>
-          </div>
+          </modal-footer>
         </template>
-      </div>
+      </modal-body>
     </section>
-  </div>
+  </modal>
 </template>
 
 <style scoped lang="scss">
-.imageManagementModalContainer {
-  @apply absolute bottom-0 top-0 left-0 right-0 bg-neutral-800 bg-opacity-80 hidden items-center justify-center;
-  z-index: 2000;
+.page {
+  @apply flex flex-grow;
 
-  &.open {
-    @apply flex;
-  }
+  &.uploadPage,
+  &.editImagePage {
+    @apply divide-x-[1px] divide-neutral-600;
 
-  .imageManagementModal {
-    @apply rounded-lg bg-neutral-900 w-[75%] h-[75%] flex flex-col shadow-2xl;
+    .form {
+      @apply p-4 grid grid-cols-[auto_1fr] gap-4 w-[65%] self-start;
 
-    .toolbar {
-      @apply rounded-t-lg flex items-center p-2 flex-grow-0;
-      background-color: lighten(#000, 4);
-
-      .title {
-        @apply font-bold flex-grow-0 p-2 leading-none;
+      label {
+        @apply my-auto text-right;
       }
 
-      .spacer {
-        @apply flex-grow;
-      }
-
-      .actions {
-        @apply flex-grow-0 flex flex-row items-center;
-
-        *:not(:first-child) {
-          @apply ml-2;
-        }
-
-        .divider {
-          @apply border-neutral-700 border-[1px] rounded-sm self-stretch bg-neutral-700;
-        }
-
-        .action {
-          @apply p-2 bg-white bg-opacity-0 rounded leading-5 transition ease-in-out flex items-center;
-
-          &:hover {
-            @apply bg-opacity-25;
-          }
-        }
+      .noFill {
+        @apply w-auto;
       }
     }
 
-    .body {
-      @apply flex flex-grow flex-col divide-y-[1px] divide-neutral-600;
+    .imagePreview {
+      @apply flex items-center justify-center w-[35%] text-neutral-400;
+    }
+  }
 
-      > *:last-child {
-        @apply rounded-b-lg;
-      }
+  &.listPage {
+    @apply items-start;
+  }
 
-      .page {
-        @apply flex flex-grow;
+  &.confirmDeletePage {
+    @apply flex-col items-center justify-center;
 
-        &.uploadPage,
-        &.editImagePage {
-          @apply divide-x-[1px] divide-neutral-600;
+    .heading {
+      @apply font-light text-7xl;
+    }
 
-          .form {
-            @apply p-4 grid grid-cols-[auto_1fr] gap-4 w-[65%] self-start;
+    .subHeading {
+      @apply font-light text-2xl text-red-600 mt-8;
 
-            label {
-              @apply my-auto text-right;
-            }
-
-            .noFill {
-              @apply w-auto;
-            }
-          }
-
-          .imagePreview {
-            @apply flex items-center justify-center w-[35%] text-neutral-400;
-          }
-        }
-
-        &.listPage {
-          @apply items-start;
-        }
-
-        &.confirmDeletePage {
-          @apply flex-col items-center justify-center;
-
-          .heading {
-            @apply font-light text-7xl;
-          }
-          .subHeading {
-            @apply font-light text-2xl text-red-600 mt-8;
-
-            b {
-              @apply font-semibold;
-            }
-          }
-        }
-      }
-
-      .bottomBar {
-        @apply flex flex-grow-0 justify-end p-2;
+      b {
+        @apply font-semibold;
       }
     }
   }
-}
-
-.faintButton {
-  @apply bg-opacity-10 bg-white text-white leading-none py-2 px-3 rounded transition text-base;
-
-  &:hover {
-    @apply bg-opacity-25;
-  }
-}
-
-input {
-  @apply bg-opacity-10 bg-white text-white py-1.5 px-3 rounded transition text-base leading-none align-middle;
-
-  &:focus {
-    @apply bg-opacity-25 outline-0;
-  }
-}
-
-::placeholder {
-  @apply text-white text-opacity-50 text-base align-middle;
 }
 </style>

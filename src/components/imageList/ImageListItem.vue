@@ -2,8 +2,8 @@
 import type { PropType, Ref } from "vue";
 import type { ImageDef } from "@/stores/images";
 import { ref } from "vue";
-import ContextMenu from "@/components/ContextMenu/ContextMenu.vue";
-import ContextMenuItem from "@/components/ContextMenu/ContextMenuItem.vue";
+import ContextMenu from "@/components/contextMenu/ContextMenu.vue";
+import ContextMenuItem from "@/components/contextMenu/ContextMenuItem.vue";
 
 const emit = defineEmits(["click", "edit", "delete"]);
 const props = defineProps({

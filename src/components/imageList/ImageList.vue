@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ImageDef } from "@/stores/images";
 import type { PropType } from "vue";
-import ImageListItem from "@/components/ImageList/ImageListItem.vue";
+import ImageListItem from "@/components/imageList/ImageListItem.vue";
 
 const emit = defineEmits(["imageSelected", "edit", "delete"]);
 const props = defineProps({
