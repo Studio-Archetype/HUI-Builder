@@ -325,9 +325,13 @@ function handleMouseDown(e: MouseEvent) {
   startX.value = parseInt(`${e.clientX - offsetX}`);
   startY.value = parseInt(`${e.clientY - offsetY}`);
 
-  for (const placement of placements.value)
-    if (testPlacementHit(startX.value, startY.value, placement))
+  for (const placement of placements.value) {
+    console.log("placement", placement);
+    if (testPlacementHit(startX.value, startY.value, placement)) {
       selectedComponentId.value = placement.id;
+      console.log("hit", placement.id);
+    }
+  }
 }
 
 function handleMouseUp(e: MouseEvent) {
@@ -357,11 +361,11 @@ function handleMouseMove(e: MouseEvent) {
   const dataCopy = data;
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   dataCopy.components.find(
-    (it: Component) => (it.id = selectedComponentId.value)
+    (it: Component) => (it.id === selectedComponentId.value)
   )!.offset[0] += dx;
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   dataCopy.components.find(
-    (it: Component) => (it.id = selectedComponentId.value)
+    (it: Component) => (it.id === selectedComponentId.value)
   )!.offset[1] += dy;
   emit("changeData", dataCopy);
 }

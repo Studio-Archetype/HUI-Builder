@@ -67,7 +67,7 @@ main {
       }
 
       .right {
-        @apply w-96 flex flex-col divide-y divide-neutral-700;
+        @apply w-1/4 flex flex-col divide-y divide-neutral-700;
 
         .treePanel {
           @apply h-64;
@@ -81,28 +81,44 @@ main {
           }
 
           .textIconText {
-            @apply mt-2 p-1 border-neutral-800 border-[1px] rounded;
+            @apply mt-3 p-1 border-neutral-800 border-[1px] rounded;
 
             &:focus {
               @apply bg-neutral-800 outline-0;
             }
           }
 
+          .inputGroup {
+            @apply mt-4 flex items-center;
+
+            input {
+              @apply flex-grow;
+            }
+
+            label {
+              @apply mr-2 flex-grow-0;
+            }
+          }
+
           .offset {
-            @apply flex flex-col items-start;
+            @apply flex flex-col items-start mt-4;
+
+            > label {
+              @apply font-semibold;
+            }
 
             .inputs {
-              @apply flex items-center;
+              @apply grid grid-cols-3 gap-2 mt-1;
 
-              input {
-                @apply w-20;
-              }
+              .group {
+                @apply flex items-center;
 
-              label {
-                @apply mr-1;
+                input {
+                  @apply flex-grow w-full;
+                }
 
-                &:not(:first-child) {
-                  @apply ml-2;
+                label {
+                  @apply mr-2 flex-grow-0;
                 }
               }
             }
@@ -123,7 +139,13 @@ import Codemirror from "codemirror-editor-vue3";
 
 // types
 import type { Doc, Editor, EditorConfiguration } from "codemirror";
-import type { Component, Deco, TextIcon, HuiData } from "@/schema";
+import type {
+  Component,
+  Deco,
+  TextIcon,
+  HuiData,
+  TextImageIcon,
+} from "@/schema";
 
 // lib
 import { downloadSchema, getComponentDisplay } from "@/schema";
@@ -262,7 +284,6 @@ function textIconTextChange(e: Event) {
   const newText = (e.target as HTMLElement).innerText;
 
   // write the data to the component
-
   const copyData: HuiData = data.value;
   const componentIndex = copyData.components.findIndex(
     (value: Component) => value.id === activeComponent.value?.id
@@ -270,6 +291,21 @@ function textIconTextChange(e: Event) {
 
   ((copyData.components[componentIndex].data as Deco).icon as TextIcon).text =
     newText;
+  data.value = copyData;
+}
+
+function textImageIconPathChange(e: Event) {
+  const newPath = (e.target as HTMLInputElement).value;
+
+  // write the data to the component
+  const copyData: HuiData = data.value;
+  const componentIndex = copyData.components.findIndex(
+    (value: Component) => value.id === activeComponent.value?.id
+  );
+
+  (
+    (copyData.components[componentIndex].data as Deco).icon as TextImageIcon
+  ).path = newPath;
   data.value = copyData;
 }
 
@@ -350,14 +386,14 @@ function editorChange(newData: HuiData) {
                 <template #closedIcon>
                   <font-awesome-icon
                     fixed-width
-                    icon="caret-right"
+                    icon="folder-closed"
                   ></font-awesome-icon>
                 </template>
 
                 <template #openIcon>
                   <font-awesome-icon
                     fixed-width
-                    icon="caret-down"
+                    icon="folder-open"
                   ></font-awesome-icon>
                 </template>
 
@@ -389,29 +425,51 @@ function editorChange(newData: HuiData) {
             <div class="offset">
               <label for="positionField">Position</label>
               <div class="inputs" id="positionField">
-                <label for="offsetX">X</label>
-                <input
-                  type="number"
-                  id="offsetX"
-                  :value="activeComponent.offset[0]"
-                  @change="offsetChange(0, $event)"
-                />
-                <label for="offsetY">Y</label>
-                <input
-                  type="number"
-                  id="offsetY"
-                  :value="activeComponent.offset[1]"
-                  @change="offsetChange(1, $event)"
-                />
-                <label for="offsetZ">Z</label>
-                <input
-                  type="number"
-                  id="offsetZ"
-                  :value="activeComponent.offset[2]"
-                  @change="offsetChange(2, $event)"
-                />
+                <div class="group">
+                  <label for="offsetX">X:</label>
+                  <input
+                    type="number"
+                    id="offsetX"
+                    :value="activeComponent.offset[0]"
+                    @change="offsetChange(0, $event)"
+                  />
+                </div>
+                <div class="group">
+                  <label for="offsetY">Y:</label>
+                  <input
+                    type="number"
+                    id="offsetY"
+                    :value="activeComponent.offset[1]"
+                    @change="offsetChange(1, $event)"
+                  />
+                </div>
+                <div class="group">
+                  <label for="offsetZ">Z:</label>
+                  <input
+                    type="number"
+                    id="offsetZ"
+                    :value="activeComponent.offset[2]"
+                    @change="offsetChange(2, $event)"
+                  />
+                </div>
               </div>
             </div>
+
+            <template v-if="activeComponent.data.type === 'decoration'">
+              <div
+                v-if="activeComponent.data.icon.type === 'textImage'"
+                class="inputGroup"
+              >
+                <label for="textImageIconPathInput">Path</label>
+                <input
+                  id="textImageIconPathInput"
+                  type="text"
+                  :value="activeComponent.data.icon.path"
+                  placeholder="/image.png"
+                  @input="textImageIconPathChange"
+                />
+              </div>
+            </template>
           </div>
         </aside>
       </div>
@@ -434,7 +492,7 @@ function editorChange(newData: HuiData) {
     </section>
 
     <section class="toolbarBottom">
-      <div class="saveIndicator">Saving/Saved</div>
+      <div class="saveIndicator">Changes Auto-saved in LocalStorage</div>
       <div class="spacer" />
       <div v-if="!visualMode" class="stats">{{ line }}:{{ char }}</div>
     </section>

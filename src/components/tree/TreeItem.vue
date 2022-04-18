@@ -64,7 +64,7 @@ function click(event: Event) {
   }
 
   > .title {
-    @apply cursor-pointer;
+    @apply cursor-pointer select-none;
 
     &:hover {
       @apply bg-neutral-800;
