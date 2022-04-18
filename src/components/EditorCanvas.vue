@@ -13,6 +13,7 @@ import type {
 import { useImageStore } from "@/stores/images";
 import type { ImageDef } from "@/stores/images";
 import { getComponentDisplay } from "@/schema";
+import { useProjectStore } from "@/stores/project";
 
 const ICON_PX_GAP = 2;
 const ICON_PX_SIZE = 6;
@@ -20,6 +21,7 @@ const ICON_FONT_SIZE = 36;
 const ICON_FONT = `${ICON_FONT_SIZE}px sans-serif`;
 
 const imageStore = useImageStore();
+const projectStore = useProjectStore();
 const emit = defineEmits(["changeData"]);
 const props = defineProps({
   data: {
@@ -324,12 +326,12 @@ function handleMouseDown(e: MouseEvent) {
   e.preventDefault();
   startX.value = parseInt(`${e.clientX - offsetX}`);
   startY.value = parseInt(`${e.clientY - offsetY}`);
+  console.log(startX.value, startY.value);
 
   for (const placement of placements.value) {
-    console.log("placement", placement);
     if (testPlacementHit(startX.value, startY.value, placement)) {
       selectedComponentId.value = placement.id;
-      console.log("hit", placement.id);
+      console.log("hit", placement);
     }
   }
 }
@@ -361,13 +363,13 @@ function handleMouseMove(e: MouseEvent) {
   const dataCopy = data;
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   dataCopy.components.find(
-    (it: Component) => (it.id === selectedComponentId.value)
+    (it: Component) => it.id === selectedComponentId.value
   )!.offset[0] += dx;
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   dataCopy.components.find(
-    (it: Component) => (it.id === selectedComponentId.value)
+    (it: Component) => it.id === selectedComponentId.value
   )!.offset[1] += dy;
-  emit("changeData", dataCopy);
+  projectStore.setProject(dataCopy);
 }
 
 onMounted(() => {

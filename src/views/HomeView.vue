@@ -34,7 +34,7 @@ main {
       }
 
       .buttonItem {
-        @apply p-2 bg-white bg-opacity-0 rounded leading-5 transition ease-in-out w-full;
+        @apply p-2 bg-white bg-opacity-0 rounded leading-none transition ease-in-out w-full appearance-none;
 
         &:not(:first-child) {
           @apply mt-2;
@@ -161,27 +161,14 @@ import "codemirror/mode/javascript/javascript.js";
 import "../assets/base16-dark-modified.css";
 import ImagesModal from "@/components/ImagesModal.vue";
 import { useImageStore } from "@/stores/images";
+import { useProjectStore } from "@/stores/project";
+import { storeToRefs } from "pinia";
 
 // data
 const imageStore = useImageStore();
+const projectStore = useProjectStore();
 let visualMode = ref(true);
-let data = ref<HuiData>({
-  components: [
-    {
-      id: uuidV4(),
-      offset: [0, 0, 0],
-      data: {
-        type: "decoration",
-        icon: {
-          type: "text",
-          text: "Test Text",
-        },
-      },
-    },
-  ],
-  offset: [0, 0, 0],
-  lockPosition: false,
-});
+let { project: data } = storeToRefs(projectStore);
 let line = ref(0);
 let char = ref(0);
 let errorMessageTimeout = ref<number | null>(null);
@@ -208,7 +195,7 @@ let dataJson = computed<string>({
     return JSON.stringify(data.value, null, 2);
   },
   set(newValue: string) {
-    data.value = JSON.parse(newValue);
+    projectStore.setProject(JSON.parse(newValue));
   },
 });
 
@@ -221,9 +208,9 @@ function upload() {
   const element = document.createElement("input");
   element.type = "file";
   element.onchange = async (evt: Event) => {
-    data.value = await new Response(
+    projectStore.setProject(await new Response(
       (evt.target as HTMLInputElement)?.files?.[0]
-    ).json();
+    ).json());
 
     document.body.removeChild(element);
 
@@ -293,7 +280,7 @@ function textIconTextChange(e: Event) {
 
   ((copyData.components[componentIndex].data as Deco).icon as TextIcon).text =
     newText;
-  data.value = copyData;
+  projectStore.setProject(copyData);
 }
 
 function textImageIconPathChange(e: Event) {
@@ -308,7 +295,7 @@ function textImageIconPathChange(e: Event) {
   (
     (copyData.components[componentIndex].data as Deco).icon as TextImageIcon
   ).path = newPath;
-  data.value = copyData;
+  projectStore.setProject(copyData);
 }
 
 function offsetChange(index: number, e: Event) {
@@ -320,12 +307,12 @@ function offsetChange(index: number, e: Event) {
     (value: Component) => value.id === activeComponent.value?.id
   );
   copyData.components[componentIndex].offset[index] = newValue;
-  data.value = copyData;
+  projectStore.setProject(copyData);
 }
-
-function editorChange(newData: HuiData) {
-  data.value = newData;
-}
+//
+// function editorChange(newData: HuiData) {
+//   data.value = newData;
+// }
 </script>
 
 <template>
@@ -375,7 +362,6 @@ function editorChange(newData: HuiData) {
               :data="data"
               backdrop="https://cdn.discordapp.com/attachments/897227758340542505/963623720516210738/hui_backdrop.webp"
               show-bounds
-              @changeData="editorChange"
             />
           </div>
         </div>
