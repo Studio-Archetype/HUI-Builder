@@ -284,6 +284,10 @@ function offsetChange(index: number, e: Event) {
   copyData.components[componentIndex].offset[index] = newValue;
   data.value = copyData;
 }
+
+function editorChange(newData: HuiData) {
+  data.value = newData;
+}
 </script>
 
 <template>
@@ -333,6 +337,7 @@ function offsetChange(index: number, e: Event) {
               :data="data"
               backdrop="https://cdn.discordapp.com/attachments/897227758340542505/963623720516210738/hui_backdrop.webp"
               show-bounds
+              @changeData="editorChange"
             />
           </div>
         </div>
