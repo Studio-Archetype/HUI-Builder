@@ -242,7 +242,9 @@ async function redraw() {
     const startOffsetX = data.offset[0];
     const startOffsetY = data.offset[1];
 
-    for (const component of data.components) {
+    for (const component of data.components.sort(
+      (a: Component, b: Component) => a.offset[2] - b.offset[2]
+    )) {
       const componentOffsetX = startOffsetX + component.offset[0];
       const componentOffsetY = startOffsetY + component.offset[1];
 
