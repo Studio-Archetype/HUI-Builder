@@ -87,3 +87,39 @@ export async function downloadSchema(
   const resp = await fetch(url);
   return await resp.json();
 }
+
+export function getComponentDisplay(
+  component: Component,
+  detail = false
+): string {
+  let detailText = component.id;
+  let name: string;
+
+  switch (component.data.type) {
+    case "decoration": {
+      switch ((component.data as Deco).icon.type) {
+        case "text":
+          detailText = `(${((component.data as Deco).icon as TextIcon).text})`;
+          name = "Text";
+          break;
+        case "textImage":
+          name = "Image";
+          break;
+        default:
+          name = "Decoration";
+      }
+
+      break;
+    }
+    case "button":
+      name = "Button";
+      break;
+    case "toggle":
+      name = "Toggle";
+      break;
+    default:
+      name = "Unknown Component";
+  }
+
+  return `${name}${detail ? ` ${detailText}` : ""}`;
+}

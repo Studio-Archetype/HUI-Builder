@@ -1,3 +1,32 @@
+<script setup lang="ts">
+import { ref } from "vue";
+
+const props = defineProps({
+  toggleable: {
+    type: Boolean,
+    default: false,
+  },
+  root: {
+    type: Boolean,
+    default: false,
+  },
+  open: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const emit = defineEmits(["click"]);
+
+let opened = ref(props.open);
+
+function click(event: Event) {
+  event.stopPropagation();
+  if (props.toggleable) opened.value = !opened.value;
+  emit("click", event);
+}
+</script>
+
 <template>
   <div class="treeItem" :class="{ open: opened, toggleable, root }">
     <div class="title" @click.stop="click">
@@ -25,43 +54,6 @@
     </div>
   </div>
 </template>
-
-<script lang="ts">
-export default {
-  name: "TreeItem",
-  props: {
-    toggleable: {
-      type: Boolean,
-      default: false,
-    },
-    root: {
-      type: Boolean,
-      default: false,
-    },
-    open: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      opened: false,
-    };
-  },
-
-  methods: {
-    click(event: Event) {
-      event.stopPropagation();
-      if (this.toggleable) this.opened = !this.opened;
-      this.$emit("click", event);
-    },
-  },
-
-  created() {
-    this.opened = this.open;
-  },
-};
-</script>
 
 <style scoped lang="scss">
 .treeItem {

@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.fa-fw {
+    width: 1rem !important;
+}
+
+::-webkit-scrollbar {
+    @apply w-2 h-2;
+    pointer-events: none;
+
+    &-track {
+        @apply bg-transparent;
+    }
+
+    &-thumb {
+        @apply bg-neutral-400;
+
+        &:hover {
+            @apply bg-neutral-300;
+        }
+    }
+}
+
+input {
+    @apply bg-opacity-10 bg-white text-white py-1.5 px-3 rounded transition text-base leading-none align-middle;
+
+    &:focus {
+        @apply bg-opacity-25 outline-0;
+    }
+}
+
+::placeholder {
+    @apply text-white text-opacity-50 text-base align-middle;
+}
