@@ -332,6 +332,7 @@ function offsetChange(index: number, e: Event) {
             <editor-canvas
               :data="data"
               backdrop="https://cdn.discordapp.com/attachments/897227758340542505/963623720516210738/hui_backdrop.webp"
+              show-bounds
             />
           </div>
         </div>
