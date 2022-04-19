@@ -1,14 +1,20 @@
 <script setup lang="ts">
+const emit = defineEmits(["backgroundClick"]);
 const props = defineProps({
   open: {
     type: Boolean,
     default: false,
   },
 });
+
+function backgroundClicked(e: MouseEvent) {
+  if (e.target !== e.currentTarget) return;
+  emit("backgroundClick");
+}
 </script>
 
 <template>
-  <div class="modalContainer" :class="{ open }">
+  <div class="modalContainer" :class="{ open }" @click="backgroundClicked">
     <section class="modal">
       <slot />
     </section>

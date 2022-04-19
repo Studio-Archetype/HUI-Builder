@@ -109,7 +109,7 @@ function deleteImage(image: ImageDef) {
 </script>
 
 <template>
-  <modal :open="open">
+  <modal :open="open" @backgroundClick="close">
     <section class="imageManagementModal">
       <modal-toolbar>
         <template #title>

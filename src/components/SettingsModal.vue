@@ -19,7 +19,7 @@ function close() {
 </script>
 
 <template>
-  <modal :open="open">
+  <modal :open="open" @backgroundClick="close">
     <modal-toolbar>
       <template #title>Settings</template>
       <template #actions>
