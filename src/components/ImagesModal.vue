@@ -215,6 +215,9 @@ function deleteImage(image: ImageDef) {
         </div>
 
         <modal-footer>
+          <button class="button faint mr-2" @click="page = ModalPage.LIST">
+            Cancel
+          </button>
           <button class="button" @click="confirmDeleteImage">
             Confirm
           </button>
