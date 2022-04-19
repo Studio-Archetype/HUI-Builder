@@ -36,7 +36,9 @@ function close() {
       </template>
     </modal-toolbar>
     <modal-body>
-      <div class="page"></div>
+      <div class="page topology">
+
+      </div>
       <modal-footer>
         <p class="text-neutral-500">
           &copy; {{ new Date().getFullYear() }} Studio Archetype, All Rights

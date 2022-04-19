@@ -80,7 +80,7 @@ function closeContextMenu() {
 
 <style scoped lang="scss">
 .item {
-  @apply flex flex-col divide-y-[1px] divide-neutral-600 rounded bg-neutral-800;
+  @apply flex flex-col divide-y-[1px] divide-neutral-800 rounded bg-neutral-800;
 
   &.selectable {
     @apply cursor-pointer;

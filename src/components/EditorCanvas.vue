@@ -22,7 +22,7 @@ const ICON_FONT = `${ICON_FONT_SIZE}px sans-serif`;
 
 const imageStore = useImageStore();
 const projectStore = useProjectStore();
-const emit = defineEmits(["changeData"]);
+const emit = defineEmits(["componentSelected"]);
 const props = defineProps({
   data: {
     type: Object as () => HuiData,
@@ -36,6 +36,7 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  activeComponentId: String,
 });
 
 let data = reactive<HuiData>(props.data);
@@ -191,12 +192,6 @@ async function drawIcon(icon: Icon, offsetX: number, offsetY: number) {
         ctx.value.textBaseline = "top";
         ctx.value.fillStyle = "#000000";
         ctx.value?.fillText(textIcon.text, offsetX, offsetY);
-
-        if (props.showBounds) {
-          ctx.value.strokeStyle = "#ff0000";
-          ctx.value.lineWidth = 1;
-          ctx.value?.strokeRect(offsetX, offsetY, bounds.width, bounds.height);
-        }
         break;
       }
       case "textImage": {
@@ -215,17 +210,6 @@ async function drawIcon(icon: Icon, offsetX: number, offsetY: number) {
             }
 
             cursorY += ICON_PX_SIZE + ICON_PX_GAP;
-          }
-
-          if (props.showBounds) {
-            ctx.value.strokeStyle = "#ff0000";
-            ctx.value.lineWidth = 1;
-            ctx.value?.strokeRect(
-              offsetX,
-              offsetY,
-              bounds.width,
-              bounds.height
-            );
           }
         }
         break;
@@ -261,8 +245,30 @@ async function redraw() {
             height: iconBounds.height,
           });
 
-          if (props.showBounds) {
-            ctx.value.fillStyle = "#ff0000";
+          let boundColor: string;
+
+          if (
+            props.activeComponentId &&
+            props.activeComponentId === component.id
+          ) {
+            boundColor = "#efefef";
+          } else boundColor = "#ff0000";
+
+          if (
+            (props.activeComponentId &&
+              props.activeComponentId === component.id) ||
+            props.showBounds
+          ) {
+            ctx.value.strokeStyle = boundColor;
+            ctx.value.lineWidth = 1;
+            ctx.value?.strokeRect(
+              componentOffsetX,
+              componentOffsetY,
+              iconBounds.width,
+              iconBounds.height
+            );
+
+            ctx.value.fillStyle = boundColor;
             ctx.value.font = "12px sans-serif";
             ctx.value.textBaseline = "bottom";
             ctx.value?.fillText(
@@ -320,20 +326,19 @@ function getCanvasValues(): CanvasValues {
       scrollY: 0,
     };
 }
-let startX = ref(0),
-  startY = ref(0);
+let startX = ref(0);
+let startY = ref(0);
 
 function handleMouseDown(e: MouseEvent) {
   const { offsetX, offsetY } = getCanvasValues();
   e.preventDefault();
   startX.value = parseInt(`${e.clientX - offsetX}`);
   startY.value = parseInt(`${e.clientY - offsetY}`);
-  console.log(startX.value, startY.value);
 
   for (const placement of placements.value) {
     if (testPlacementHit(startX.value, startY.value, placement)) {
       selectedComponentId.value = placement.id;
-      console.log("hit", placement);
+      emit("componentSelected", selectedComponentId.value);
     }
   }
 }

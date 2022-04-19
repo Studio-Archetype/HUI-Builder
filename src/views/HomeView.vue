@@ -3,10 +3,10 @@ main {
   @apply h-full w-full flex flex-col text-white;
 
   .toolbarBottom {
-    @apply flex bg-black items-center text-white p-1 text-xs flex-grow-0;
+    @apply flex bg-black items-center text-white p-2.5 text-xs flex-grow-0;
 
     .saveIndicator {
-      @apply flex-shrink;
+      @apply flex-shrink text-neutral-500;
     }
 
     .spacer {
@@ -14,7 +14,19 @@ main {
     }
 
     .stats {
-      @apply flex-shrink;
+      @apply flex-shrink flex;
+
+      .divider {
+        @apply border-neutral-500 bg-neutral-500;
+      }
+
+      > :not(:first-child) {
+        @apply ml-2;
+      }
+
+      .muted {
+        @apply text-neutral-500;
+      }
     }
   }
 
@@ -23,7 +35,7 @@ main {
 
     .sidebar {
       @apply flex flex-col items-center p-2;
-      background-color: lighten(#000, 4);
+      background-color: lighten(#000, 5);
 
       > :not(.spacer) {
         @apply flex-grow-0;
@@ -39,7 +51,7 @@ main {
     }
 
     .viewport {
-      @apply flex flex-grow divide-x divide-neutral-700 bg-neutral-900 relative;
+      @apply flex flex-grow divide-x divide-neutral-800 bg-neutral-900 relative;
 
       .errorMessage {
         @apply absolute bottom-2 right-2 bg-red-600 px-3 py-2 rounded shadow-md;
@@ -47,7 +59,7 @@ main {
       }
 
       .content {
-        @apply flex flex-col w-full divide-neutral-600 divide-y-[1px];
+        @apply flex flex-col w-full divide-neutral-800 divide-y-[1px];
 
         .canvasViewport {
           @apply flex-grow flex items-center justify-center;
@@ -59,7 +71,7 @@ main {
       }
 
       .right {
-        @apply w-1/4 flex flex-col divide-y divide-neutral-700;
+        @apply w-1/4 flex flex-col divide-y divide-neutral-800;
 
         .treePanel {
           @apply h-64;
@@ -295,10 +307,11 @@ function offsetChange(index: number, e: Event) {
   copyData.components[componentIndex].offset[index] = newValue;
   projectStore.setProject(copyData);
 }
-//
-// function editorChange(newData: HuiData) {
-//   data.value = newData;
-// }
+function componentSelectedOnCanvas(componentId: string) {
+  activeComponent.value = projectStore.project.components.find(
+    (it: Component) => it.id === componentId
+  )!;
+}
 </script>
 
 <template>
@@ -362,6 +375,8 @@ function offsetChange(index: number, e: Event) {
               :data="data"
               backdrop="https://cdn.discordapp.com/attachments/897227758340542505/963623720516210738/hui_backdrop.webp"
               :show-bounds="settingsStore.settings.debugFrames"
+              @componentSelected="componentSelectedOnCanvas"
+              :activeComponentId="activeComponent ? activeComponent.id : null"
             />
           </div>
         </div>
@@ -389,6 +404,11 @@ function offsetChange(index: number, e: Event) {
                   <ComponentTreeItem
                     v-for="component in data.components"
                     :key="component.id"
+                    :selected="
+                      activeComponent
+                        ? component.id === activeComponent.id
+                        : false
+                    "
                     :component="component"
                     @click="componentClickedInTreeView(component)"
                   />
@@ -498,7 +518,11 @@ function offsetChange(index: number, e: Event) {
     <section class="toolbarBottom">
       <div class="saveIndicator">Changes Auto-saved in LocalStorage</div>
       <div class="spacer" />
-      <div v-if="!visualMode" class="stats">{{ line }}:{{ char }}</div>
+      <div v-if="!visualMode" class="stats">
+        <span class="muted">JSON</span>
+        <div class="divider" />
+        <span>{{ line }}:{{ char }}</span>
+      </div>
     </section>
   </main>
 </template>

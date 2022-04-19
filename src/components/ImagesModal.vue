@@ -110,119 +110,117 @@ function deleteImage(image: ImageDef) {
 
 <template>
   <modal :open="open" @backgroundClick="close">
-    <section class="imageManagementModal">
-      <modal-toolbar>
-        <template #title>
-          Image Management {{ page !== ModalPage.LIST ? `// ${page}` : "" }}
-        </template>
-        <template #actions>
-          <button class="button icon faint" @click="page = ModalPage.UPLOAD">
-            <font-awesome-icon fixed-width icon="plus"></font-awesome-icon>
-          </button>
-          <div class="divider" />
-          <button
-            v-if="page !== ModalPage.LIST"
-            class="button icon faint"
-            @click="page = ModalPage.LIST"
-          >
-            <font-awesome-icon
-              fixed-width
-              icon="arrow-left"
-            ></font-awesome-icon>
-          </button>
-          <button class="button icon faint" @click="close">
-            <font-awesome-icon fixed-width icon="close"></font-awesome-icon>
-          </button>
-        </template>
-      </modal-toolbar>
-      <modal-body>
-        <template v-if="page === ModalPage.LIST">
-          <div class="page listPage">
-            <image-list
-              :images="imageStore.allImages"
-              :selectable="selectionMode"
-              @edit="editImage"
-              @delete="deleteImage"
+    <modal-toolbar>
+      <template #title>
+        Image Management {{ page !== ModalPage.LIST ? `// ${page}` : "" }}
+      </template>
+      <template #actions>
+        <button class="button icon faint" @click="page = ModalPage.UPLOAD">
+          <font-awesome-icon fixed-width icon="plus"></font-awesome-icon>
+        </button>
+        <div class="divider" />
+        <button
+          v-if="page !== ModalPage.LIST"
+          class="button icon faint"
+          @click="page = ModalPage.LIST"
+        >
+          <font-awesome-icon
+            fixed-width
+            icon="arrow-left"
+          ></font-awesome-icon>
+        </button>
+        <button class="button icon faint" @click="close">
+          <font-awesome-icon fixed-width icon="close"></font-awesome-icon>
+        </button>
+      </template>
+    </modal-toolbar>
+    <modal-body>
+      <template v-if="page === ModalPage.LIST">
+        <div class="page listPage">
+          <image-list
+            :images="imageStore.allImages"
+            :selectable="selectionMode"
+            @edit="editImage"
+            @delete="deleteImage"
+          />
+        </div>
+      </template>
+      <template v-else-if="page === ModalPage.UPLOAD">
+        <div class="page uploadPage">
+          <section class="form">
+            <label for="pathInputUpload">Path</label>
+            <input
+              id="pathInputUpload"
+              type="text"
+              v-model="chooseImagePath"
+              placeholder="/image.png"
             />
-          </div>
-        </template>
-        <template v-else-if="page === ModalPage.UPLOAD">
-          <div class="page uploadPage">
-            <section class="form">
-              <label for="pathInputUpload">Path</label>
-              <input
-                id="pathInputUpload"
-                type="text"
-                v-model="chooseImagePath"
-                placeholder="/image.png"
-              />
-              <label for="uploadButton">Image</label>
-              <div>
-                <button
-                  class="button noFill"
-                  id="uploadButton"
-                  @click="chooseImage"
-                >
-                  Upload Image
-                </button>
-              </div>
-            </section>
-            <aside class="imagePreview">
-              <img
-                v-if="chooseImageContent !== ''"
-                :src="chooseImageContent"
-                alt="Selected Image"
-              />
-              <span v-else>No Image Selected</span>
-            </aside>
-          </div>
+            <label for="uploadButton">Image</label>
+            <div>
+              <button
+                class="button noFill"
+                id="uploadButton"
+                @click="chooseImage"
+              >
+                Upload Image
+              </button>
+            </div>
+          </section>
+          <aside class="imagePreview">
+            <img
+              v-if="chooseImageContent !== ''"
+              :src="chooseImageContent"
+              alt="Selected Image"
+            />
+            <span v-else>No Image Selected</span>
+          </aside>
+        </div>
 
-          <modal-footer>
-            <button class="button" @click="confirmAddImage">
-              Confirm
-            </button>
-          </modal-footer>
-        </template>
-        <template v-else-if="page === ModalPage.EDIT_IMAGE">
-          <div class="page editImagePage">
-            <section class="form">
-              <label for="pathInputEdit">Path</label>
-              <input
-                id="pathInputEdit"
-                type="text"
-                v-model="editImagePath"
-                placeholder="/image.png"
-              />
-            </section>
-            <aside class="imagePreview">
-              <img :src="editDeleteImage.content" alt="Selected Image" />
-            </aside>
-          </div>
+        <modal-footer>
+          <button class="button" @click="confirmAddImage">
+            Confirm
+          </button>
+        </modal-footer>
+      </template>
+      <template v-else-if="page === ModalPage.EDIT_IMAGE">
+        <div class="page editImagePage">
+          <section class="form">
+            <label for="pathInputEdit">Path</label>
+            <input
+              id="pathInputEdit"
+              type="text"
+              v-model="editImagePath"
+              placeholder="/image.png"
+            />
+          </section>
+          <aside class="imagePreview">
+            <img :src="editDeleteImage.content" alt="Selected Image" />
+          </aside>
+        </div>
 
-          <modal-footer>
-            <button
-              class="button"
-              :disabled="editImagePath === editImageOldPath"
-              @click="confirmEditImage"
-            >
-              Confirm
-            </button>
-          </modal-footer>
-        </template>
-        <template v-else-if="page === ModalPage.DELETE_CONFIRM">
-          <div class="page confirmDeletePage">
-            <h3 class="heading">Confirm Deletion?</h3>
-            <p class="subHeading">The image will be gone <b>forever</b></p>
-          </div>
+        <modal-footer>
+          <button
+            class="button"
+            :disabled="editImagePath === editImageOldPath"
+            @click="confirmEditImage"
+          >
+            Confirm
+          </button>
+        </modal-footer>
+      </template>
+      <template v-else-if="page === ModalPage.DELETE_CONFIRM">
+        <div class="page confirmDeletePage">
+          <h3 class="heading">Confirm Deletion?</h3>
+          <p class="subHeading">The image will be gone <b>forever</b></p>
+        </div>
 
-          <modal-footer>
-            <button class="button" @click="confirmDeleteImage">
-              Confirm
-            </button>
-          </modal-footer>
-        </template>
-      </modal-body>
-    </section>
+        <modal-footer>
+          <button class="button" @click="confirmDeleteImage">
+            Confirm
+          </button>
+        </modal-footer>
+      </template>
+    </modal-body>
   </modal>
 </template>
 
@@ -232,7 +230,7 @@ function deleteImage(image: ImageDef) {
 
   &.uploadPage,
   &.editImagePage {
-    @apply divide-x-[1px] divide-neutral-600;
+    @apply divide-x-[1px] divide-neutral-800;
 
     .form {
       @apply p-4 grid grid-cols-[auto_1fr] gap-4 w-[65%] self-start;

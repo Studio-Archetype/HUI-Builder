@@ -9,6 +9,10 @@ const props = defineProps({
     type: Object as () => Component,
     required: true,
   },
+  selected: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["click"]);
@@ -23,7 +27,7 @@ function click() {
 </script>
 
 <template>
-  <TreeItem @click.stop="click">
+  <TreeItem @click.stop="click" :selected="selected">
     {{ name }}
   </TreeItem>
 </template>

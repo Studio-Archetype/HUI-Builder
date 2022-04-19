@@ -14,6 +14,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  selected: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["click"]);
@@ -28,7 +32,7 @@ function click(event: Event) {
 </script>
 
 <template>
-  <div class="treeItem" :class="{ open: opened, toggleable, root }">
+  <div class="treeItem" :class="{ open: opened, toggleable, root, selected }">
     <div class="title" @click.stop="click">
       <slot name="icon">
         <template v-if="toggleable">
@@ -61,6 +65,14 @@ function click(event: Event) {
 
   &:not(.root) {
     @apply border-l-2 border-neutral-600 pl-2 ml-2;
+  }
+
+  &.selected .title {
+    @apply bg-neutral-600;
+
+    &:hover {
+      @apply bg-neutral-600;
+    }
   }
 
   > .title {

@@ -2,6 +2,7 @@
 import Modal from "@/components/modal/Modal.vue";
 import ModalToolbar from "@/components/modal/ModalToolbar.vue";
 import { useSettingsStore } from "@/stores/settings";
+import ModalFooter from "@/components/modal/ModalFooter.vue";
 import ModalBody from "@/components/modal/ModalBody.vue";
 
 const settingsStore = useSettingsStore();
@@ -42,6 +43,12 @@ function close() {
           </label>
         </div>
       </div>
+      <modal-footer>
+        <p class="text-neutral-500">
+          &copy; {{ new Date().getFullYear() }} Studio Archetype, All Rights
+          Reserved.
+        </p>
+      </modal-footer>
     </modal-body>
   </modal>
 </template>
