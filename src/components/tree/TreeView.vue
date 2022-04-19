@@ -1,6 +1,6 @@
 <style lang="scss">
 .treeView {
-  @apply p-1;
+  @apply pl-2;
 }
 </style>
 

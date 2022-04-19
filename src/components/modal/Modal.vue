@@ -5,6 +5,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  width: {
+    type: String,
+    default: "75%",
+  },
+  height: {
+    type: String,
+    default: "75%",
+  },
 });
 
 function backgroundClicked(e: MouseEvent) {
@@ -15,7 +23,7 @@ function backgroundClicked(e: MouseEvent) {
 
 <template>
   <div class="modalContainer" :class="{ open }" @click="backgroundClicked">
-    <section class="modal">
+    <section class="modal" :style="{ width, height }">
       <slot />
     </section>
   </div>
@@ -31,7 +39,7 @@ function backgroundClicked(e: MouseEvent) {
   }
 
   .modal {
-    @apply rounded-lg bg-neutral-900 w-[75%] h-[75%] flex flex-col shadow-2xl;
+    @apply rounded-lg bg-neutral-900 flex flex-col shadow-2xl;
   }
 }
 </style>

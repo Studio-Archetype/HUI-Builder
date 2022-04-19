@@ -15,7 +15,7 @@ import type { ImageDef } from "@/stores/images";
 import { getComponentDisplay } from "@/schema";
 import { useProjectStore } from "@/stores/project";
 
-const ICON_PX_GAP = 2;
+const ICON_PX_GAP = 1;
 const ICON_PX_SIZE = 6;
 const ICON_FONT_SIZE = 36;
 const ICON_FONT = `${ICON_FONT_SIZE}px sans-serif`;
@@ -125,7 +125,7 @@ function imageToColorMap(image: HTMLImageElement): Vector4[][] {
     cursorY = 0,
     cursorTotal = 0;
 
-  while (cursorY < image.width) {
+  while (cursorY < image.height) {
     const row: Vector4[] = [];
     while (cursorX < image.width) {
       row.push({
