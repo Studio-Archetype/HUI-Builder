@@ -10,10 +10,11 @@ import type {
   TextImageIcon,
   Toggle,
 } from "@/schema";
-import { useImageStore } from "@/stores/images";
-import type { ImageDef } from "@/stores/images";
 import { getComponentDisplay } from "@/schema";
+import { useImageStore } from "@/stores/images";
 import { useProjectStore } from "@/stores/project";
+import type { Dimension } from "@/lib/image";
+import { getImage, imageToColorMap } from "@/lib/image";
 
 const ICON_PX_GAP = 1;
 const ICON_PX_SIZE = 6;
@@ -55,28 +56,6 @@ interface ComponentPlacement {
 }
 let placements = ref<ComponentPlacement[]>([]);
 
-interface Dimension {
-  width: number;
-  height: number;
-}
-
-const imageCache = new Map<string, HTMLImageElement>();
-
-async function getImage(imageDef: ImageDef): Promise<HTMLImageElement> {
-  if (imageCache.has(imageDef.path))
-    return Promise.resolve(imageCache.get(imageDef.path)!);
-  else {
-    return new Promise<HTMLImageElement>((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        imageCache.set(imageDef.path, img);
-        resolve(img);
-      };
-      img.src = imageDef.content;
-    });
-  }
-}
-
 async function calculateIconSize(icon: Icon): Promise<Dimension> {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d")!;
@@ -84,9 +63,13 @@ async function calculateIconSize(icon: Icon): Promise<Dimension> {
   switch (icon.type) {
     case "text": {
       ctx.font = ICON_FONT;
+      const metrics = ctx.measureText((icon as TextIcon).text);
       return {
-        width: ctx.measureText((icon as TextIcon).text).width,
-        height: ICON_FONT_SIZE,
+        width: metrics.width,
+        height:
+          metrics.actualBoundingBoxAscent +
+          metrics.actualBoundingBoxDescent +
+          2,
       };
     }
     case "textImage": {
@@ -102,48 +85,6 @@ async function calculateIconSize(icon: Icon): Promise<Dimension> {
       } else return { width: 0, height: 0 };
     }
   }
-}
-
-interface Vector4 {
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-}
-
-function imageToColorMap(image: HTMLImageElement): Vector4[][] {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  canvas.width = image.width;
-  canvas.height = image.height;
-
-  ctx?.drawImage(image, 0, 0);
-  const { data } = ctx!.getImageData(0, 0, canvas.width, canvas.height);
-
-  const imageOut: Vector4[][] = [];
-  let cursorX = 0,
-    cursorY = 0,
-    cursorTotal = 0;
-
-  while (cursorY < image.height) {
-    const row: Vector4[] = [];
-    while (cursorX < image.width) {
-      row.push({
-        r: data[cursorTotal],
-        g: data[cursorTotal + 1],
-        b: data[cursorTotal + 2],
-        a: data[cursorTotal + 3],
-      });
-
-      cursorTotal += 4;
-      cursorX++;
-    }
-
-    imageOut.push(row);
-    cursorX = 0;
-    cursorY++;
-  }
-  return imageOut;
 }
 
 function fillImage(img: HTMLImageElement) {
@@ -182,7 +123,6 @@ function drawBackdrop(): Promise<void> {
 }
 
 async function drawIcon(icon: Icon, offsetX: number, offsetY: number) {
-  const bounds = await calculateIconSize(icon);
   if (canvas.value && ctx.value) {
     switch (icon.type) {
       case "text": {
@@ -245,20 +185,36 @@ async function redraw() {
             height: iconBounds.height,
           });
 
-          let boundColor: string;
+          let boundColor = "#efefef";
+          let doBox = false;
+
+          if (props.showBounds) {
+            boundColor = "red";
+            doBox = true;
+          }
 
           if (
             props.activeComponentId &&
             props.activeComponentId === component.id
-          ) {
-            boundColor = "#efefef";
-          } else boundColor = "#ff0000";
+          )
+            doBox = true;
 
-          if (
-            (props.activeComponentId &&
-              props.activeComponentId === component.id) ||
-            props.showBounds
-          ) {
+          if (decoData.icon.type === "textImage") {
+            const imgDef = imageStore.imageByPath(
+              (decoData.icon as TextImageIcon).path
+            );
+            if (imgDef) {
+              const image = await getImage(imgDef);
+              const imageData = imageToColorMap(image);
+
+              if (imageData.length > 16 || imageData[0].length > 16) {
+                doBox = true;
+                boundColor = "#dc2626";
+              }
+            }
+          }
+
+          if (doBox) {
             ctx.value.strokeStyle = boundColor;
             ctx.value.lineWidth = 1;
             ctx.value?.strokeRect(

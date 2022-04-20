@@ -373,7 +373,7 @@ function componentSelectedOnCanvas(componentId: string) {
           <div class="canvasViewport">
             <editor-canvas
               :data="data"
-              backdrop="https://cdn.discordapp.com/attachments/879103053138116668/921471907088461835/2021-12-17_00.44.03.png"
+              backdrop="https://cdn.discordapp.com/attachments/897227758340542505/963623720516210738/hui_backdrop.webp"
               :show-bounds="settingsStore.settings.debugFrames"
               @componentSelected="componentSelectedOnCanvas"
               :activeComponentId="activeComponent ? activeComponent.id : null"
