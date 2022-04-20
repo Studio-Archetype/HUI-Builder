@@ -16,7 +16,7 @@ enum ModalPage {
 }
 
 const imageStore = useImageStore();
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "selected"]);
 const props = defineProps({
   open: {
     type: Boolean,
@@ -69,12 +69,14 @@ function confirmAddImage() {
       path: chooseImagePath.value,
       content: chooseImageContent.value,
     });
+
+    chooseImageContent.value = "";
+    chooseImagePath.value = "";
+    page.value = ModalPage.LIST;
   } else {
     console.log(`Path taken: ${chooseImagePath.value}`);
     // todo: warn user
   }
-
-  page.value = ModalPage.LIST;
 }
 
 function confirmEditImage() {
@@ -82,6 +84,9 @@ function confirmEditImage() {
     imageStore.editImage(editImageOldPath.value, {
       path: editImagePath.value,
     });
+
+    editImagePath.value = "";
+    page.value = ModalPage.LIST;
   } else {
     console.log(`Path taken: ${editImagePath.value}`);
     // todo: warn user
@@ -105,6 +110,10 @@ function editImage(image: ImageDef) {
 function deleteImage(image: ImageDef) {
   editDeleteImage.value = image;
   page.value = ModalPage.DELETE_CONFIRM;
+}
+
+function select(image: ImageDef) {
+  emit("selected", image);
 }
 </script>
 
@@ -142,6 +151,7 @@ function deleteImage(image: ImageDef) {
             :selectable="selectionMode"
             @edit="editImage"
             @delete="deleteImage"
+            @imageSelected="select"
           />
         </div>
       </template>
@@ -218,9 +228,7 @@ function deleteImage(image: ImageDef) {
           <button class="button faint mr-2" @click="page = ModalPage.LIST">
             Cancel
           </button>
-          <button class="button" @click="confirmDeleteImage">
-            Confirm
-          </button>
+          <button class="button" @click="confirmDeleteImage">Confirm</button>
         </modal-footer>
       </template>
     </modal-body>
@@ -249,6 +257,11 @@ function deleteImage(image: ImageDef) {
 
     .imagePreview {
       @apply flex items-center justify-center w-[35%] text-neutral-400;
+
+      img {
+        @apply w-[65%] h-auto;
+        image-rendering: pixelated;
+      }
     }
   }
 

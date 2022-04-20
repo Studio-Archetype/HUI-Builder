@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { useStorage } from "@vueuse/core";
-import type { HuiData } from "@/schema";
+import type { Component, HuiData } from "@/schema";
 import { v4 as uuidV4 } from "uuid";
 
 export const useProjectStore = defineStore({
@@ -28,6 +28,15 @@ export const useProjectStore = defineStore({
   actions: {
     setProject(project: HuiData) {
       this.project = project;
+    },
+    addComponent(component: Component) {
+      this.project.components.push(component);
+    },
+    deleteComponent(componentId: string) {
+      const index = this.project.components.findIndex(
+        (it: Component) => it.id === componentId
+      );
+      this.project.components.splice(index, 1);
     },
   },
 });

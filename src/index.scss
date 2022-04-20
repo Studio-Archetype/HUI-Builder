@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: 'Minecraftia';
+    src: url('/Minecraftia-Regular.ttf');
+}
+
 .fa-fw {
     width: 1rem !important;
 }
@@ -27,7 +32,7 @@
     @apply bg-opacity-25 bg-white text-white;
 }
 
-input, select {
+input, select, [contenteditable] {
     @apply bg-opacity-10 bg-white text-white py-1 px-3 rounded transition text-base align-middle appearance-none;
 
     &:focus {

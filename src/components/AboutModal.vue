@@ -3,7 +3,7 @@ import Modal from "@/components/modal/Modal.vue";
 import ModalToolbar from "@/components/modal/ModalToolbar.vue";
 import ModalFooter from "@/components/modal/ModalFooter.vue";
 import ModalBody from "@/components/modal/ModalBody.vue";
-import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import { faGithub, faDiscord } from "@fortawesome/free-brands-svg-icons";
 
 const emit = defineEmits(["close"]);
 const props = defineProps({
@@ -16,20 +16,15 @@ const props = defineProps({
 function close() {
   emit("close");
 }
+
+const buildNumber = 1;
 </script>
 
 <template>
-  <modal :open="open" @backgroundClick="close" width="25%" height="65%">
+  <modal :open="open" @backgroundClick="close" width="35%" height="75%">
     <modal-toolbar>
       <template #title>About Application</template>
       <template #actions>
-        <a
-          class="button icon faint"
-          href="https://github.com/Studio-Archetype/HUI-Builder"
-        >
-          <font-awesome-icon fixed-width :icon="faGithub"></font-awesome-icon>
-        </a>
-        <div class="divider" />
         <button class="button icon faint" @click="close">
           <font-awesome-icon fixed-width icon="close"></font-awesome-icon>
         </button>
@@ -37,13 +32,53 @@ function close() {
     </modal-toolbar>
     <modal-body>
       <div class="page topology">
-
-      </div>
-      <modal-footer>
-        <p class="text-neutral-500">
+        <h2>HUI Builder</h2>
+        <p>
           &copy; {{ new Date().getFullYear() }} Studio Archetype, All Rights
           Reserved.
         </p>
+
+        <div class="buttons">
+          <a
+            class="button"
+            href="https://github.com/Studio-Archetype/HUI-Builder"
+          >
+            <font-awesome-icon fixed-width :icon="faGithub"></font-awesome-icon>
+            Github
+          </a>
+
+          <a
+            class="button"
+            href="https://github.com/Studio-Archetype/HUI-Builder"
+          >
+            <font-awesome-icon
+              fixed-width
+              :icon="faDiscord"
+            ></font-awesome-icon>
+            Support
+          </a>
+
+          <a class="button" href="https://studioarchetype.net/hologui">
+            <font-awesome-icon
+              fixed-width
+              icon="dollar-sign"
+            ></font-awesome-icon>
+            Buy
+          </a>
+          <a
+            class="button"
+            href="https://docs.studioarchetype.net/en/utilities/hui"
+          >
+            <font-awesome-icon fixed-width icon="book"></font-awesome-icon>
+            Buy
+          </a>
+        </div>
+
+        <p></p>
+      </div>
+
+      <modal-footer>
+        <span class="text-neutral-500"> Build {{ buildNumber }} </span>
       </modal-footer>
     </modal-body>
   </modal>
@@ -51,6 +86,22 @@ function close() {
 
 <style scoped lang="scss">
 .page {
-  @apply flex flex-grow p-4 flex-col;
+  @apply flex flex-grow p-16 flex-col items-center;
+
+  h2 {
+    @apply font-light text-6xl;
+  }
+
+  p {
+    @apply text-lg mt-8;
+  }
+
+  .buttons {
+    @apply grid grid-cols-2 w-full mt-8 gap-2;
+
+    .button {
+      @apply text-center;
+    }
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUpdated, reactive, ref, watch } from "vue";
+import { computed, onMounted, onUpdated, reactive, ref, watch } from "vue";
 import type {
   Button,
   Component,
@@ -15,15 +15,17 @@ import { useImageStore } from "@/stores/images";
 import { useProjectStore } from "@/stores/project";
 import type { Dimension } from "@/lib/image";
 import { getImage, imageToColorMap } from "@/lib/image";
+import { computedAsync } from "@vueuse/core";
 
 const ICON_PX_GAP = 1;
 const ICON_PX_SIZE = 6;
 const ICON_FONT_SIZE = 36;
-const ICON_FONT = `${ICON_FONT_SIZE}px sans-serif`;
+const ICON_FONT_SHIFT = -62;
+const ICON_FONT = `${ICON_FONT_SIZE}px Minecraftia`;
 
 const imageStore = useImageStore();
 const projectStore = useProjectStore();
-const emit = defineEmits(["componentSelected"]);
+const emit = defineEmits(["componentSelected", "deselect"]);
 const props = defineProps({
   data: {
     type: Object as () => HuiData,
@@ -40,7 +42,7 @@ const props = defineProps({
   activeComponentId: String,
 });
 
-let data = reactive<HuiData>(props.data);
+let data = reactive<HuiData>(projectStore.project);
 let canvas = ref<HTMLCanvasElement>();
 let ctx = ref<CanvasRenderingContext2D>();
 let width = ref(1280);
@@ -54,7 +56,48 @@ interface ComponentPlacement {
   width: number;
   height: number;
 }
-let placements = ref<ComponentPlacement[]>([]);
+
+async function convertPlacements(): Promise<ComponentPlacement[]> {
+  return await Promise.all(
+    projectStore.project.components.map(async (it: Component) => {
+      switch (it.data.type) {
+        case "decoration": {
+          const size = await calculateIconSize((it.data as Deco).icon);
+          return {
+            id: it.id,
+            x: it.offset[0],
+            y:
+              (it.data as Deco).icon.type === "text"
+                ? it.offset[1] + ICON_FONT_SHIFT
+                : it.offset[1],
+            width: size.width,
+            height: size.height,
+          };
+        }
+        default:
+          return {
+            id: "",
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0,
+          };
+      }
+    })
+  );
+}
+
+let placements = computedAsync<ComponentPlacement[]>(
+  async () => await convertPlacements()
+);
+
+watch(
+  () => data,
+  async () => {
+    placements.value = await convertPlacements();
+  },
+  { deep: true }
+);
 
 async function calculateIconSize(icon: Icon): Promise<Dimension> {
   const canvas = document.createElement("canvas");
@@ -129,8 +172,8 @@ async function drawIcon(icon: Icon, offsetX: number, offsetY: number) {
         const textIcon = icon as TextIcon;
 
         ctx.value.font = ICON_FONT;
-        ctx.value.textBaseline = "top";
-        ctx.value.fillStyle = "#000000";
+        ctx.value.textBaseline = "bottom";
+        ctx.value.fillStyle = "#ffffff";
         ctx.value?.fillText(textIcon.text, offsetX, offsetY);
         break;
       }
@@ -166,6 +209,20 @@ async function redraw() {
     const startOffsetX = data.offset[0];
     const startOffsetY = data.offset[1];
 
+    if (props.showBounds) {
+      placements.value?.forEach((placement: ComponentPlacement) => {
+        if (canvas.value && ctx.value) {
+          ctx.value.strokeStyle = "#0000ff";
+          ctx.value?.strokeRect(
+            placement.x,
+            placement.y,
+            placement.width,
+            placement.height
+          );
+        }
+      });
+    }
+
     for (const component of data.components.sort(
       (a: Component, b: Component) => a.offset[2] - b.offset[2]
     )) {
@@ -177,13 +234,6 @@ async function redraw() {
           const decoData = component.data as Deco;
           await drawIcon(decoData.icon, componentOffsetX, componentOffsetY);
           const iconBounds = await calculateIconSize(decoData.icon);
-          placements.value.push({
-            id: component.id,
-            x: componentOffsetX,
-            y: componentOffsetY,
-            width: iconBounds.width,
-            height: iconBounds.height,
-          });
 
           let boundColor = "#efefef";
           let doBox = false;
@@ -219,7 +269,9 @@ async function redraw() {
             ctx.value.lineWidth = 1;
             ctx.value?.strokeRect(
               componentOffsetX,
-              componentOffsetY,
+              decoData.icon.type === "text"
+                ? componentOffsetY + ICON_FONT_SHIFT
+                : componentOffsetY,
               iconBounds.width,
               iconBounds.height
             );
@@ -230,7 +282,9 @@ async function redraw() {
             ctx.value?.fillText(
               getComponentDisplay(component),
               componentOffsetX,
-              componentOffsetY
+              decoData.icon.type === "text"
+                ? componentOffsetY + ICON_FONT_SHIFT
+                : componentOffsetY
             );
           }
           break;
@@ -291,12 +345,15 @@ function handleMouseDown(e: MouseEvent) {
   startX.value = parseInt(`${e.clientX - offsetX}`);
   startY.value = parseInt(`${e.clientY - offsetY}`);
 
-  for (const placement of placements.value) {
+  placements.value?.forEach((placement: ComponentPlacement) => {
     if (testPlacementHit(startX.value, startY.value, placement)) {
       selectedComponentId.value = placement.id;
       emit("componentSelected", selectedComponentId.value);
+      // } else {
+      //   selectedComponentId.value = "";
+      //   emit("deselect");
     }
-  }
+  });
 }
 
 function handleMouseUp(e: MouseEvent) {

@@ -7,10 +7,16 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-config.autoReplaceSvg = "nest";
-
 import App from "./App.vue";
 import router from "./router";
+
+config.autoReplaceSvg = "nest";
+
+const minecraftiaFont = new FontFace("Minecraftia", "url(/Minecraftia-Regular.ttf)");
+
+minecraftiaFont.load().then((font) => {
+  document.fonts.add(font);
+});
 
 const app = createApp(App);
 

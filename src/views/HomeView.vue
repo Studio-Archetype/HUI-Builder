@@ -66,7 +66,19 @@ main {
         }
 
         .componentPanel {
-          @apply flex-grow-0;
+          @apply flex-grow-0 flex flex-col items-center p-8;
+
+          h2 {
+            @apply mb-8;
+          }
+
+          .choices {
+            @apply grid grid-cols-4 gap-8 w-full;
+
+            .choice {
+              @apply bg-neutral-800 rounded flex items-center justify-center py-8;
+            }
+          }
         }
       }
 
@@ -74,7 +86,7 @@ main {
         @apply w-1/4 flex flex-col divide-y divide-neutral-800;
 
         .treePanel {
-          @apply h-64;
+          @apply h-64 overflow-auto;
         }
 
         .detailPanel {
@@ -85,11 +97,7 @@ main {
           }
 
           .textIconText {
-            @apply mt-3 p-1 border-neutral-800 border-[1px] rounded;
-
-            &:focus {
-              @apply bg-neutral-800 outline-0;
-            }
+            @apply mt-3;
           }
 
           .offset {
@@ -121,11 +129,9 @@ main {
   }
 }
 </style>
-
 <script setup lang="ts">
 // vendor & 3rd-party
 import { computed, ref } from "vue";
-import { v4 as uuidV4 } from "uuid";
 import Ajv from "ajv";
 import Codemirror from "codemirror-editor-vue3";
 
@@ -158,6 +164,7 @@ import { storeToRefs } from "pinia";
 import { useSettingsStore } from "@/stores/settings";
 import SettingsModal from "@/components/SettingsModal.vue";
 import AboutModal from "@/components/AboutModal.vue";
+import AddComponentModal from "@/components/AddComponentModal.vue";
 
 // data
 const imageStore = useImageStore();
@@ -177,11 +184,19 @@ let cmOptions = ref<EditorConfiguration>({
   smartIndent: true, // Smart indent
   indentUnit: 2, // The smart indent unit is 2 spaces in length
 });
-let activeComponent = ref<Component | null>(null);
+let activeComponentId = ref<string | null>(null);
+let activeComponent = computed<Component | null>(
+  () =>
+    projectStore.project.components.find(
+      (it: Component) => it.id === activeComponentId.value
+    ) || null
+);
 let imageModalOpen = ref<boolean>(false);
 let imageModalSelectionMode = ref(false);
 let settingsModalOpen = ref<boolean>(false);
 let aboutModalOpen = ref<boolean>(false);
+let addComponentModalOpen = ref<boolean>(false);
+let addComponentModalType = ref<string | null>(null);
 
 // computed
 let activeComponentDisplay = computed<string>(() => {
@@ -264,7 +279,7 @@ function cmCursor(doc: Doc) {
 }
 
 function componentClickedInTreeView(component: Component) {
-  activeComponent.value = component;
+  activeComponentId.value = component.id;
 }
 
 function textIconTextChange(e: Event) {
@@ -273,7 +288,7 @@ function textIconTextChange(e: Event) {
   // write the data to the component
   const copyData: HuiData = data.value;
   const componentIndex = copyData.components.findIndex(
-    (value: Component) => value.id === activeComponent.value?.id
+    (value: Component) => value.id === activeComponentId.value
   );
 
   ((copyData.components[componentIndex].data as Deco).icon as TextIcon).text =
@@ -287,7 +302,7 @@ function textImageIconPathChange(e: Event) {
   // write the data to the component
   const copyData: HuiData = data.value;
   const componentIndex = copyData.components.findIndex(
-    (value: Component) => value.id === activeComponent.value?.id
+    (value: Component) => value.id === activeComponentId.value
   );
 
   (
@@ -302,16 +317,39 @@ function offsetChange(index: number, e: Event) {
   // write the data to the component
   const copyData: HuiData = data.value;
   const componentIndex = copyData.components.findIndex(
-    (value: Component) => value.id === activeComponent.value?.id
+    (value: Component) => value.id === activeComponentId.value
   );
   copyData.components[componentIndex].offset[index] = newValue;
   projectStore.setProject(copyData);
 }
 function componentSelectedOnCanvas(componentId: string) {
-  activeComponent.value = projectStore.project.components.find(
-    (it: Component) => it.id === componentId
-  )!;
+  activeComponentId.value =
+    projectStore.project.components.find(
+      (it: Component) => it.id === componentId
+    )?.id || null;
 }
+
+function canvasDeselected() {
+  activeComponentId.value = null;
+}
+
+function openAddComponentModal(type: string) {
+  addComponentModalType.value = type;
+  addComponentModalOpen.value = true;
+}
+
+function closeAddComponentModal() {
+  addComponentModalOpen.value = false;
+  addComponentModalType.value = null;
+}
+
+window.addEventListener("keydown", (e: KeyboardEvent) => {
+  if (e.code === "Delete") {
+    if (activeComponent.value) {
+      projectStore.deleteComponent(activeComponent.value.id);
+    }
+  }
+});
 </script>
 
 <template>
@@ -324,6 +362,11 @@ function componentSelectedOnCanvas(componentId: string) {
     <settings-modal
       :open="settingsModalOpen"
       @close="settingsModalOpen = false"
+    />
+    <add-component-modal
+      :open="addComponentModalOpen"
+      @close="closeAddComponentModal"
+      :type="addComponentModalType"
     />
     <about-modal :open="aboutModalOpen" @close="aboutModalOpen = false" />
 
@@ -375,9 +418,27 @@ function componentSelectedOnCanvas(componentId: string) {
               :data="data"
               backdrop="https://cdn.discordapp.com/attachments/897227758340542505/963623720516210738/hui_backdrop.webp"
               :show-bounds="settingsStore.settings.debugFrames"
+              :activeComponentId="activeComponentId"
               @componentSelected="componentSelectedOnCanvas"
-              :activeComponentId="activeComponent ? activeComponent.id : null"
+              @deselect="canvasDeselected"
             />
+          </div>
+          <div class="componentPanel">
+            <h2>Add a Component</h2>
+            <div class="choices">
+              <button class="choice" @click="openAddComponentModal('image')">
+                Image
+              </button>
+              <button class="choice" @click="openAddComponentModal('text')">
+                Text
+              </button>
+              <button class="choice" @click="openAddComponentModal('button')">
+                Button
+              </button>
+              <button class="choice" @click="openAddComponentModal('toggle')">
+                Toggle
+              </button>
+            </div>
           </div>
         </div>
         <aside class="right">

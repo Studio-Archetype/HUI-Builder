@@ -26,8 +26,6 @@ let contextMenuY = ref(0);
 const showWarning = asyncComputed<boolean>(async () => {
   const imageData = imageToColorMap(await getImage(props.image));
 
-  console.log(imageData);
-
   return imageData.length > 16 || imageData[0].length > 16;
 });
 
