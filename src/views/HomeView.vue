@@ -322,6 +322,25 @@ function offsetChange(index: number, e: Event) {
   copyData.components[componentIndex].offset[index] = newValue;
   projectStore.setProject(copyData);
 }
+
+function componentIdChange(e: Event) {
+  let newValue = (e.target as HTMLInputElement).value;
+  const oldValue = activeComponentId.value;
+
+  if (projectStore.project.components.find((it) => it.id === newValue)) {
+    // taken, cancel this shit and give a warning
+    // todo: warning
+    return;
+  }
+
+  const componentIndex = projectStore.project.components.findIndex(
+    (value: Component) => value.id === oldValue
+  );
+
+  projectStore.project.components[componentIndex].id = newValue;
+  activeComponentId.value = newValue;
+}
+
 function componentSelectedOnCanvas(componentId: string) {
   activeComponentId.value =
     projectStore.project.components.find(
@@ -344,9 +363,57 @@ function closeAddComponentModal() {
 }
 
 window.addEventListener("keydown", (e: KeyboardEvent) => {
-  if (e.code === "Delete") {
-    if (activeComponent.value) {
-      projectStore.deleteComponent(activeComponent.value.id);
+  switch (e.code) {
+    case "Delete": {
+      if (activeComponent.value) {
+        projectStore.deleteComponent(activeComponent.value.id);
+      }
+
+      break;
+    }
+    case "ArrowDown": {
+      if (activeComponent.value) {
+        const componentIndex = projectStore.project.components.findIndex(
+          (it: Component) => it.id === activeComponentId.value
+        );
+
+        projectStore.project.components[componentIndex].offset[1] += 1;
+      }
+
+      break;
+    }
+    case "ArrowLeft": {
+      if (activeComponent.value) {
+        const componentIndex = projectStore.project.components.findIndex(
+          (it: Component) => it.id === activeComponentId.value
+        );
+
+        projectStore.project.components[componentIndex].offset[0] -= 1;
+      }
+
+      break;
+    }
+    case "ArrowRight": {
+      if (activeComponent.value) {
+        const componentIndex = projectStore.project.components.findIndex(
+          (it: Component) => it.id === activeComponentId.value
+        );
+
+        projectStore.project.components[componentIndex].offset[0] += 1;
+      }
+
+      break;
+    }
+    case "ArrowUp": {
+      if (activeComponent.value) {
+        const componentIndex = projectStore.project.components.findIndex(
+          (it: Component) => it.id === activeComponentId.value
+        );
+
+        projectStore.project.components[componentIndex].offset[1] -= 1;
+      }
+
+      break;
     }
   }
 });
@@ -547,12 +614,12 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
             </template>
 
             <div class="inputGroup">
-              <label for="componentId">ID</label>
+              <label for="componentId">Name</label>
               <input
                 id="componentId"
                 type="text"
                 :value="activeComponent.id"
-                readonly
+                @blur="componentIdChange"
               />
             </div>
           </div>
