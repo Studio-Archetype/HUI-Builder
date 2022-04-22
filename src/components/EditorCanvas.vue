@@ -20,8 +20,10 @@ import { computedAsync } from "@vueuse/core";
 const ICON_PX_GAP = 1;
 const ICON_PX_SIZE = 6;
 const ICON_FONT_SIZE = 36;
-const ICON_FONT_SHIFT = -62;
-const ICON_FONT = `${ICON_FONT_SIZE}px Minecraftia`;
+// const ICON_FONT_SHIFT = -62;
+// const ICON_FONT = `${ICON_FONT_SIZE}px Minecraftia`;
+const ICON_FONT_SHIFT = 0;
+const ICON_FONT = `${ICON_FONT_SIZE}px sans-serif`;
 
 const imageStore = useImageStore();
 const projectStore = useProjectStore();
@@ -172,7 +174,7 @@ async function drawIcon(icon: Icon, offsetX: number, offsetY: number) {
         const textIcon = icon as TextIcon;
 
         ctx.value.font = ICON_FONT;
-        ctx.value.textBaseline = "bottom";
+        ctx.value.textBaseline = "top";
         ctx.value.fillStyle = "#ffffff";
         ctx.value?.fillText(textIcon.text, offsetX, offsetY);
         break;
