@@ -7,6 +7,26 @@ export interface Vector4 {
   a: number;
 }
 
+export function getFileParts(filename: string): string[] {
+  const dotSplit = filename.split(".");
+  if (dotSplit.length === 1 || (dotSplit[0] === "" && dotSplit.length === 2)) {
+    return [filename, ""];
+  }
+
+  const ext = dotSplit.pop();
+  return [dotSplit.join("."), ext!];
+}
+
+export function ensurePath(path: string): string {
+  const fileParts = getFileParts(path);
+  if (!fileParts[1]) fileParts[1] = "png";
+  path = fileParts.join(".");
+
+  if (!path.startsWith("/")) path = `/${path}`;
+
+  return path;
+}
+
 export interface Dimension {
   width: number;
   height: number;

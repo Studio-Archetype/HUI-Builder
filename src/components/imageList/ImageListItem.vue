@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import type { PropType } from "vue";
 import type { ImageDef } from "@/stores/images";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import ContextMenu from "@/components/contextMenu/ContextMenu.vue";
 import ContextMenuItem from "@/components/contextMenu/ContextMenuItem.vue";
-import { getImage, imageToColorMap } from "@/lib/image";
+import { ensurePath, getImage, imageToColorMap } from "@/lib/image";
 import { asyncComputed } from "@vueuse/core";
+import { useImageStore } from "@/stores/images";
 
-const emit = defineEmits(["click", "edit", "delete"]);
+const imageStore = useImageStore();
+const emit = defineEmits(["click", "delete"]);
 const props = defineProps({
   image: {
     type: Object as PropType<ImageDef>,
@@ -29,8 +31,12 @@ const showWarning = asyncComputed<boolean>(async () => {
   return imageData.length > 16 || imageData[0].length > 16;
 });
 
-function emitEdit() {
-  emit("edit");
+function edited(e: Event) {
+  const oldValue = props.image.path;
+  const newValue = ensurePath((e.target as HTMLElement).innerText);
+
+  if (imageStore.imageByPath(newValue)) return; // todo: warn taken
+  else imageStore.editImage(oldValue, { path: newValue });
 }
 
 function emitDelete() {
@@ -68,7 +74,11 @@ function closeContextMenu() {
       </div>
     </div>
     <div class="caption">
-      <div class="content">
+      <div
+        class="content noInputStyles"
+        :contenteditable="!selectable"
+        @blur="edited"
+      >
         {{ image.path }}
       </div>
     </div>
@@ -80,13 +90,6 @@ function closeContextMenu() {
     :y="contextMenuY"
     @close="closeContextMenu"
   >
-    <context-menu-item @click="emitEdit">
-      <template #iconStart>
-        <font-awesome-icon fixed-width icon="pencil"></font-awesome-icon>
-      </template>
-      Edit
-    </context-menu-item>
-
     <context-menu-item danger @click="emitDelete">
       <template #iconStart>
         <font-awesome-icon fixed-width icon="trash"></font-awesome-icon>
@@ -98,13 +101,13 @@ function closeContextMenu() {
 
 <style scoped lang="scss">
 .item {
-  @apply flex flex-col divide-y-[1px] divide-neutral-800 rounded bg-neutral-800;
+  @apply flex flex-col divide-y-[1px] divide-neutral-700 rounded bg-neutral-800;
 
   &.selectable {
     @apply cursor-pointer;
 
     &:hover {
-      @apply bg-neutral-700;
+      @apply bg-neutral-700 divide-neutral-600;
     }
   }
 

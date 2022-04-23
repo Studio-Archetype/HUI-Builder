@@ -165,6 +165,7 @@ import { useSettingsStore } from "@/stores/settings";
 import SettingsModal from "@/components/SettingsModal.vue";
 import AboutModal from "@/components/AboutModal.vue";
 import AddComponentModal from "@/components/AddComponentModal.vue";
+import NavBar from "@/components/NavBar.vue";
 
 // data
 const imageStore = useImageStore();
@@ -421,6 +422,7 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
 
 <template>
   <main>
+    <nav-bar />
     <images-modal
       :open="imageModalOpen"
       :selection-mode="imageModalSelectionMode"

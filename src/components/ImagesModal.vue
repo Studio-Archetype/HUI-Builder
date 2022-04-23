@@ -7,11 +7,10 @@ import Modal from "@/components/modal/Modal.vue";
 import ModalToolbar from "@/components/modal/ModalToolbar.vue";
 import ModalFooter from "@/components/modal/ModalFooter.vue";
 import ModalBody from "@/components/modal/ModalBody.vue";
+import {ensurePath} from "@/lib/image";
 
 enum ModalPage {
-  UPLOAD = "Upload",
   LIST = "List",
-  EDIT_IMAGE = "Edit Image",
   DELETE_CONFIRM = "Confirm Deletion",
 }
 
@@ -29,33 +28,32 @@ const props = defineProps({
 });
 
 let page = ref<ModalPage>(ModalPage.LIST);
-let chooseImagePath = ref<string>("");
-let chooseImageContent = ref<string>("");
 let editDeleteImage = ref<ImageDef>();
-let editImageOldPath = ref<string>("");
-let editImagePath = ref<string>("");
 
 function close() {
   emit("close");
+}
+
+function readAndAddImage(file: File) {
+  const reader = new FileReader();
+  reader.onload = (readerEvt: Event) => {
+    imageStore.addImage({
+      path: ensurePath(file.name),
+      content: (readerEvt.target as FileReader).result as string,
+    });
+  };
+
+  reader.readAsDataURL(file);
 }
 
 function chooseImage() {
   const element = document.createElement("input");
   element.type = "file";
   element.accept = "png";
+  element.multiple = true;
   element.onchange = async (fileEvt: Event) => {
-    const reader = new FileReader();
-    reader.onload = (readerEvt: Event) => {
-      chooseImageContent.value = (readerEvt.target as FileReader)
-        .result as string;
-    };
-
-    const file = (fileEvt.target as HTMLInputElement)?.files?.[0];
-    if (file) reader.readAsDataURL(file);
-    else {
-      // todo: warn the user
-    }
-
+    const files = (fileEvt.target as HTMLInputElement)?.files;
+    if (files) for (const file of files) readAndAddImage(file);
     document.body.removeChild(element);
   };
   element.style.display = "none";
@@ -63,48 +61,9 @@ function chooseImage() {
   element.click();
 }
 
-function confirmAddImage() {
-  if (!imageStore.imageByPath(chooseImagePath.value)) {
-    imageStore.addImage({
-      path: chooseImagePath.value,
-      content: chooseImageContent.value,
-    });
-
-    chooseImageContent.value = "";
-    chooseImagePath.value = "";
-    page.value = ModalPage.LIST;
-  } else {
-    console.log(`Path taken: ${chooseImagePath.value}`);
-    // todo: warn user
-  }
-}
-
-function confirmEditImage() {
-  if (!imageStore.imageByPath(editImagePath.value)) {
-    imageStore.editImage(editImageOldPath.value, {
-      path: editImagePath.value,
-    });
-
-    editImagePath.value = "";
-    page.value = ModalPage.LIST;
-  } else {
-    console.log(`Path taken: ${editImagePath.value}`);
-    // todo: warn user
-  }
-
-  page.value = ModalPage.LIST;
-}
-
 function confirmDeleteImage() {
   if (editDeleteImage.value) imageStore.deleteImage(editDeleteImage.value.path);
   page.value = ModalPage.LIST;
-}
-
-function editImage(image: ImageDef) {
-  editImageOldPath.value = image.path;
-  editImagePath.value = image.path;
-  editDeleteImage.value = image;
-  page.value = ModalPage.EDIT_IMAGE;
 }
 
 function deleteImage(image: ImageDef) {
@@ -124,20 +83,6 @@ function select(image: ImageDef) {
         Image Management {{ page !== ModalPage.LIST ? `// ${page}` : "" }}
       </template>
       <template #actions>
-        <button class="button icon faint" @click="page = ModalPage.UPLOAD">
-          <font-awesome-icon fixed-width icon="plus"></font-awesome-icon>
-        </button>
-        <div class="divider" />
-        <button
-          v-if="page !== ModalPage.LIST"
-          class="button icon faint"
-          @click="page = ModalPage.LIST"
-        >
-          <font-awesome-icon
-            fixed-width
-            icon="arrow-left"
-          ></font-awesome-icon>
-        </button>
         <button class="button icon faint" @click="close">
           <font-awesome-icon fixed-width icon="close"></font-awesome-icon>
         </button>
@@ -149,79 +94,17 @@ function select(image: ImageDef) {
           <image-list
             :images="imageStore.allImages"
             :selectable="selectionMode"
-            @edit="editImage"
             @delete="deleteImage"
             @imageSelected="select"
+            @addClicked="chooseImage"
           />
         </div>
-      </template>
-      <template v-else-if="page === ModalPage.UPLOAD">
-        <div class="page uploadPage">
-          <section class="form">
-            <label for="pathInputUpload">Path</label>
-            <input
-              id="pathInputUpload"
-              type="text"
-              v-model="chooseImagePath"
-              placeholder="/image.png"
-            />
-            <label for="uploadButton">Image</label>
-            <div>
-              <button
-                class="button noFill"
-                id="uploadButton"
-                @click="chooseImage"
-              >
-                Upload Image
-              </button>
-            </div>
-          </section>
-          <aside class="imagePreview">
-            <img
-              v-if="chooseImageContent !== ''"
-              :src="chooseImageContent"
-              alt="Selected Image"
-            />
-            <span v-else>No Image Selected</span>
-          </aside>
-        </div>
-
-        <modal-footer>
-          <button class="button" @click="confirmAddImage">
-            Confirm
-          </button>
-        </modal-footer>
-      </template>
-      <template v-else-if="page === ModalPage.EDIT_IMAGE">
-        <div class="page editImagePage">
-          <section class="form">
-            <label for="pathInputEdit">Path</label>
-            <input
-              id="pathInputEdit"
-              type="text"
-              v-model="editImagePath"
-              placeholder="/image.png"
-            />
-          </section>
-          <aside class="imagePreview">
-            <img :src="editDeleteImage.content" alt="Selected Image" />
-          </aside>
-        </div>
-
-        <modal-footer>
-          <button
-            class="button"
-            :disabled="editImagePath === editImageOldPath"
-            @click="confirmEditImage"
-          >
-            Confirm
-          </button>
-        </modal-footer>
       </template>
       <template v-else-if="page === ModalPage.DELETE_CONFIRM">
         <div class="page confirmDeletePage">
           <h3 class="heading">Confirm Deletion?</h3>
           <p class="subHeading">The image will be gone <b>forever</b></p>
+          <p class="mt-4">This will not delete the image on your local disk.</p>
         </div>
 
         <modal-footer>

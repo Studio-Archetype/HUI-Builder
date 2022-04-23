@@ -2,27 +2,22 @@
 import { useSettingsStore } from "@/stores/settings";
 
 const settingsStore = useSettingsStore();
-
-function confirmLeave() {
-  const leave = window.confirm("Leave the page?");
-  if (leave) window.location.href = "https://studioarchetype.net/holoui";
-}
 </script>
 
 <template>
   <div class="navbar">
     <div class="navbarInner">
-      <button class="brand" @click="confirmLeave">
-        <img :src="import('@/assets/logo.svg')" alt="Studio Archetype Logo" />
+      <div class="brand">
+        <img src="/logo.svg" alt="Studio Archetype Logo" />
         <div class="text"><span class="font-black">STUDIO</span>ARCHETYPE</div>
-      </button>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .navbar {
-  @apply bg-black;
+  @apply bg-black flex-grow-0;
 
   .navbarInner {
     @apply mx-auto flex items-center h-16 px-4;
@@ -40,6 +35,11 @@ function confirmLeave() {
     }
 
     .navItem {
+      @apply relative h-full;
+
+      .inner {
+        @apply text-sm text-white h-full px-4 h-full flex items-center leading-none;
+      }
     }
   }
 }
