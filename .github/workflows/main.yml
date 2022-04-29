@@ -15,3 +15,4 @@ jobs:
         reponame: 'HUI-Builder'
         token: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
         branch: 'build'
+        useyarn: true
