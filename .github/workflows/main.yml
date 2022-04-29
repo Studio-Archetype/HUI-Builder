@@ -10,6 +10,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Set Variables
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
       - name: Install Yarn Dependencies
         run: yarn install
       - name: Build
@@ -26,13 +29,12 @@ jobs:
         with:
           draft: false
           prerelease: false
-          release_name: ${{ steps.version.outputs.version }}
+          release_name: HUI-Builder ${{ steps.vars.outputs.tag }}
           tag_name: ${{ github.ref }}
-          body_path: README.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Create Version File
-        run: echo "${{ github.ref }}" > VERSION.txt
+        run: echo "${{ steps.vars.outputs.tag }}" > VERSION.txt
       - name: Upload Release Archive
         uses: actions/upload-release-asset@v1
         env:
