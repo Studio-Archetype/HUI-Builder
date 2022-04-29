@@ -9,7 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - id: Build-Vue
-      uses: LizAinslie/VueBuildToBranchAction@1.0.2
+      uses: LizAinslie/VueBuildToBranchAction@1.0.2+1
       with:
         username: 'Studio-Archetype'
         reponame: 'HUI-Builder'
