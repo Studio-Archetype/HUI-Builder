@@ -10,7 +10,7 @@ import { useProjectStore } from "@/stores/project";
 import { v4 as uuidV4 } from "uuid";
 import ImagesModal from "@/components/ImagesModal.vue";
 
-type ComponentAddType = "image" | "text" | "button" | "toggle";
+export type ComponentAddType = "image" | "text" | "button" | "toggle";
 
 const imageStore = useImageStore();
 const projectStore = useProjectStore();

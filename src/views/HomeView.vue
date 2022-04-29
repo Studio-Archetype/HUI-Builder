@@ -165,6 +165,7 @@ import { useSettingsStore } from "@/stores/settings";
 import SettingsModal from "@/components/SettingsModal.vue";
 import AboutModal from "@/components/AboutModal.vue";
 import AddComponentModal from "@/components/AddComponentModal.vue";
+import type { ComponentAddType } from "@/components/AddComponentModal.vue"
 import NavBar from "@/components/NavBar.vue";
 
 // data
@@ -197,7 +198,7 @@ let imageModalSelectionMode = ref(false);
 let settingsModalOpen = ref<boolean>(false);
 let aboutModalOpen = ref<boolean>(false);
 let addComponentModalOpen = ref<boolean>(false);
-let addComponentModalType = ref<string | null>(null);
+let addComponentModalType = ref<ComponentAddType | null>(null);
 
 // computed
 let activeComponentDisplay = computed<string>(() => {
@@ -353,7 +354,7 @@ function canvasDeselected() {
   activeComponentId.value = null;
 }
 
-function openAddComponentModal(type: string) {
+function openAddComponentModal(type: ComponentAddType) {
   addComponentModalType.value = type;
   addComponentModalOpen.value = true;
 }
@@ -435,7 +436,7 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
     <add-component-modal
       :open="addComponentModalOpen"
       @close="closeAddComponentModal"
-      :type="addComponentModalType"
+      :type="addComponentModalType ?? undefined"
     />
     <about-modal :open="aboutModalOpen" @close="aboutModalOpen = false" />
 
@@ -487,7 +488,7 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
               :data="data"
               backdrop="https://cdn.discordapp.com/attachments/897227758340542505/963623720516210738/hui_backdrop.webp"
               :show-bounds="settingsStore.settings.debugFrames"
-              :activeComponentId="activeComponentId"
+              :activeComponentId="activeComponentId ?? undefined"
               @componentSelected="componentSelectedOnCanvas"
               @deselect="canvasDeselected"
             />
@@ -552,11 +553,11 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
             <template v-if="activeComponent.data.type === 'decoration'">
               <p
                 class="textIconText"
-                v-if="activeComponent.data.icon.type === 'text'"
+                v-if="(activeComponent.data as Deco).icon.type === 'text'"
                 contenteditable
                 @input="textIconTextChange"
               >
-                {{ activeComponent.data.icon.text }}
+                {{ ((activeComponent.data as Deco).icon as TextIcon).text }}
               </p>
             </template>
 
@@ -595,7 +596,7 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
 
             <template v-if="activeComponent.data.type === 'decoration'">
               <div
-                v-if="activeComponent.data.icon.type === 'textImage'"
+                v-if="(activeComponent.data as Deco).icon.type === 'textImage'"
                 class="inputGroup"
               >
                 <label for="textImageIconPathInput">Path</label>
@@ -603,7 +604,7 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
                 <select
                   id="textImageIconPathInput"
                   @change="textImageIconPathChange"
-                  :value="activeComponent.data.icon.path"
+                  :value="((activeComponent.data as Deco).icon as TextImageIcon).path"
                 >
                   <option
                     v-for="image in imageStore.allImages"

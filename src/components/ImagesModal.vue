@@ -1,4 +1,4 @@
-<script setup lang="ts">
+\<script setup lang="ts">
 import { useImageStore } from "@/stores/images";
 import type { ImageDef } from "@/stores/images";
 import { ref } from "vue";
