@@ -1,18 +1,51 @@
 name: Build Vue
 on: 
   push:
-    branches: [ master ]
+    tags:
+      - '*'
 jobs:
   build_vue:
     runs-on: ubuntu-latest
-    name: Build Vue
+    name: Build Vue App
     steps:
-    - uses: actions/checkout@v2
-    - id: Build-Vue
-      uses: LizAinslie/VueBuildToBranchAction@1.0.2+1
-      with:
-        username: 'Studio-Archetype'
-        reponame: 'HUI-Builder'
-        token: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
-        gitbranch: 'build'
-        useyarn: true
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build
+        run: yarn build
+      - name: Build Archive
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'release.zip'
+          directory: './dist'
+      - name: Release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref }}
+          body_path: README.md
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Create Version File
+        run: echo "${{ github.ref }}" > VERSION.txt
+      - name: Upload Release Archive
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/release.zip
+          asset_name: builder_static.zip
+          asset_content_type: application/zip
+      - name: Upload Version File
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./VERSION.txt
+          asset_name: VERSION
+          asset_content_type: text/plain
