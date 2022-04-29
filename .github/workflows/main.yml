@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Install Yarn Dependencies
+        run: yarn install
       - name: Build
         run: yarn build
       - name: Build Archive
