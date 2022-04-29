@@ -14,5 +14,5 @@ jobs:
         username: 'Studio-Archetype'
         reponame: 'HUI-Builder'
         token: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
-        branch: 'build'
+        gitbranch: 'build'
         useyarn: true
