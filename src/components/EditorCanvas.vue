@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUpdated, reactive, ref, watch } from "vue";
+import { onMounted, onUpdated, reactive, ref, watch } from "vue";
 import type {
   Button,
   Component,
@@ -50,6 +50,9 @@ let ctx = ref<CanvasRenderingContext2D>();
 let width = ref(1280);
 let height = ref(720);
 let selectedComponentId = ref<string>("");
+let mousePlacement = ref<{ x: number; y: number; clicking: boolean } | null>(
+  null
+);
 
 interface ComponentPlacement {
   id: string;
@@ -72,8 +75,8 @@ async function convertPlacements(): Promise<ComponentPlacement[]> {
               (it.data as Deco).icon.type === "text"
                 ? it.offset[1] + ICON_FONT_SHIFT
                 : it.offset[1],
-            width: size.width,
-            height: size.height,
+            width: Math.round(size.width),
+            height: Math.round(size.height),
           };
         }
         default:
@@ -212,6 +215,23 @@ async function redraw() {
     const startOffsetY = data.offset[1];
 
     if (props.showBounds) {
+      console.log(mousePlacement.value);
+      if (mousePlacement.value !== null) {
+        ctx.value.beginPath();
+        ctx.value.arc(
+          mousePlacement.value.x,
+          mousePlacement.value.y,
+          3,
+          0,
+          2 * Math.PI,
+          false
+        );
+        ctx.value.fillStyle = mousePlacement.value.clicking
+          ? "green"
+          : "yellow";
+        ctx.value.fill();
+      }
+
       placements.value?.forEach((placement: ComponentPlacement) => {
         if (canvas.value && ctx.value) {
           ctx.value.strokeStyle = "#0000ff";
@@ -308,8 +328,8 @@ async function redraw() {
 
 function testPlacementHit(x: number, y: number, placement: ComponentPlacement) {
   return (
-    x >= placement.x &&
-    x <= placement.x + placement.width &&
+    x > placement.x &&
+    x < placement.x + placement.width &&
     y >= placement.y &&
     y <= placement.y + placement.height
   );
@@ -323,14 +343,15 @@ interface CanvasValues {
 }
 
 function getCanvasValues(): CanvasValues {
-  if (canvas.value)
+  if (canvas.value) {
+    const rect = canvas.value.getBoundingClientRect();
     return {
-      offsetX: canvas.value.offsetLeft,
-      offsetY: canvas.value.offsetTop,
+      offsetX: rect.left,
+      offsetY: rect.top,
       scrollX: canvas.value.scrollLeft,
       scrollY: canvas.value.scrollTop,
     };
-  else
+  } else
     return {
       offsetX: 0,
       offsetY: 0,
@@ -346,8 +367,15 @@ function handleMouseDown(e: MouseEvent) {
   e.preventDefault();
   startX.value = parseInt(`${e.clientX - offsetX}`);
   startY.value = parseInt(`${e.clientY - offsetY}`);
+  if (mousePlacement.value !== null)
+    mousePlacement.value = {
+      ...mousePlacement.value,
+      clicking: true,
+    };
 
+  // console.log(placements.value);
   placements.value?.forEach((placement: ComponentPlacement) => {
+    console.log(startX.value, startY.value, placement);
     if (testPlacementHit(startX.value, startY.value, placement)) {
       selectedComponentId.value = placement.id;
       emit("componentSelected", selectedComponentId.value);
@@ -356,16 +384,26 @@ function handleMouseDown(e: MouseEvent) {
       //   emit("deselect");
     }
   });
+  redraw();
 }
 
 function handleMouseUp(e: MouseEvent) {
   e.preventDefault();
   selectedComponentId.value = "";
+
+  if (mousePlacement.value !== null)
+    mousePlacement.value = {
+      ...mousePlacement.value,
+      clicking: false,
+    };
+  redraw();
 }
 
 function handleMouseOut(e: MouseEvent) {
   e.preventDefault();
   selectedComponentId.value = "";
+  mousePlacement.value = null;
+  redraw();
 }
 
 function handleMouseMove(e: MouseEvent) {
@@ -374,6 +412,13 @@ function handleMouseMove(e: MouseEvent) {
   const { offsetX, offsetY } = getCanvasValues();
   const mouseX = parseInt(`${e.clientX - offsetX}`);
   const mouseY = parseInt(`${e.clientY - offsetY}`);
+
+  mousePlacement.value = {
+    x: mouseX,
+    y: mouseY,
+    clicking:
+      mousePlacement.value === null ? false : mousePlacement.value.clicking,
+  };
 
   // Put your mousemove stuff here
   const dx = mouseX - startX.value;
@@ -392,6 +437,7 @@ function handleMouseMove(e: MouseEvent) {
     (it: Component) => it.id === selectedComponentId.value
   )!.offset[1] += dy;
   projectStore.setProject(dataCopy);
+  redraw();
 }
 
 onMounted(() => {
