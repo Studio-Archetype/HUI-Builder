@@ -10,7 +10,7 @@ import { useProjectStore } from "@/stores/project";
 import { v4 as uuidV4 } from "uuid";
 import ImagesModal from "@/components/ImagesModal.vue";
 
-export type ComponentAddType = "image" | "text" | "button" | "toggle";
+export type ComponentAddType = "static" | "button" | "toggle";
 
 const imageStore = useImageStore();
 const projectStore = useProjectStore();
@@ -92,9 +92,6 @@ function addText(text = "Text Element") {
     <modal-toolbar>
       <template #title>Add Component{{ page ? ` // ${page}` : "" }}</template>
       <template #actions>
-        <button v-if="page !== null" class="button icon faint" @click="clear">
-          <font-awesome-icon fixed-width icon="arrow-left"></font-awesome-icon>
-        </button>
         <button class="button icon faint" @click="close">
           <font-awesome-icon fixed-width icon="close"></font-awesome-icon>
         </button>
@@ -102,7 +99,7 @@ function addText(text = "Text Element") {
     </modal-toolbar>
     <modal-body>
       <template v-if="page !== null">
-        <!--    <template v-if="page === 'text'">-->
+        <!--    <template v-if="page === 'static'">-->
         <!--      <div class="page">-->
         <!--        <div class="form">-->
         <!--          <label for="newTextTextInput">Text</label>-->
@@ -114,16 +111,6 @@ function addText(text = "Text Element") {
         <!--        <button class="button" @click="addText">Add</button>-->
         <!--      </modal-footer>-->
         <!--    </template>-->
-      </template>
-      <template v-else>
-        <div class="page new">
-          <div class="choices">
-            <button class="choice" @click="page = 'image'">Image</button>
-            <button class="choice" @click="page = 'text'">Text</button>
-            <button class="choice" @click="page = 'button'">Button</button>
-            <button class="choice" @click="page = 'toggle'">Toggle</button>
-          </div>
-        </div>
       </template>
     </modal-body>
   </modal>
