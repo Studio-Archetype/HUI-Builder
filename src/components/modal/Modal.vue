@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const emit = defineEmits(["backgroundClick"]);
-const props = defineProps({
+defineProps({
   open: {
     type: Boolean,
     default: false,

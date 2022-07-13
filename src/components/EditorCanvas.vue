@@ -106,6 +106,7 @@ watch(
 
 async function calculateIconSize(icon: Icon): Promise<Dimension> {
   const canvas = document.createElement("canvas");
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const ctx = canvas.getContext("2d")!;
 
   switch (icon.type) {
@@ -312,11 +313,13 @@ async function redraw() {
           break;
         }
         case "button": {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const buttonData = component.data as Button;
           // todo: draw logic
           break;
         }
         case "toggle": {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const toggleData = component.data as Toggle;
           // todo: draw logic
           break;

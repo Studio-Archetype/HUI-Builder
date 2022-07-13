@@ -6,7 +6,7 @@ import ModalBody from "@/components/modal/ModalBody.vue";
 import { faGithub, faDiscord } from "@fortawesome/free-brands-svg-icons";
 
 const emit = defineEmits(["close"]);
-const props = defineProps({
+defineProps({
   open: {
     type: Boolean,
     default: false,

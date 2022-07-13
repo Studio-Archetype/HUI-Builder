@@ -17,7 +17,7 @@ enum ModalPage {
 
 const imageStore = useImageStore();
 const emit = defineEmits(["close", "selected"]);
-const props = defineProps({
+defineProps({
   open: {
     type: Boolean,
     default: false,

@@ -4,7 +4,6 @@ import ModalToolbar from "@/components/modal/ModalToolbar.vue";
 import ModalBody from "@/components/modal/ModalBody.vue";
 import { ref, watch } from "vue";
 import type { PropType } from "vue";
-import { useImageStore } from "@/stores/images";
 import type { ImageDef } from "@/stores/images";
 import { useProjectStore } from "@/stores/project";
 import { v4 as uuidV4 } from "uuid";
@@ -12,7 +11,6 @@ import ImagesModal from "@/components/ImagesModal.vue";
 
 export type ComponentAddType = "static" | "button" | "toggle";
 
-const imageStore = useImageStore();
 const projectStore = useProjectStore();
 const emit = defineEmits(["close"]);
 const props = defineProps({

@@ -4,7 +4,7 @@ import type { PropType } from "vue";
 import ImageListItem from "@/components/imageList/ImageListItem.vue";
 
 const emit = defineEmits(["imageSelected", "edit", "delete", "addClicked"]);
-const props = defineProps({
+defineProps({
   images: Array as PropType<ImageDef[]>,
   selectable: {
     type: Boolean,

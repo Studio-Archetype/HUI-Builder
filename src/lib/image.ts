@@ -14,6 +14,7 @@ export function getFileParts(filename: string): string[] {
   }
 
   const ext = dotSplit.pop();
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return [dotSplit.join("."), ext!];
 }
 
@@ -39,6 +40,7 @@ export function imageToColorMap(image: HTMLImageElement): Vector4[][] {
   canvas.height = image.height;
 
   ctx?.drawImage(image, 0, 0);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const { data } = ctx!.getImageData(0, 0, canvas.width, canvas.height);
 
   const imageOut: Vector4[][] = [];
@@ -71,6 +73,7 @@ const imageCache = new Map<string, HTMLImageElement>();
 
 export async function getImage(imageDef: ImageDef): Promise<HTMLImageElement> {
   if (imageCache.has(imageDef.path))
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return Promise.resolve(imageCache.get(imageDef.path)!);
   else {
     return new Promise<HTMLImageElement>((resolve) => {

@@ -28,8 +28,10 @@ export interface Toggle extends _ComponentData {
 
 export type ComponentData = Deco | Button | Toggle;
 
+export type IconType = "text" | "textImage";
+
 export interface _Icon {
-  type: "text" | "textImage";
+  type: IconType;
 }
 
 export interface TextImageIcon extends _Icon {
@@ -42,8 +44,10 @@ export interface TextIcon extends _Icon {
 
 export type Icon = TextImageIcon | TextIcon;
 
+export type ActionType = "command" | "sound";
+
 export interface _Action {
-  type: "command" | "sound";
+  type: ActionType;
 }
 
 export interface CommandAction extends _Action {

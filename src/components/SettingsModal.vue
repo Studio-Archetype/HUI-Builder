@@ -7,7 +7,7 @@ import ModalBody from "@/components/modal/ModalBody.vue";
 
 const settingsStore = useSettingsStore();
 const emit = defineEmits(["close"]);
-const props = defineProps({
+defineProps({
   open: {
     type: Boolean,
     default: false,

@@ -136,7 +136,7 @@ import Ajv from "ajv";
 import Codemirror from "codemirror-editor-vue3";
 
 // types
-import type { Doc, Editor, EditorConfiguration } from "codemirror";
+import type { Doc, EditorConfiguration } from "codemirror";
 import type {
   Component,
   Deco,
@@ -270,7 +270,7 @@ function download() {
   document.body.removeChild(element);
 }
 
-function cmChange(value: string, cm: Editor) {
+function cmChange() {
   validate();
 }
 
