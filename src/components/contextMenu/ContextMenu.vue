@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, nextTick, onMounted, ref} from "vue";
+import { computed, nextTick, onMounted, ref } from "vue";
 
 const emit = defineEmits(["close"]);
 const props = defineProps({

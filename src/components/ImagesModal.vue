@@ -1,4 +1,5 @@
-\<script setup lang="ts">
+\
+<script setup lang="ts">
 import { useImageStore } from "@/stores/images";
 import type { ImageDef } from "@/stores/images";
 import { ref } from "vue";
@@ -7,7 +8,7 @@ import Modal from "@/components/modal/Modal.vue";
 import ModalToolbar from "@/components/modal/ModalToolbar.vue";
 import ModalFooter from "@/components/modal/ModalFooter.vue";
 import ModalBody from "@/components/modal/ModalBody.vue";
-import {ensurePath} from "@/lib/image";
+import { ensurePath } from "@/lib/image";
 
 enum ModalPage {
   LIST = "List",

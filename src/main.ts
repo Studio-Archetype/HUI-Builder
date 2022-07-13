@@ -12,7 +12,10 @@ import router from "./router";
 
 config.autoReplaceSvg = "nest";
 
-const minecraftiaFont = new FontFace("Minecraftia", "url(/Minecraftia-Regular.ttf)");
+const minecraftiaFont = new FontFace(
+  "Minecraftia",
+  "url(/Minecraftia-Regular.ttf)"
+);
 
 minecraftiaFont.load().then((font) => {
   document.fonts.add(font);
