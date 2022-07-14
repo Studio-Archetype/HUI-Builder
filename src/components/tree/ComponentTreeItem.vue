@@ -1,33 +1,23 @@
 <script setup lang="ts">
 import type { Component } from "@/schema";
 import TreeItem from "./TreeItem.vue";
-import { computed } from "vue";
+import { computed, reactive } from "vue";
 import { getComponentDisplay } from "@/schema";
 
-const props = defineProps({
-  component: {
-    type: Object as () => Component,
-    required: true,
-  },
-  selected: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-const emit = defineEmits(["click"]);
-
-let name = computed<string>(() => {
-  return getComponentDisplay(props.component, true);
-});
-
-function click() {
-  emit("click");
+export interface ComponentTreeItemProps {
+  component: Component;
+  selected?: boolean;
 }
+
+const props = withDefaults(defineProps<ComponentTreeItemProps>(), {
+  selected: false,
+});
+
+const name = computed<string>(() => getComponentDisplay(props.component, true));
 </script>
 
 <template>
-  <TreeItem @click.stop="click" :selected="selected">
+  <TreeItem :selected="props.selected">
     {{ name }}
   </TreeItem>
 </template>

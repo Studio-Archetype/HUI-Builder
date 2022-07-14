@@ -1,41 +1,32 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import {reactive, ref} from "vue";
 
-const props = defineProps({
-  toggleable: {
-    type: Boolean,
-    default: false,
-  },
-  root: {
-    type: Boolean,
-    default: false,
-  },
-  open: {
-    type: Boolean,
-    default: false,
-  },
-  selected: {
-    type: Boolean,
-    default: false,
-  },
+export interface TreeItemProps {
+  toggleable?: boolean;
+  root?: boolean;
+  open?: boolean;
+  selected?: boolean;
+}
+
+const props = withDefaults(defineProps<TreeItemProps>(), {
+  toggleable: false,
+  root: false,
+  open: false,
+  selected: false,
 });
 
-const emit = defineEmits(["click"]);
+const opened = ref(props.open);
 
-let opened = ref(props.open);
-
-function click(event: Event) {
-  event.stopPropagation();
+function click() {
   if (props.toggleable) opened.value = !opened.value;
-  emit("click", event);
 }
 </script>
 
 <template>
-  <div class="treeItem" :class="{ open: opened, toggleable, root, selected }">
-    <div class="title" @click.stop="click">
+  <div class="treeItem" :class="{ open: opened, toggleable: props.toggleable, root: props.root, selected: props.selected }">
+    <div class="title" @click="click">
       <slot name="icon">
-        <template v-if="toggleable">
+        <template v-if="props.toggleable">
           <slot v-if="opened" name="openIcon">
             <font-awesome-icon
               fixed-width

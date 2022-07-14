@@ -1,8 +1,7 @@
-\
 <script setup lang="ts">
 import { useImageStore } from "@/stores/images";
 import type { ImageDef } from "@/stores/images";
-import { ref } from "vue";
+import { reactive, ref, withDefaults } from "vue";
 import ImageList from "@/components/imageList/ImageList.vue";
 import Modal from "@/components/modal/Modal.vue";
 import ModalToolbar from "@/components/modal/ModalToolbar.vue";
@@ -15,18 +14,19 @@ enum ModalPage {
   DELETE_CONFIRM = "Confirm Deletion",
 }
 
+export interface ImagesModalProps {
+  open?: boolean;
+  selectionMode?: boolean;
+}
+
 const imageStore = useImageStore();
 const emit = defineEmits(["close", "selected"]);
-defineProps({
-  open: {
-    type: Boolean,
-    default: false,
-  },
-  selectionMode: {
-    type: Boolean,
-    default: false,
-  },
+const props = withDefaults(defineProps<ImagesModalProps>(), {
+  open: false,
+  selectionMode: false,
 });
+
+const { open, selectionMode } = reactive(props);
 
 let page = ref<ModalPage>(ModalPage.LIST);
 let editDeleteImage = ref<ImageDef>();

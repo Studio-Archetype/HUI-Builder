@@ -5,12 +5,13 @@ import ModalFooter from "@/components/modal/ModalFooter.vue";
 import ModalBody from "@/components/modal/ModalBody.vue";
 import { faGithub, faDiscord } from "@fortawesome/free-brands-svg-icons";
 
+export interface AboutModalProps {
+  open?: boolean;
+}
+
 const emit = defineEmits(["close"]);
-defineProps({
-  open: {
-    type: Boolean,
-    default: false,
-  },
+const props = withDefaults(defineProps<AboutModalProps>(), {
+  open: false,
 });
 
 function close() {
@@ -21,7 +22,7 @@ const buildNumber = 1;
 </script>
 
 <template>
-  <modal :open="open" @backgroundClick="close" width="35%" height="75%">
+  <modal :open="props.open" @backgroundClick="close" width="35%" height="75%">
     <modal-toolbar>
       <template #title>About Application</template>
       <template #actions>
@@ -70,11 +71,9 @@ const buildNumber = 1;
             href="https://docs.studioarchetype.net/en/utilities/hui"
           >
             <font-awesome-icon fixed-width icon="book"></font-awesome-icon>
-            Buy
+            Docs
           </a>
         </div>
-
-        <p></p>
       </div>
 
       <modal-footer>
