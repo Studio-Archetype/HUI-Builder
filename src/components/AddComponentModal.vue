@@ -4,14 +4,9 @@ import ModalToolbar from "@/components/modal/ModalToolbar.vue";
 import ModalBody from "@/components/modal/ModalBody.vue";
 import { ref, watch } from "vue";
 import type { PropType } from "vue";
-import type { ImageDef } from "@/stores/images";
-import { useProjectStore } from "@/stores/project";
-import { v4 as uuidV4 } from "uuid";
-import ImagesModal from "@/components/ImagesModal.vue";
 
-export type ComponentAddType = "static" | "button" | "toggle";
+export type ComponentAddType = "button" | "toggle";
 
-const projectStore = useProjectStore();
 const emit = defineEmits(["close"]);
 const props = defineProps({
   type: {
@@ -24,14 +19,13 @@ const props = defineProps({
   },
 });
 
-const page = ref<string | null>(props.type);
+const page = ref<ComponentAddType | null>(props.type);
 const newImageImageInput = ref("");
 
 watch(
   () => props.type,
   () => {
     page.value = props.type;
-    if (page.value === "text") addText();
   }
 );
 
@@ -44,49 +38,10 @@ function close() {
   emit("close");
   clear();
 }
-
-function addImage(image: ImageDef) {
-  projectStore.addComponent({
-    id: uuidV4(),
-    offset: [0, 0, 0],
-    data: {
-      type: "decoration",
-      icon: {
-        type: "textImage",
-        path: image.path,
-      },
-    },
-  });
-
-  close();
-}
-
-function addText(text = "Text Element") {
-  projectStore.addComponent({
-    id: uuidV4(),
-    offset: [0, 0, 0],
-    data: {
-      type: "decoration",
-      icon: {
-        type: "text",
-        text,
-      },
-    },
-  });
-
-  close();
-}
 </script>
 
 <template>
-  <images-modal
-    :open="open"
-    @close="close"
-    v-if="page === 'image'"
-    selection-mode
-    @selected="addImage"
-  />
-  <modal v-else :open="open" width="40%">
+  <modal :open="open" width="40%">
     <modal-toolbar>
       <template #title>Add Component{{ page ? ` // ${page}` : "" }}</template>
       <template #actions>

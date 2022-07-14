@@ -1,23 +1,82 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import {ref, watch} from "vue";
 import type { IconType } from "@/schema";
 import { faImage, faFont } from "@fortawesome/free-solid-svg-icons";
 import Modal from "@/components/modal/Modal.vue";
 import ModalToolbar from "@/components/modal/ModalToolbar.vue";
 import ModalBody from "@/components/modal/ModalBody.vue";
+import type { ImageDef } from "@/stores/images";
+import { v4 as uuidV4 } from "uuid";
+import { useProjectStore } from "@/stores/project";
+import ImagesModal from "@/components/ImagesModal.vue";
 
+const projectStore = useProjectStore();
 const iconType = ref<IconType | null>(null);
-
 const emit = defineEmits(["cancel", "selected"]);
-defineProps({
+
+const props = defineProps({
   open: {
     type: Boolean,
     default: false,
   },
+  type: {
+    type: String as () => IconType | null,
+    default: null,
+  },
 });
+
+function close() {
+  emit("cancel");
+}
+
+function addText(text = "Text Element") {
+  projectStore.addComponent({
+    id: uuidV4(),
+    offset: [0, 0, 0],
+    data: {
+      type: "decoration",
+      icon: {
+        type: "text",
+        text,
+      },
+    },
+  });
+
+  close();
+}
+
+function addImage(image: ImageDef) {
+  projectStore.addComponent({
+    id: uuidV4(),
+    offset: [0, 0, 0],
+    data: {
+      type: "decoration",
+      icon: {
+        type: "textImage",
+        path: image.path,
+      },
+    },
+  });
+
+  close();
+}
+
+watch(
+  () => props.type,
+  () => {
+    iconType.value = props.type;
+    if (iconType.value === "text") addText();
+  }
+);
 </script>
 
 <template>
+  <images-modal
+    :open="open"
+    @close="close"
+    selection-mode
+    @selected="addImage"
+  />
   <modal :open="open" @backgroundClick="close" width="35%" height="75%">
     <modal-toolbar>
       <template #title>About Application</template>

@@ -73,7 +73,7 @@ main {
           }
 
           .choices {
-            @apply grid grid-cols-4 gap-8 w-full;
+            @apply grid grid-cols-3 gap-8 w-full;
 
             .choice {
               @apply bg-neutral-800 rounded flex items-center justify-center py-8;
@@ -496,11 +496,8 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
           <div class="componentPanel">
             <h2>Add a Component</h2>
             <div class="choices">
-              <button class="choice" @click="openAddComponentModal('image')">
-                Image
-              </button>
-              <button class="choice" @click="openAddComponentModal('text')">
-                Text
+              <button class="choice" @click="openAddComponentModal('static')">
+                Static
               </button>
               <button class="choice" @click="openAddComponentModal('button')">
                 Button
