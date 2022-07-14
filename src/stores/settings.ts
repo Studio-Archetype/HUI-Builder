@@ -1,10 +1,10 @@
-import { defineStore } from "pinia";
-import { useStorage } from "@vueuse/core";
+import { defineStore } from 'pinia';
+import { useStorage } from '@vueuse/core';
 
 export const useSettingsStore = defineStore({
-  id: "settings",
+  id: 'settings',
   state: () => ({
-    settings: useStorage("settings", {
+    settings: useStorage('settings', {
       debugFrames: false,
     }),
   }),

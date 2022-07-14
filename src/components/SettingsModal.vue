@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import Modal from "@/components/modal/Modal.vue";
-import ModalToolbar from "@/components/modal/ModalToolbar.vue";
-import { useSettingsStore } from "@/stores/settings";
-import ModalFooter from "@/components/modal/ModalFooter.vue";
-import ModalBody from "@/components/modal/ModalBody.vue";
+import Modal from '@/components/modal/Modal.vue';
+import ModalToolbar from '@/components/modal/ModalToolbar.vue';
+import { useSettingsStore } from '@/stores/settings';
+import ModalFooter from '@/components/modal/ModalFooter.vue';
+import ModalBody from '@/components/modal/ModalBody.vue';
 
 const settingsStore = useSettingsStore();
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['close']);
 defineProps({
   open: {
     type: Boolean,
@@ -15,7 +15,7 @@ defineProps({
 });
 
 function close() {
-  emit("close");
+  emit('close');
 }
 </script>
 
@@ -39,7 +39,7 @@ function close() {
           />
           <label for="debugFramesCheck">
             Debug Frames:
-            {{ settingsStore.settings.debugFrames ? "On" : "Off" }}
+            {{ settingsStore.settings.debugFrames ? 'On' : 'Off' }}
           </label>
         </div>
       </div>

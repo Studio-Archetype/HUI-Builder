@@ -1,9 +1,9 @@
-import type { JSONSchemaType } from "ajv";
+import type { JSONSchemaType } from 'ajv';
 
 export type Vector3 = [number, number, number];
 
 export interface _ComponentData {
-  type: "button" | "decoration" | "toggle";
+  type: 'button' | 'decoration' | 'toggle';
 }
 
 export interface Button extends _ComponentData {
@@ -28,7 +28,7 @@ export interface Toggle extends _ComponentData {
 
 export type ComponentData = Deco | Button | Toggle;
 
-export type IconType = "text" | "textImage";
+export type IconType = 'text' | 'textImage';
 
 export interface _Icon {
   type: IconType;
@@ -44,7 +44,7 @@ export interface TextIcon extends _Icon {
 
 export type Icon = TextImageIcon | TextIcon;
 
-export type ActionType = "command" | "sound";
+export type ActionType = 'command' | 'sound';
 
 export interface _Action {
   type: ActionType;
@@ -52,21 +52,21 @@ export interface _Action {
 
 export interface CommandAction extends _Action {
   command: string;
-  source: "server" | "player";
+  source: 'server' | 'player';
 }
 export interface SoundAction extends _Action {
   sound: string;
   source:
-    | "master"
-    | "music"
-    | "record"
-    | "weather"
-    | "block"
-    | "hostile"
-    | "neutral"
-    | "player"
-    | "ambient"
-    | "voice";
+    | 'master'
+    | 'music'
+    | 'record'
+    | 'weather'
+    | 'block'
+    | 'hostile'
+    | 'neutral'
+    | 'player'
+    | 'ambient'
+    | 'voice';
   volume: number;
   pitch: number;
 }
@@ -86,7 +86,7 @@ export interface HuiData {
 }
 
 export async function downloadSchema(
-  url = "https://cdn.studioarchetype.net/holoui.schema.json"
+  url = 'https://cdn.studioarchetype.net/holoui.schema.json'
 ): Promise<JSONSchemaType<HuiData>> {
   const resp = await fetch(url);
   return await resp.json();
@@ -100,30 +100,30 @@ export function getComponentDisplay(
   let name: string;
 
   switch (component.data.type) {
-    case "decoration": {
+    case 'decoration': {
       switch ((component.data as Deco).icon.type) {
-        case "text":
+        case 'text':
           detailText = `(${((component.data as Deco).icon as TextIcon).text})`;
-          name = "Text";
+          name = 'Text';
           break;
-        case "textImage":
-          name = "Image";
+        case 'textImage':
+          name = 'Image';
           break;
         default:
-          name = "Decoration";
+          name = 'Decoration';
       }
 
       break;
     }
-    case "button":
-      name = "Button";
+    case 'button':
+      name = 'Button';
       break;
-    case "toggle":
-      name = "Toggle";
+    case 'toggle':
+      name = 'Toggle';
       break;
     default:
-      name = "Unknown Component";
+      name = 'Unknown Component';
   }
 
-  return `${name}${detail ? ` ${detailText}` : ""}`;
+  return `${name}${detail ? ` ${detailText}` : ''}`;
 }

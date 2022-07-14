@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { useImageStore } from "@/stores/images";
-import type { ImageDef } from "@/stores/images";
-import { reactive, ref, withDefaults } from "vue";
-import ImageList from "@/components/imageList/ImageList.vue";
-import Modal from "@/components/modal/Modal.vue";
-import ModalToolbar from "@/components/modal/ModalToolbar.vue";
-import ModalFooter from "@/components/modal/ModalFooter.vue";
-import ModalBody from "@/components/modal/ModalBody.vue";
-import { ensurePath } from "@/lib/image";
+import { useImageStore } from '@/stores/images';
+import type { ImageDef } from '@/stores/images';
+import { reactive, ref, withDefaults } from 'vue';
+import ImageList from '@/components/imageList/ImageList.vue';
+import Modal from '@/components/modal/Modal.vue';
+import ModalToolbar from '@/components/modal/ModalToolbar.vue';
+import ModalFooter from '@/components/modal/ModalFooter.vue';
+import ModalBody from '@/components/modal/ModalBody.vue';
+import { ensurePath } from '@/lib/image';
 
 enum ModalPage {
-  LIST = "List",
-  DELETE_CONFIRM = "Confirm Deletion",
+  LIST = 'List',
+  DELETE_CONFIRM = 'Confirm Deletion',
 }
 
 export interface ImagesModalProps {
@@ -20,46 +20,17 @@ export interface ImagesModalProps {
 }
 
 const imageStore = useImageStore();
-const emit = defineEmits(["close", "selected"]);
+const emit = defineEmits(['close', 'selected']);
 const props = withDefaults(defineProps<ImagesModalProps>(), {
   open: false,
   selectionMode: false,
 });
 
-const { open, selectionMode } = reactive(props);
-
-let page = ref<ModalPage>(ModalPage.LIST);
-let editDeleteImage = ref<ImageDef>();
+const page = ref<ModalPage>(ModalPage.LIST);
+const editDeleteImage = ref<ImageDef>();
 
 function close() {
-  emit("close");
-}
-
-function readAndAddImage(file: File) {
-  const reader = new FileReader();
-  reader.onload = (readerEvt: Event) => {
-    imageStore.addImage({
-      path: ensurePath(file.name),
-      content: (readerEvt.target as FileReader).result as string,
-    });
-  };
-
-  reader.readAsDataURL(file);
-}
-
-function chooseImage() {
-  const element = document.createElement("input");
-  element.type = "file";
-  element.accept = "png";
-  element.multiple = true;
-  element.onchange = async (fileEvt: Event) => {
-    const files = (fileEvt.target as HTMLInputElement)?.files;
-    if (files) for (const file of files) readAndAddImage(file);
-    document.body.removeChild(element);
-  };
-  element.style.display = "none";
-  document.body.appendChild(element);
-  element.click();
+  emit('close');
 }
 
 function confirmDeleteImage() {
@@ -73,15 +44,15 @@ function deleteImage(image: ImageDef) {
 }
 
 function select(image: ImageDef) {
-  emit("selected", image);
+  emit('selected', image);
 }
 </script>
 
 <template>
-  <modal :open="open" @backgroundClick="close">
+  <modal :open="props.open" @backgroundClick="close">
     <modal-toolbar>
       <template #title>
-        Image Management {{ page !== ModalPage.LIST ? `// ${page}` : "" }}
+        Image Management {{ page !== ModalPage.LIST ? `// ${page}` : '' }}
       </template>
       <template #actions>
         <button class="button icon faint" @click="close">
@@ -94,10 +65,9 @@ function select(image: ImageDef) {
         <div class="page listPage">
           <image-list
             :images="imageStore.allImages"
-            :selectable="selectionMode"
+            :selectable="props.selectionMode"
             @delete="deleteImage"
             @imageSelected="select"
-            @addClicked="chooseImage"
           />
         </div>
       </template>

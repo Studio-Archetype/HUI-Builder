@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {reactive, ref} from "vue";
+import { ref } from 'vue';
 
 export interface TreeItemProps {
   toggleable?: boolean;
@@ -23,7 +23,15 @@ function click() {
 </script>
 
 <template>
-  <div class="treeItem" :class="{ open: opened, toggleable: props.toggleable, root: props.root, selected: props.selected }">
+  <div
+    class="treeItem"
+    :class="{
+      open: opened,
+      toggleable: props.toggleable,
+      root: props.root,
+      selected: props.selected,
+    }"
+  >
     <div class="title" @click="click">
       <slot name="icon">
         <template v-if="props.toggleable">

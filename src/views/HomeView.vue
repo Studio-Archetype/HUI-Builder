@@ -131,81 +131,84 @@ main {
 </style>
 <script setup lang="ts">
 // vendor & 3rd-party
-import { computed, ref } from "vue";
-import Ajv from "ajv";
-import Codemirror from "codemirror-editor-vue3";
+import { computed, ref } from 'vue';
+import Ajv from 'ajv';
+import Codemirror from 'codemirror-editor-vue3';
 
 // types
-import type { Doc, EditorConfiguration } from "codemirror";
+import type { Doc, EditorConfiguration } from 'codemirror';
 import type {
   Component,
   Deco,
   TextIcon,
   HuiData,
   TextImageIcon,
-} from "@/schema";
+} from '@/schema';
 
 // lib
-import { downloadSchema, getComponentDisplay } from "@/schema";
+import { downloadSchema, getComponentDisplay } from '@/schema';
+import { useImageStore } from '@/stores/images';
+import { useProjectStore } from '@/stores/project';
+import { storeToRefs } from 'pinia';
+import { useSettingsStore } from '@/stores/settings';
 
 // components
-import EditorCanvas from "@/components/EditorCanvas.vue";
-import TreeView from "@/components/tree/TreeView.vue";
-import TreeItem from "@/components/tree/TreeItem.vue";
-import ComponentTreeItem from "@/components/tree/ComponentTreeItem.vue";
+import EditorCanvas from '@/components/EditorCanvas.vue';
+import TreeView from '@/components/tree/TreeView.vue';
+import TreeItem from '@/components/tree/TreeItem.vue';
+import SettingsModal from '@/components/SettingsModal.vue';
+import ImagesModal from '@/components/ImagesModal.vue';
+import AboutModal from '@/components/AboutModal.vue';
+import AddComponentModal from '@/components/AddComponentModal.vue';
+import type { ComponentAddType } from '@/components/AddComponentModal.vue';
+import NavBar from '@/components/NavBar.vue';
 
-// codemirror
-import "codemirror/mode/javascript/javascript.js";
-import "../assets/base16-dark-modified.css";
-import ImagesModal from "@/components/ImagesModal.vue";
-import { useImageStore } from "@/stores/images";
-import { useProjectStore } from "@/stores/project";
-import { storeToRefs } from "pinia";
-import { useSettingsStore } from "@/stores/settings";
-import SettingsModal from "@/components/SettingsModal.vue";
-import AboutModal from "@/components/AboutModal.vue";
-import AddComponentModal from "@/components/AddComponentModal.vue";
-import type { ComponentAddType } from "@/components/AddComponentModal.vue";
-import NavBar from "@/components/NavBar.vue";
+import ChooseIconModal from '@/components/ChooseIconModal.vue';
+import ComponentTreeItem from '@/components/tree/ComponentTreeItem.vue';
+// codemirror css
+
+import 'codemirror/mode/javascript/javascript.js';
+import '../assets/base16-dark-modified.css';
 
 // data
 const imageStore = useImageStore();
 const projectStore = useProjectStore();
 const settingsStore = useSettingsStore();
-let visualMode = ref(true);
-let { project: data } = storeToRefs(projectStore);
-let line = ref(0);
-let char = ref(0);
-let errorMessageTimeout = ref<number | null>(null);
-let showErrorMessage = ref(false);
-let errorMessage = ref("Validation error");
-let cmOptions = ref<EditorConfiguration>({
-  mode: { name: "javascript", json: true }, // Language mode
-  theme: "base16-dark", // Theme
+const visualMode = ref(true);
+const { project: data } = storeToRefs(projectStore);
+const line = ref(0);
+const char = ref(0);
+const errorMessageTimeout = ref<number | null>(null);
+const showErrorMessage = ref(false);
+const errorMessage = ref('Validation error');
+const cmOptions = ref<EditorConfiguration>({
+  mode: { name: 'javascript', json: true }, // Language mode
+  theme: 'base16-dark', // Theme
   lineNumbers: true, // Show line number
   smartIndent: true, // Smart indent
   indentUnit: 2, // The smart indent unit is 2 spaces in length
 });
-let activeComponentId = ref<string | null>(null);
-let activeComponent = computed<Component | null>(
+const activeComponentId = ref<string | null>(null);
+const activeComponent = computed<Component | null>(
   () =>
     projectStore.project.components.find(
       (it: Component) => it.id === activeComponentId.value
     ) || null
 );
-let imageModalOpen = ref<boolean>(false);
-let imageModalSelectionMode = ref(false);
-let settingsModalOpen = ref<boolean>(false);
-let aboutModalOpen = ref<boolean>(false);
-let addComponentModalOpen = ref<boolean>(false);
-let addComponentModalType = ref<ComponentAddType | null>(null);
+const imageModalOpen = ref<boolean>(false);
+const imageModalSelectionMode = ref(false);
+const settingsModalOpen = ref<boolean>(false);
+const aboutModalOpen = ref<boolean>(false);
+const chooseIconStaticModalOpen = ref<boolean>(false);
+const addComponentModalOpen = ref<boolean>(false);
+const addComponentModalType = ref<ComponentAddType | null>(null);
 
 // computed
-let activeComponentDisplay = computed<string>(() => {
+const activeComponentDisplay = computed<string>(() => {
   if (activeComponent.value) return getComponentDisplay(activeComponent.value);
-  else return "";
+  else return '';
 });
-let dataJson = computed<string>({
+const dataJson = computed<string>({
   get(): string {
     return JSON.stringify(data.value, null, 2);
   },
@@ -220,8 +223,8 @@ function toggleMode() {
 }
 
 function upload() {
-  const element = document.createElement("input");
-  element.type = "file";
+  const element = document.createElement('input');
+  element.type = 'file';
   element.onchange = async (evt: Event) => {
     projectStore.setProject(
       await new Response((evt.target as HTMLInputElement)?.files?.[0]).json()
@@ -231,7 +234,7 @@ function upload() {
 
     // todo: notify the user that the upload was successful.
   };
-  element.style.display = "none";
+  element.style.display = 'none';
   document.body.appendChild(element);
   element.click();
 }
@@ -257,14 +260,14 @@ function validate() {
 }
 
 function download() {
-  const element = document.createElement("a");
+  const element = document.createElement('a');
   element.setAttribute(
-    "href",
+    'href',
     `data:application/json;charset=utf-8,${encodeURIComponent(dataJson.value)}`
   );
-  element.setAttribute("download", "hui-project.json");
+  element.setAttribute('download', 'hui-project.json');
 
-  element.style.display = "none";
+  element.style.display = 'none';
   document.body.appendChild(element);
   element.click();
   document.body.removeChild(element);
@@ -326,7 +329,7 @@ function offsetChange(index: number, e: Event) {
 }
 
 function componentIdChange(e: Event) {
-  let newValue = (e.target as HTMLInputElement).value;
+  const newValue = (e.target as HTMLInputElement).value;
   const oldValue = activeComponentId.value;
 
   if (projectStore.project.components.find((it) => it.id === newValue)) {
@@ -364,16 +367,16 @@ function closeAddComponentModal() {
   addComponentModalType.value = null;
 }
 
-window.addEventListener("keydown", (e: KeyboardEvent) => {
+window.addEventListener('keydown', (e: KeyboardEvent) => {
   switch (e.code) {
-    case "Delete": {
+    case 'Delete': {
       if (activeComponent.value) {
         projectStore.deleteComponent(activeComponent.value.id);
       }
 
       break;
     }
-    case "ArrowDown": {
+    case 'ArrowDown': {
       if (activeComponent.value) {
         const componentIndex = projectStore.project.components.findIndex(
           (it: Component) => it.id === activeComponentId.value
@@ -384,7 +387,7 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
 
       break;
     }
-    case "ArrowLeft": {
+    case 'ArrowLeft': {
       if (activeComponent.value) {
         const componentIndex = projectStore.project.components.findIndex(
           (it: Component) => it.id === activeComponentId.value
@@ -395,7 +398,7 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
 
       break;
     }
-    case "ArrowRight": {
+    case 'ArrowRight': {
       if (activeComponent.value) {
         const componentIndex = projectStore.project.components.findIndex(
           (it: Component) => it.id === activeComponentId.value
@@ -406,7 +409,7 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
 
       break;
     }
-    case "ArrowUp": {
+    case 'ArrowUp': {
       if (activeComponent.value) {
         const componentIndex = projectStore.project.components.findIndex(
           (it: Component) => it.id === activeComponentId.value
@@ -437,6 +440,10 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
       :open="addComponentModalOpen"
       @close="closeAddComponentModal"
       :type="addComponentModalType ?? undefined"
+    />
+    <choose-icon-modal
+      :open="chooseIconStaticModalOpen"
+      @close="chooseIconStaticModalOpen = false"
     />
     <about-modal :open="aboutModalOpen" @close="aboutModalOpen = false" />
 
@@ -496,7 +503,7 @@ window.addEventListener("keydown", (e: KeyboardEvent) => {
           <div class="componentPanel">
             <h2>Add a Component</h2>
             <div class="choices">
-              <button class="choice" @click="openAddComponentModal('static')">
+              <button class="choice" @click="chooseIconStaticModalOpen = true">
                 Static
               </button>
               <button class="choice" @click="openAddComponentModal('button')">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUpdated, reactive, ref, watch } from "vue";
+import { onMounted, onUpdated, reactive, ref, watch } from 'vue';
 import type {
   Button,
   Component,
@@ -9,13 +9,13 @@ import type {
   TextIcon,
   TextImageIcon,
   Toggle,
-} from "@/schema";
-import { getComponentDisplay } from "@/schema";
-import { useImageStore } from "@/stores/images";
-import { useProjectStore } from "@/stores/project";
-import type { Dimension } from "@/lib/image";
-import { getImage, imageToColorMap } from "@/lib/image";
-import { computedAsync } from "@vueuse/core";
+} from '@/schema';
+import { getComponentDisplay } from '@/schema';
+import { useImageStore } from '@/stores/images';
+import { useProjectStore } from '@/stores/project';
+import type { Dimension } from '@/lib/image';
+import { getImage, imageToColorMap } from '@/lib/image';
+import { computedAsync } from '@vueuse/core';
 
 const ICON_PX_GAP = 1;
 const ICON_PX_SIZE = 6;
@@ -27,7 +27,7 @@ const ICON_FONT = `${ICON_FONT_SIZE}px sans-serif`;
 
 const imageStore = useImageStore();
 const projectStore = useProjectStore();
-const emit = defineEmits(["componentSelected", "deselect"]);
+const emit = defineEmits(['componentSelected', 'deselect']);
 const props = defineProps({
   data: {
     type: Object as () => HuiData,
@@ -44,13 +44,13 @@ const props = defineProps({
   activeComponentId: String,
 });
 
-let data = reactive<HuiData>(projectStore.project);
-let canvas = ref<HTMLCanvasElement>();
-let ctx = ref<CanvasRenderingContext2D>();
-let width = ref(1280);
-let height = ref(720);
-let selectedComponentId = ref<string>("");
-let mousePlacement = ref<{ x: number; y: number; clicking: boolean } | null>(
+const data = reactive<HuiData>(projectStore.project);
+const canvas = ref<HTMLCanvasElement>();
+const ctx = ref<CanvasRenderingContext2D>();
+const width = ref(1280);
+const height = ref(720);
+const selectedComponentId = ref<string>('');
+const mousePlacement = ref<{ x: number; y: number; clicking: boolean } | null>(
   null
 );
 
@@ -66,13 +66,13 @@ async function convertPlacements(): Promise<ComponentPlacement[]> {
   return await Promise.all(
     projectStore.project.components.map(async (it: Component) => {
       switch (it.data.type) {
-        case "decoration": {
+        case 'decoration': {
           const size = await calculateIconSize((it.data as Deco).icon);
           return {
             id: it.id,
             x: it.offset[0],
             y:
-              (it.data as Deco).icon.type === "text"
+              (it.data as Deco).icon.type === 'text'
                 ? it.offset[1] + ICON_FONT_SHIFT
                 : it.offset[1],
             width: Math.round(size.width),
@@ -81,7 +81,7 @@ async function convertPlacements(): Promise<ComponentPlacement[]> {
         }
         default:
           return {
-            id: "",
+            id: '',
             x: 0,
             y: 0,
             width: 0,
@@ -92,7 +92,7 @@ async function convertPlacements(): Promise<ComponentPlacement[]> {
   );
 }
 
-let placements = computedAsync<ComponentPlacement[]>(
+const placements = computedAsync<ComponentPlacement[]>(
   async () => await convertPlacements()
 );
 
@@ -105,12 +105,12 @@ watch(
 );
 
 async function calculateIconSize(icon: Icon): Promise<Dimension> {
-  const canvas = document.createElement("canvas");
+  const canvas = document.createElement('canvas');
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const ctx = canvas.getContext("2d")!;
+  const ctx = canvas.getContext('2d')!;
 
   switch (icon.type) {
-    case "text": {
+    case 'text': {
       ctx.font = ICON_FONT;
       const metrics = ctx.measureText((icon as TextIcon).text);
       return {
@@ -121,7 +121,7 @@ async function calculateIconSize(icon: Icon): Promise<Dimension> {
           2,
       };
     }
-    case "textImage": {
+    case 'textImage': {
       const textImageIcon = icon as TextImageIcon;
       const imageDef = imageStore.imageByPath(textImageIcon.path);
       if (imageDef) {
@@ -174,16 +174,16 @@ function drawBackdrop(): Promise<void> {
 async function drawIcon(icon: Icon, offsetX: number, offsetY: number) {
   if (canvas.value && ctx.value) {
     switch (icon.type) {
-      case "text": {
+      case 'text': {
         const textIcon = icon as TextIcon;
 
         ctx.value.font = ICON_FONT;
-        ctx.value.textBaseline = "top";
-        ctx.value.fillStyle = "#ffffff";
+        ctx.value.textBaseline = 'top';
+        ctx.value.fillStyle = '#ffffff';
         ctx.value?.fillText(textIcon.text, offsetX, offsetY);
         break;
       }
-      case "textImage": {
+      case 'textImage': {
         const textImageIcon = icon as TextImageIcon;
         const imageDef = imageStore.imageByPath(textImageIcon.path);
         if (imageDef) {
@@ -228,14 +228,14 @@ async function redraw() {
           false
         );
         ctx.value.fillStyle = mousePlacement.value.clicking
-          ? "green"
-          : "yellow";
+          ? 'green'
+          : 'yellow';
         ctx.value.fill();
       }
 
       placements.value?.forEach((placement: ComponentPlacement) => {
         if (canvas.value && ctx.value) {
-          ctx.value.strokeStyle = "#0000ff";
+          ctx.value.strokeStyle = '#0000ff';
           ctx.value?.strokeRect(
             placement.x,
             placement.y,
@@ -253,16 +253,16 @@ async function redraw() {
       const componentOffsetY = startOffsetY + component.offset[1];
 
       switch (component.data.type) {
-        case "decoration": {
+        case 'decoration': {
           const decoData = component.data as Deco;
           await drawIcon(decoData.icon, componentOffsetX, componentOffsetY);
           const iconBounds = await calculateIconSize(decoData.icon);
 
-          let boundColor = "#efefef";
+          let boundColor = '#efefef';
           let doBox = false;
 
           if (props.showBounds) {
-            boundColor = "red";
+            boundColor = 'red';
             doBox = true;
           }
 
@@ -272,7 +272,7 @@ async function redraw() {
           )
             doBox = true;
 
-          if (decoData.icon.type === "textImage") {
+          if (decoData.icon.type === 'textImage') {
             const imgDef = imageStore.imageByPath(
               (decoData.icon as TextImageIcon).path
             );
@@ -282,7 +282,7 @@ async function redraw() {
 
               if (imageData.length > 16 || imageData[0].length > 16) {
                 doBox = true;
-                boundColor = "#dc2626";
+                boundColor = '#dc2626';
               }
             }
           }
@@ -292,7 +292,7 @@ async function redraw() {
             ctx.value.lineWidth = 1;
             ctx.value?.strokeRect(
               componentOffsetX,
-              decoData.icon.type === "text"
+              decoData.icon.type === 'text'
                 ? componentOffsetY + ICON_FONT_SHIFT
                 : componentOffsetY,
               iconBounds.width,
@@ -300,25 +300,25 @@ async function redraw() {
             );
 
             ctx.value.fillStyle = boundColor;
-            ctx.value.font = "12px sans-serif";
-            ctx.value.textBaseline = "bottom";
+            ctx.value.font = '12px sans-serif';
+            ctx.value.textBaseline = 'bottom';
             ctx.value?.fillText(
               getComponentDisplay(component),
               componentOffsetX,
-              decoData.icon.type === "text"
+              decoData.icon.type === 'text'
                 ? componentOffsetY + ICON_FONT_SHIFT
                 : componentOffsetY
             );
           }
           break;
         }
-        case "button": {
+        case 'button': {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const buttonData = component.data as Button;
           // todo: draw logic
           break;
         }
-        case "toggle": {
+        case 'toggle': {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const toggleData = component.data as Toggle;
           // todo: draw logic
@@ -362,8 +362,8 @@ function getCanvasValues(): CanvasValues {
       scrollY: 0,
     };
 }
-let startX = ref(0);
-let startY = ref(0);
+const startX = ref(0);
+const startY = ref(0);
 
 function handleMouseDown(e: MouseEvent) {
   const { offsetX, offsetY } = getCanvasValues();
@@ -381,7 +381,7 @@ function handleMouseDown(e: MouseEvent) {
     console.log(startX.value, startY.value, placement);
     if (testPlacementHit(startX.value, startY.value, placement)) {
       selectedComponentId.value = placement.id;
-      emit("componentSelected", selectedComponentId.value);
+      emit('componentSelected', selectedComponentId.value);
       // } else {
       //   selectedComponentId.value = "";
       //   emit("deselect");
@@ -392,7 +392,7 @@ function handleMouseDown(e: MouseEvent) {
 
 function handleMouseUp(e: MouseEvent) {
   e.preventDefault();
-  selectedComponentId.value = "";
+  selectedComponentId.value = '';
 
   if (mousePlacement.value !== null)
     mousePlacement.value = {
@@ -404,13 +404,13 @@ function handleMouseUp(e: MouseEvent) {
 
 function handleMouseOut(e: MouseEvent) {
   e.preventDefault();
-  selectedComponentId.value = "";
+  selectedComponentId.value = '';
   mousePlacement.value = null;
   redraw();
 }
 
 function handleMouseMove(e: MouseEvent) {
-  if (selectedComponentId.value === "") return;
+  if (selectedComponentId.value === '') return;
   e.preventDefault();
   const { offsetX, offsetY } = getCanvasValues();
   const mouseX = parseInt(`${e.clientX - offsetX}`);
@@ -452,7 +452,7 @@ onMounted(() => {
     // this case) isn't recognized, the fucking DOM returns null. JUST THROW AN
     // ERROR!
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    ctx.value = canvas.value.getContext("2d")!;
+    ctx.value = canvas.value.getContext('2d')!;
     redraw();
   }
 });

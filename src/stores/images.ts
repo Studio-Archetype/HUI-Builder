@@ -1,5 +1,5 @@
-import { defineStore } from "pinia";
-import { useStorage } from "@vueuse/core";
+import { defineStore } from 'pinia';
+import { useStorage } from '@vueuse/core';
 
 export interface ImageDef {
   path: string;
@@ -9,9 +9,9 @@ export interface ImageDef {
 export type ImageEditParams = Partial<ImageDef>;
 
 export const useImageStore = defineStore({
-  id: "images",
+  id: 'images',
   state: () => ({
-    images: useStorage<ImageDef[]>("images", []),
+    images: useStorage<ImageDef[]>('images', []),
   }),
   getters: {
     allImages: (state): ImageDef[] => state.images,

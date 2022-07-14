@@ -1,4 +1,4 @@
-import type { ImageDef } from "@/stores/images";
+import type { ImageDef } from '@/stores/images';
 
 export interface Vector4 {
   r: number;
@@ -8,22 +8,22 @@ export interface Vector4 {
 }
 
 export function getFileParts(filename: string): string[] {
-  const dotSplit = filename.split(".");
-  if (dotSplit.length === 1 || (dotSplit[0] === "" && dotSplit.length === 2)) {
-    return [filename, ""];
+  const dotSplit = filename.split('.');
+  if (dotSplit.length === 1 || (dotSplit[0] === '' && dotSplit.length === 2)) {
+    return [filename, ''];
   }
 
   const ext = dotSplit.pop();
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return [dotSplit.join("."), ext!];
+  return [dotSplit.join('.'), ext!];
 }
 
 export function ensurePath(path: string): string {
   const fileParts = getFileParts(path);
-  if (!fileParts[1]) fileParts[1] = "png";
-  path = fileParts.join(".");
+  if (!fileParts[1]) fileParts[1] = 'png';
+  path = fileParts.join('.');
 
-  if (!path.startsWith("/")) path = `/${path}`;
+  if (!path.startsWith('/')) path = `/${path}`;
 
   return path;
 }
@@ -34,8 +34,8 @@ export interface Dimension {
 }
 
 export function imageToColorMap(image: HTMLImageElement): Vector4[][] {
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
   canvas.width = image.width;
   canvas.height = image.height;
 

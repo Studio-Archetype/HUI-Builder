@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import Modal from "@/components/modal/Modal.vue";
-import ModalToolbar from "@/components/modal/ModalToolbar.vue";
-import ModalBody from "@/components/modal/ModalBody.vue";
-import { ref, watch } from "vue";
-import type { PropType } from "vue";
+import Modal from '@/components/modal/Modal.vue';
+import ModalToolbar from '@/components/modal/ModalToolbar.vue';
+import ModalBody from '@/components/modal/ModalBody.vue';
+import { ref, watch } from 'vue';
+import type { PropType } from 'vue';
 
-export type ComponentAddType = "button" | "toggle";
+export type ComponentAddType = 'button' | 'toggle';
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['close']);
+
 const props = defineProps({
   type: {
     type: String as unknown as PropType<ComponentAddType>,
@@ -20,7 +21,7 @@ const props = defineProps({
 });
 
 const page = ref<ComponentAddType | null>(props.type);
-const newImageImageInput = ref("");
+const newImageImageInput = ref('');
 
 watch(
   () => props.type,
@@ -30,12 +31,12 @@ watch(
 );
 
 function clear() {
-  newImageImageInput.value = "";
+  newImageImageInput.value = '';
   page.value = null;
 }
 
 function close() {
-  emit("close");
+  emit('close');
   clear();
 }
 </script>
@@ -43,7 +44,7 @@ function close() {
 <template>
   <modal :open="open" width="40%">
     <modal-toolbar>
-      <template #title>Add Component{{ page ? ` // ${page}` : "" }}</template>
+      <template #title>Add Component{{ page ? ` // ${page}` : '' }}</template>
       <template #actions>
         <button class="button icon faint" @click="close">
           <font-awesome-icon fixed-width icon="close"></font-awesome-icon>

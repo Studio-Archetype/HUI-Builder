@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Component } from "@/schema";
-import TreeItem from "./TreeItem.vue";
-import { computed, reactive } from "vue";
-import { getComponentDisplay } from "@/schema";
+import type { Component } from '@/schema';
+import TreeItem from './TreeItem.vue';
+import { computed } from 'vue';
+import { getComponentDisplay } from '@/schema';
 
 export interface ComponentTreeItemProps {
   component: Component;

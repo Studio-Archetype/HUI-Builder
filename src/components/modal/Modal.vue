@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const emit = defineEmits(["backgroundClick"]);
+const emit = defineEmits(['backgroundClick']);
 defineProps({
   open: {
     type: Boolean,
@@ -7,17 +7,17 @@ defineProps({
   },
   width: {
     type: String,
-    default: "75%",
+    default: '75%',
   },
   height: {
     type: String,
-    default: "75%",
+    default: '75%',
   },
 });
 
 function backgroundClicked(e: MouseEvent) {
   if (e.target !== e.currentTarget) return;
-  emit("backgroundClick");
+  emit('backgroundClick');
 }
 </script>
 

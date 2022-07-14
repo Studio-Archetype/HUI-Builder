@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { PropType } from "vue";
-import type { ImageDef } from "@/stores/images";
-import { ref } from "vue";
-import ContextMenu from "@/components/contextMenu/ContextMenu.vue";
-import ContextMenuItem from "@/components/contextMenu/ContextMenuItem.vue";
-import { ensurePath, getImage, imageToColorMap } from "@/lib/image";
-import { asyncComputed } from "@vueuse/core";
-import { useImageStore } from "@/stores/images";
+import type { PropType } from 'vue';
+import type { ImageDef } from '@/stores/images';
+import { ref } from 'vue';
+import ContextMenu from '@/components/contextMenu/ContextMenu.vue';
+import ContextMenuItem from '@/components/contextMenu/ContextMenuItem.vue';
+import { ensurePath, getImage, imageToColorMap } from '@/lib/image';
+import { asyncComputed } from '@vueuse/core';
+import { useImageStore } from '@/stores/images';
 
 const imageStore = useImageStore();
-const emit = defineEmits(["click", "delete"]);
+const emit = defineEmits(['click', 'delete']);
 const props = defineProps({
   image: {
     type: Object as PropType<ImageDef>,
@@ -19,11 +19,15 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  showDelete: {
+    type: Boolean,
+    default: true,
+  },
 });
 
-let contextMenuOpen = ref(false);
-let contextMenuX = ref(0);
-let contextMenuY = ref(0);
+const contextMenuOpen = ref(false);
+const contextMenuX = ref(0);
+const contextMenuY = ref(0);
 
 const showWarning = asyncComputed<boolean>(async () => {
   const imageData = imageToColorMap(await getImage(props.image));
@@ -40,7 +44,7 @@ function edited(e: Event) {
 }
 
 function emitDelete() {
-  emit("delete");
+  emit('delete');
 }
 
 function openContextMenu(evt: MouseEvent) {
@@ -85,6 +89,7 @@ function closeContextMenu() {
   </div>
 
   <context-menu
+    v-if="showDelete"
     :show="contextMenuOpen"
     :x="contextMenuX"
     :y="contextMenuY"

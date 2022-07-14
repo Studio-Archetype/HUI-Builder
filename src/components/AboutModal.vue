@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import Modal from "@/components/modal/Modal.vue";
-import ModalToolbar from "@/components/modal/ModalToolbar.vue";
-import ModalFooter from "@/components/modal/ModalFooter.vue";
-import ModalBody from "@/components/modal/ModalBody.vue";
-import { faGithub, faDiscord } from "@fortawesome/free-brands-svg-icons";
+import Modal from '@/components/modal/Modal.vue';
+import ModalToolbar from '@/components/modal/ModalToolbar.vue';
+import ModalFooter from '@/components/modal/ModalFooter.vue';
+import ModalBody from '@/components/modal/ModalBody.vue';
+import { faGithub, faDiscord } from '@fortawesome/free-brands-svg-icons';
 
 export interface AboutModalProps {
   open?: boolean;
 }
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['close']);
 const props = withDefaults(defineProps<AboutModalProps>(), {
   open: false,
 });
 
 function close() {
-  emit("close");
+  emit('close');
 }
 
 const buildNumber = 1;

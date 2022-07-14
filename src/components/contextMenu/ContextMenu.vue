@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, nextTick } from "vue";
+import { computed, nextTick } from 'vue';
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['close']);
 const props = defineProps({
   x: Number,
   y: Number,
@@ -15,13 +15,13 @@ const vFocusOnMount = {
 };
 
 function close() {
-  emit("close");
+  emit('close');
 }
 
-let style = computed(() => ({
+const style = computed(() => ({
   left: `${props.x}px`,
   top: `${props.y}px`,
-  display: props.show ? "flex" : "none",
+  display: props.show ? 'flex' : 'none',
 }));
 </script>
 
