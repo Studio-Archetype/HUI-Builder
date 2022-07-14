@@ -39,7 +39,7 @@ function backgroundClicked(e: MouseEvent) {
   }
 
   .modal {
-    @apply rounded-lg bg-neutral-900 flex flex-col shadow-2xl;
+    @apply rounded-lg bg-neutral-900 flex flex-col shadow-2xl max-h-[75%];
   }
 }
 </style>

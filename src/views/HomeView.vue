@@ -83,7 +83,7 @@ main {
       }
 
       .right {
-        @apply w-1/4 flex flex-col divide-y divide-neutral-800;
+        @apply w-1/4 min-w-[25%] flex flex-col divide-y divide-neutral-800;
 
         .treePanel {
           @apply h-64 overflow-auto;

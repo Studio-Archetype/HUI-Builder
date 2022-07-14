@@ -87,7 +87,7 @@ function chooseImage() {
 
 <style scoped lang="scss">
 .imageList {
-  @apply grid grid-cols-6 gap-4 p-4;
+  @apply grid grid-cols-8 gap-4 p-4;
 
   .addButton {
     @apply flex flex-col items-center rounded bg-neutral-800 cursor-pointer;

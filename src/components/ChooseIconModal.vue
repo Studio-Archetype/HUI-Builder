@@ -76,7 +76,12 @@ watch(
 </script>
 
 <template>
-  <modal :open="open" @backgroundClick="close" width="35%" height="auto">
+  <modal
+    :open="open"
+    @backgroundClick="close"
+    :width="iconType === 'textImage' ? '75%' : '35%'"
+    height="auto"
+  >
     <modal-toolbar>
       <template #title>Choose An Icon</template>
       <template #actions>
