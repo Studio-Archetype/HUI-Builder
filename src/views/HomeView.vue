@@ -444,6 +444,7 @@ window.addEventListener('keydown', (e: KeyboardEvent) => {
     <choose-icon-modal
       :open="chooseIconStaticModalOpen"
       @close="chooseIconStaticModalOpen = false"
+      title="Add a Static Component"
     />
     <about-modal :open="aboutModalOpen" @close="aboutModalOpen = false" />
 

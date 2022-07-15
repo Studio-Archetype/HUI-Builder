@@ -47,7 +47,9 @@ const props = defineProps({
 });
 
 const data = reactive<HuiData>(projectStore.project);
-const canvas = ref<HTMLCanvasElement>();
+const canvas = ref<OffscreenCanvas>(
+  new OffscreenCanvas(fixedWidth, fixedHeight)
+);
 const displayCanvas = ref<HTMLCanvasElement>();
 const ctx = ref<CanvasRenderingContext2D>();
 const displayCtx = ref<CanvasRenderingContext2D>();
@@ -218,7 +220,7 @@ async function redraw() {
     const startOffsetY = data.offset[1];
 
     if (props.showBounds) {
-      console.log(mousePlacement.value);
+      // console.log(mousePlacement.value);
       if (mousePlacement.value !== null) {
         ctx.value.beginPath();
         ctx.value.arc(
@@ -392,17 +394,13 @@ function convertCoordinateViaNormalization(
   originWidth: number,
   originHeight: number
 ): Vector2 {
-  console.log('display', x, y);
-
   const normalizedStartX = x / originWidth;
   const normalizedStartY = y / originHeight;
-
-  console.log('normalized', normalizedStartX, normalizedStartY);
+  // console.log('normalized', normalizedStartX, normalizedStartY);
 
   const fixedStartX = normalizedStartX * (canvas.value?.width ?? 0);
   const fixedStartY = normalizedStartY * (canvas.value?.height ?? 0);
-
-  console.log('fixed', fixedStartX, fixedStartY);
+  // console.log('fixed', fixedStartX, fixedStartY);
 
   return {
     x: fixedStartX,
@@ -434,7 +432,7 @@ function handleMouseDown(e: MouseEvent) {
 
   // console.log(placements.value);
   placements.value?.forEach((placement: ComponentPlacement) => {
-    console.log(startX.value, startY.value, placement);
+    // console.log(startX.value, startY.value, placement);
     if (testPlacementHit(startX.value, startY.value, placement)) {
       selectedComponentId.value = placement.id;
       emit('componentSelected', selectedComponentId.value);
@@ -483,10 +481,8 @@ function handleMouseMove(e: MouseEvent) {
       mousePlacement.value === null ? false : mousePlacement.value.clicking,
   };
 
-  // Put your mousemove stuff here
   const dx = resVector.x - startX.value;
   const dy = resVector.y - startY.value;
-  console.log('dx,y', dx, dy);
   startX.value = resVector.x;
   startY.value = resVector.y;
 
@@ -517,8 +513,6 @@ onMounted(() => {
   });
 
   if (canvas.value) {
-    canvas.value.style.width = `${canvas.value?.width}px`;
-    canvas.value.style.height = `${canvas.value?.height}px`;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     ctx.value = canvas.value.getContext('2d')!;
     redraw();
@@ -546,7 +540,6 @@ watch(
 </script>
 
 <template>
-  <canvas class="contain" ref="canvas" :width="1280" :height="720" />
   <canvas
     class="display"
     ref="displayCanvas"

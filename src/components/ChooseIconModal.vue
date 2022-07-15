@@ -27,6 +27,10 @@ const props = defineProps({
     type: String as () => IconType | null,
     default: null,
   },
+  title: {
+    type: String,
+    default: 'Choose an icon',
+  },
 });
 
 function close() {
@@ -83,7 +87,7 @@ watch(
     height="auto"
   >
     <modal-toolbar>
-      <template #title>Choose An Icon</template>
+      <template #title>{{ title }}</template>
       <template #actions>
         <button class="button icon faint" @click="close">
           <font-awesome-icon fixed-width icon="close"></font-awesome-icon>
