@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUpdated, reactive, ref, watch } from 'vue';
+import { computed, onMounted, onUpdated, reactive, ref, watch } from 'vue';
 import type {
   Button,
   Component,
@@ -17,6 +17,8 @@ import type { Dimension } from '@/lib/image';
 import { getImage, imageToColorMap } from '@/lib/image';
 import { computedAsync } from '@vueuse/core';
 
+const fixedWidth = 1280;
+const fixedHeight = 720;
 const ICON_PX_GAP = 1;
 const ICON_PX_SIZE = 6;
 const ICON_FONT_SIZE = 36;
@@ -46,9 +48,9 @@ const props = defineProps({
 
 const data = reactive<HuiData>(projectStore.project);
 const canvas = ref<HTMLCanvasElement>();
+const displayCanvas = ref<HTMLCanvasElement>();
 const ctx = ref<CanvasRenderingContext2D>();
-const width = ref(1280);
-const height = ref(720);
+const displayCtx = ref<CanvasRenderingContext2D>();
 const selectedComponentId = ref<string>('');
 const mousePlacement = ref<{ x: number; y: number; clicking: boolean } | null>(
   null
@@ -326,6 +328,20 @@ async function redraw() {
         }
       }
     }
+
+    if (displayCanvas.value && displayCtx.value) {
+      displayCtx.value?.drawImage(
+        canvas.value,
+        0,
+        0,
+        canvas.value?.width,
+        canvas.value?.height,
+        0,
+        0,
+        displayCanvas.value?.width,
+        displayCanvas.value?.height
+      );
+    }
   }
 }
 
@@ -346,13 +362,13 @@ interface CanvasValues {
 }
 
 function getCanvasValues(): CanvasValues {
-  if (canvas.value) {
-    const rect = canvas.value.getBoundingClientRect();
+  if (displayCanvas.value) {
+    const rect = displayCanvas.value.getBoundingClientRect();
     return {
       offsetX: rect.left,
       offsetY: rect.top,
-      scrollX: canvas.value.scrollLeft,
-      scrollY: canvas.value.scrollTop,
+      scrollX: displayCanvas.value.scrollLeft,
+      scrollY: displayCanvas.value.scrollTop,
     };
   } else
     return {
@@ -365,11 +381,51 @@ function getCanvasValues(): CanvasValues {
 const startX = ref(0);
 const startY = ref(0);
 
+interface Vector2 {
+  x: number;
+  y: number;
+}
+
+function convertCoordinateViaNormalization(
+  x: number,
+  y: number,
+  originWidth: number,
+  originHeight: number
+): Vector2 {
+  console.log('display', x, y);
+
+  const normalizedStartX = x / originWidth;
+  const normalizedStartY = y / originHeight;
+
+  console.log('normalized', normalizedStartX, normalizedStartY);
+
+  const fixedStartX = normalizedStartX * (canvas.value?.width ?? 0);
+  const fixedStartY = normalizedStartY * (canvas.value?.height ?? 0);
+
+  console.log('fixed', fixedStartX, fixedStartY);
+
+  return {
+    x: fixedStartX,
+    y: fixedStartY,
+  };
+}
+
 function handleMouseDown(e: MouseEvent) {
   const { offsetX, offsetY } = getCanvasValues();
   e.preventDefault();
-  startX.value = parseInt(`${e.clientX - offsetX}`);
-  startY.value = parseInt(`${e.clientY - offsetY}`);
+  const displayCanvasStartX = parseInt(`${e.clientX - offsetX}`);
+  const displayCanvasStartY = parseInt(`${e.clientY - offsetY}`);
+
+  const resVector = convertCoordinateViaNormalization(
+    displayCanvasStartX,
+    displayCanvasStartY,
+    (e.target as HTMLCanvasElement).width,
+    (e.target as HTMLCanvasElement).height
+  );
+
+  startX.value = resVector.x;
+  startY.value = resVector.y;
+
   if (mousePlacement.value !== null)
     mousePlacement.value = {
       ...mousePlacement.value,
@@ -382,9 +438,6 @@ function handleMouseDown(e: MouseEvent) {
     if (testPlacementHit(startX.value, startY.value, placement)) {
       selectedComponentId.value = placement.id;
       emit('componentSelected', selectedComponentId.value);
-      // } else {
-      //   selectedComponentId.value = "";
-      //   emit("deselect");
     }
   });
   redraw();
@@ -413,23 +466,30 @@ function handleMouseMove(e: MouseEvent) {
   if (selectedComponentId.value === '') return;
   e.preventDefault();
   const { offsetX, offsetY } = getCanvasValues();
-  const mouseX = parseInt(`${e.clientX - offsetX}`);
-  const mouseY = parseInt(`${e.clientY - offsetY}`);
+  const displayCanvasMouseX = parseInt(`${e.clientX - offsetX}`);
+  const displayCanvasMouseY = parseInt(`${e.clientY - offsetY}`);
+
+  const resVector = convertCoordinateViaNormalization(
+    displayCanvasMouseX,
+    displayCanvasMouseY,
+    (e.target as HTMLCanvasElement).width,
+    (e.target as HTMLCanvasElement).height
+  );
 
   mousePlacement.value = {
-    x: mouseX,
-    y: mouseY,
+    x: resVector.x,
+    y: resVector.y,
     clicking:
       mousePlacement.value === null ? false : mousePlacement.value.clicking,
   };
 
   // Put your mousemove stuff here
-  const dx = mouseX - startX.value;
-  const dy = mouseY - startY.value;
-  startX.value = mouseX;
-  startY.value = mouseY;
+  const dx = resVector.x - startX.value;
+  const dy = resVector.y - startY.value;
+  console.log('dx,y', dx, dy);
+  startX.value = resVector.x;
+  startY.value = resVector.y;
 
-  // holy shit there has to be a better way
   const dataCopy = data;
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   dataCopy.components.find(
@@ -443,18 +503,33 @@ function handleMouseMove(e: MouseEvent) {
   redraw();
 }
 
+function resizeDisplayCanvas() {
+  if (displayCanvas.value) {
+    displayCanvas.value.width = displayCanvas.value?.offsetWidth;
+    displayCanvas.value.height = displayCanvas.value?.offsetHeight;
+    redraw();
+  }
+}
+
 onMounted(() => {
+  window.addEventListener('resize', () => {
+    resizeDisplayCanvas();
+  });
+
   if (canvas.value) {
     canvas.value.style.width = `${canvas.value?.width}px`;
     canvas.value.style.height = `${canvas.value?.height}px`;
-    // This is stupid. Why does it possibly return null? Don't answer that, it
-    // was rhetorical; The reason is that if the context identifier ('2d' in
-    // this case) isn't recognized, the fucking DOM returns null. JUST THROW AN
-    // ERROR!
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     ctx.value = canvas.value.getContext('2d')!;
     redraw();
   }
+
+  if (displayCanvas.value) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    displayCtx.value = displayCanvas.value.getContext('2d')!;
+  }
+
+  resizeDisplayCanvas();
 });
 
 onUpdated(() => {
@@ -471,10 +546,11 @@ watch(
 </script>
 
 <template>
+  <canvas class="contain" ref="canvas" :width="1280" :height="720" />
   <canvas
-    ref="canvas"
-    :width="width"
-    :height="height"
+    class="display"
+    ref="displayCanvas"
+    @resize="resizeDisplayCanvas()"
     @mousedown="handleMouseDown"
     @mouseup="handleMouseUp"
     @mouseout="handleMouseOut"
@@ -483,8 +559,19 @@ watch(
 </template>
 
 <style scoped lang="scss">
-canvas {
+canvas.display {
+  height: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+canvas.contain {
   width: 1280px;
   height: 720px;
+  visibility: hidden;
+  //opacity: 0.5;
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
 }
 </style>

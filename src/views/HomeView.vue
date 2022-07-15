@@ -62,14 +62,14 @@ main {
         @apply flex flex-col w-full divide-neutral-800 divide-y-[1px];
 
         .canvasViewport {
-          @apply flex-grow flex items-center justify-center;
+          @apply flex-grow flex items-center justify-center p-6;
         }
 
         .componentPanel {
-          @apply flex-grow-0 flex flex-col items-center p-8;
+          @apply flex flex-col items-center p-4;
 
           h2 {
-            @apply mb-8;
+            @apply mb-6;
           }
 
           .choices {
@@ -165,8 +165,8 @@ import NavBar from '@/components/NavBar.vue';
 
 import ChooseIconModal from '@/components/ChooseIconModal.vue';
 import ComponentTreeItem from '@/components/tree/ComponentTreeItem.vue';
-// codemirror css
 
+// codemirror css
 import 'codemirror/mode/javascript/javascript.js';
 import '../assets/base16-dark-modified.css';
 
