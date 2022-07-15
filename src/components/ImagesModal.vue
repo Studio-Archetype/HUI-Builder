@@ -13,7 +13,7 @@ enum ModalPage {
   DELETE_CONFIRM = 'Confirm Deletion',
 }
 
-export interface ImagesModalProps {
+interface ImagesModalProps {
   open?: boolean;
   selectionMode?: boolean;
 }

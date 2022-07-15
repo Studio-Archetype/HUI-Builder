@@ -136,7 +136,7 @@ import Ajv from 'ajv';
 import Codemirror from 'codemirror-editor-vue3';
 
 // types
-import type { Doc, EditorConfiguration } from 'codemirror';
+import type { Doc, Editor, EditorConfiguration } from 'codemirror';
 import type {
   Component,
   Deco,
@@ -277,8 +277,8 @@ function cmChange() {
   validate();
 }
 
-function cmCursor(doc: Doc) {
-  const cursor = doc.getCursor();
+function cmCursor(instance: Editor) {
+  const cursor = instance.getDoc().getCursor();
   line.value = cursor.line;
   char.value = cursor.ch;
 }

@@ -7,7 +7,12 @@
       "@/*": ["./src/*"]
     },
     "noImplicitThis": true,
+    "types": [
+      "offscreencanvas",
+      "uuid"
+    ]
   },
+
   "references": [
     {
       "path": "./tsconfig.vite-config.json"

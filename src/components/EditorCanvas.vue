@@ -51,7 +51,7 @@ const canvas = ref<OffscreenCanvas>(
   new OffscreenCanvas(fixedWidth, fixedHeight)
 );
 const displayCanvas = ref<HTMLCanvasElement>();
-const ctx = ref<CanvasRenderingContext2D>();
+const ctx = ref<OffscreenCanvasRenderingContext2D>();
 const displayCtx = ref<CanvasRenderingContext2D>();
 const selectedComponentId = ref<string>('');
 const mousePlacement = ref<{ x: number; y: number; clicking: boolean } | null>(
