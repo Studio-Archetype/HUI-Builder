@@ -333,7 +333,7 @@ function componentIdChange(e: Event) {
   const oldValue = activeComponentId.value;
 
   if (projectStore.project.components.find((it) => it.id === newValue)) {
-    // taken, cancel this shit and give a warning
+    // taken, cancel and give a warning
     // todo: warning
     return;
   }

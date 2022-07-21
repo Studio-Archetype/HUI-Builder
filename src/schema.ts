@@ -28,7 +28,7 @@ export interface Toggle extends _ComponentData {
 
 export type ComponentData = Deco | Button | Toggle;
 
-export type IconType = 'text' | 'textImage';
+export type IconType = 'text' | 'textImage' | 'animatedTextImage' | 'item';
 
 export interface _Icon {
   type: IconType;
@@ -36,6 +36,16 @@ export interface _Icon {
 
 export interface TextImageIcon extends _Icon {
   path: string;
+}
+
+export interface AnimatedTextImageIcon extends _Icon {
+  path: string | string[];
+}
+
+export interface ItemIcon extends _Icon {
+  item: string;
+  count: number;
+  customModelData: number;
 }
 
 export interface TextIcon extends _Icon {
