@@ -12,7 +12,8 @@ import type {
   Toggle
 } from '@/schema';
 import { getComponentDisplay } from '@/schema';
-import { ImageDef, useImageStore } from '@/stores/images';
+import type { ImageDef } from '@/stores/images';
+import { useImageStore } from '@/stores/images';
 import { useProjectStore } from '@/stores/project';
 import type { Dimension } from '@/lib/image';
 import { getImage, imageToColorMap } from '@/lib/image';

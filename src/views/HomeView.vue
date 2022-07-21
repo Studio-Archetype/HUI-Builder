@@ -147,6 +147,7 @@ import type {
 
 // lib
 import { downloadSchema, getComponentDisplay } from '@/schema';
+import type { ImageDef } from '@/stores/images';
 import { useImageStore } from '@/stores/images';
 import { useProjectStore } from '@/stores/project';
 import { storeToRefs } from 'pinia';
@@ -169,6 +170,7 @@ import ComponentTreeItem from '@/components/tree/ComponentTreeItem.vue';
 // codemirror css
 import 'codemirror/mode/javascript/javascript.js';
 import '../assets/base16-dark-modified.css';
+import { v4 as uuidV4 } from 'uuid';
 
 // data
 const imageStore = useImageStore();
@@ -422,6 +424,34 @@ window.addEventListener('keydown', (e: KeyboardEvent) => {
     }
   }
 });
+
+function addText(text = 'Text Element') {
+  projectStore.addComponent({
+    id: uuidV4(),
+    offset: [0, 0, 0],
+    data: {
+      type: 'decoration',
+      icon: {
+        type: 'text',
+        text,
+      },
+    },
+  });
+}
+
+function addImage(image: ImageDef) {
+  projectStore.addComponent({
+    id: uuidV4(),
+    offset: [0, 0, 0],
+    data: {
+      type: 'decoration',
+      icon: {
+        type: 'textImage',
+        path: image.path,
+      },
+    },
+  });
+}
 </script>
 
 <template>
@@ -445,6 +475,8 @@ window.addEventListener('keydown', (e: KeyboardEvent) => {
       :open="chooseIconStaticModalOpen"
       @close="chooseIconStaticModalOpen = false"
       title="Add a Static Component"
+      @text="addText()"
+      @image="addImage"
     />
     <about-modal :open="aboutModalOpen" @close="aboutModalOpen = false" />
 

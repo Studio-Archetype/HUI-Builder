@@ -10,14 +10,10 @@ import ImageList from '@/components/imageList/ImageList.vue';
 
 import type { IconType } from '@/schema';
 import type { ImageDef } from '@/stores/images';
-import { useProjectStore } from '@/stores/project';
-import { useImageStore } from '@/stores/images';
 
-const imageStore = useImageStore();
-const projectStore = useProjectStore();
 const iconType = ref<IconType | null>(null);
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'text', 'image']);
 const props = defineProps({
   open: {
     type: Boolean,
@@ -38,35 +34,13 @@ function close() {
   emit('close');
 }
 
-function addText(text = 'Text Element') {
-  projectStore.addComponent({
-    id: uuidV4(),
-    offset: [0, 0, 0],
-    data: {
-      type: 'decoration',
-      icon: {
-        type: 'text',
-        text,
-      },
-    },
-  });
-
+function image(image: ImageDef) {
+  emit('image', image);
   close();
 }
 
-function addImage(image: ImageDef) {
-  projectStore.addComponent({
-    id: uuidV4(),
-    offset: [0, 0, 0],
-    data: {
-      type: 'decoration',
-      icon: {
-        type: 'textImage',
-        path: image.path,
-      },
-    },
-  });
-
+function textSelected() {
+  emit('text');
   close();
 }
 
@@ -74,7 +48,7 @@ watch(
   () => props.type,
   () => {
     iconType.value = props.type;
-    if (iconType.value === 'text') addText();
+    if (iconType.value === 'text') textSelected();
   }
 );
 </script>
@@ -102,7 +76,7 @@ watch(
             selectable
             show-add-btn
             :allow-delete="false"
-            @imageSelected="addImage"
+            @imageSelected="image"
           />
         </template>
         <div v-else>
@@ -114,7 +88,7 @@ watch(
             ></font-awesome-icon>
             Image
           </div>
-          <div class="choice" role="button" @click="addText()">
+          <div class="choice" role="button" @click="textSelected">
             <font-awesome-icon
               fixed-width
               :icon="faFont"

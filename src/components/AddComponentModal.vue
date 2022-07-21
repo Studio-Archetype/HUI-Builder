@@ -2,6 +2,7 @@
 import Modal from '@/components/modal/Modal.vue';
 import ModalToolbar from '@/components/modal/ModalToolbar.vue';
 import ModalBody from '@/components/modal/ModalBody.vue';
+import ModalFooter from '@/components/modal/ModalFooter.vue';
 import { ref, watch } from 'vue';
 import type { PropType } from 'vue';
 
@@ -21,7 +22,7 @@ const props = defineProps({
 });
 
 const page = ref<ComponentAddType | null>(props.type);
-const newImageImageInput = ref('');
+const newButtonTextInput = ref('');
 
 watch(
   () => props.type,
@@ -31,13 +32,17 @@ watch(
 );
 
 function clear() {
-  newImageImageInput.value = '';
+  newButtonTextInput.value = '';
   page.value = null;
 }
 
 function close() {
   emit('close');
   clear();
+}
+
+function addButton() {
+  //
 }
 </script>
 
@@ -53,18 +58,17 @@ function close() {
     </modal-toolbar>
     <modal-body>
       <template v-if="page !== null">
-        <!--    <template v-if="page === 'static'">-->
-        <!--      <div class="page">-->
-        <!--        <div class="form">-->
-        <!--          <label for="newTextTextInput">Text</label>-->
-        <!--          <input id="newTextTextInput" v-model="newTextTextInput" />-->
-        <!--        </div>-->
-        <!--      </div>-->
-        <!--      <modal-footer>-->
-        <!--        <button class="button faint" @click="clear">Cancel</button>-->
-        <!--        <button class="button" @click="addText">Add</button>-->
-        <!--      </modal-footer>-->
-        <!--    </template>-->
+        <template v-if="page === 'button'">
+          <div class="page">
+            <div class="form">
+              <label for="newButtonTextInput">Text</label>
+              <input id="newButtonTextInput" v-model="newButtonTextInput" />
+            </div>
+          </div>
+          <modal-footer>
+            <button class="button" @click="addButton">Add</button>
+          </modal-footer>
+        </template>
       </template>
     </modal-body>
   </modal>

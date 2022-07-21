@@ -7,7 +7,7 @@ import { ensurePath } from '@/lib/image';
 import { useImageStore } from '@/stores/images';
 
 const imageStore = useImageStore();
-const emit = defineEmits(['imageSelected', 'edit', 'delete']);
+const emit = defineEmits(['imageSelected', 'delete']);
 defineProps({
   selectable: {
     type: Boolean,
@@ -25,10 +25,6 @@ defineProps({
 
 function click(image: ImageDef) {
   emit('imageSelected', image);
-}
-
-function emitEdit(image: ImageDef) {
-  emit('edit', image);
 }
 
 function emitDelete(image: ImageDef) {
@@ -71,7 +67,6 @@ function chooseImage() {
       :selectable="selectable"
       :image="imageDef"
       @click="click(imageDef)"
-      @edit="emitEdit(imageDef)"
       :show-delete="allowDelete"
       @delete="emitDelete(imageDef)"
     />
