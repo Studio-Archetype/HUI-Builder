@@ -136,7 +136,7 @@ import Ajv from 'ajv';
 import Codemirror from 'codemirror-editor-vue3';
 
 // types
-import type { Doc, Editor, EditorConfiguration } from 'codemirror';
+import type { Editor, EditorConfiguration } from 'codemirror';
 import type {
   Component,
   Deco,

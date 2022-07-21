@@ -211,12 +211,7 @@ async function drawImage(imageDef: ImageDef, offsetX: number, offsetY: number) {
           if (cursorX > canvas.value.width) break;
           if (!(cursorX + ICON_PX_SIZE < 0)) {
             ctx.value.fillStyle = `rgba(${pixel.r}, ${pixel.g}, ${pixel.b}, ${pixel.a})`;
-            ctx.value?.fillRect(
-              cursorX,
-              cursorY,
-              ICON_PX_SIZE,
-              ICON_PX_SIZE
-            );
+            ctx.value?.fillRect(cursorX, cursorY, ICON_PX_SIZE, ICON_PX_SIZE);
           }
 
           cursorX += ICON_PX_SIZE + ICON_PX_GAP;

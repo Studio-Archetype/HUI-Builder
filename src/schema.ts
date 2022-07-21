@@ -105,6 +105,25 @@ export async function downloadSchema(
   return await resp.json();
 }
 
+export function getIconDisplayDetail(icon: Icon): string {
+  let ret: string;
+  switch (icon.type) {
+    case 'text':
+      ret = 'Text';
+      break;
+    case 'textImage':
+      ret = 'Image';
+      break;
+    case 'animatedTextImage':
+      ret = 'Animated';
+      break;
+    case 'item':
+      ret = 'Item';
+      break;
+  }
+  return ret;
+}
+
 export function getComponentDisplay(
   component: Component,
   detail = false
@@ -128,12 +147,23 @@ export function getComponentDisplay(
 
       break;
     }
-    case 'button':
+    case 'button': {
       name = 'Button';
+      const button = component.data as Button;
+      detailText = `(${getIconDisplayDetail(button.icon)})`;
       break;
-    case 'toggle':
+    }
+    case 'toggle': {
       name = 'Toggle';
+      const toggle = component.data as Toggle;
+      const trueHalf = getIconDisplayDetail(toggle.trueIcon);
+      const falseHalf = getIconDisplayDetail(toggle.falseIcon);
+
+      if (toggle.trueIcon.type === toggle.falseIcon.type)
+        detailText = `(${trueHalf})`;
+      else detailText = `(${trueHalf} / ${falseHalf})`;
       break;
+    }
     default:
       name = 'Unknown Component';
   }
