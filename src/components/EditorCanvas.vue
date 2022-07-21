@@ -195,12 +195,24 @@ async function drawIcon(icon: Icon, offsetX: number, offsetY: number) {
 
           let cursorY = offsetY;
           for (const row of imageData) {
+            if (cursorY > canvas.value.height) break;
+
             let cursorX = offsetX;
-            for (const pixel of row) {
-              ctx.value.fillStyle = `rgba(${pixel.r}, ${pixel.g}, ${pixel.b}, ${pixel.a})`;
-              ctx.value?.fillRect(cursorX, cursorY, ICON_PX_SIZE, ICON_PX_SIZE);
-              cursorX += ICON_PX_SIZE + ICON_PX_GAP;
-            }
+            if (!(cursorY + ICON_PX_SIZE < 0))
+              for (const pixel of row) {
+                if (cursorX > canvas.value.width) break;
+                if (!(cursorX + ICON_PX_SIZE < 0)) {
+                  ctx.value.fillStyle = `rgba(${pixel.r}, ${pixel.g}, ${pixel.b}, ${pixel.a})`;
+                  ctx.value?.fillRect(
+                    cursorX,
+                    cursorY,
+                    ICON_PX_SIZE,
+                    ICON_PX_SIZE
+                  );
+                }
+
+                cursorX += ICON_PX_SIZE + ICON_PX_GAP;
+              }
 
             cursorY += ICON_PX_SIZE + ICON_PX_GAP;
           }
