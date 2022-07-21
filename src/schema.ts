@@ -38,24 +38,28 @@ export interface _Icon {
 }
 
 export interface TextImageIcon extends _Icon {
+  type: 'textImage';
   path: string;
 }
 
 export interface AnimatedTextImageIcon extends _Icon {
+  type: 'animatedTextImage'
   path: string | string[];
 }
 
 export interface ItemIcon extends _Icon {
+  type: 'item';
   item: string;
   count: number;
   customModelData: number;
 }
 
 export interface TextIcon extends _Icon {
+  type: 'text';
   text: string;
 }
 
-export type Icon = TextImageIcon | TextIcon;
+export type Icon = TextImageIcon | TextIcon | AnimatedTextImageIcon | ItemIcon;
 
 export type ActionType = 'command' | 'sound';
 
@@ -64,10 +68,12 @@ export interface _Action {
 }
 
 export interface CommandAction extends _Action {
+  type: 'command';
   command: string;
   source: 'server' | 'player';
 }
 export interface SoundAction extends _Action {
+  type: 'sound';
   sound: string;
   source:
     | 'master'
@@ -140,6 +146,13 @@ export function getComponentDisplay(
           break;
         case 'textImage':
           name = 'Image';
+          break;
+        case 'animatedTextImage':
+          name = 'Animation';
+          break;
+        case 'item':
+          detailText = `(${((component.data as Deco).icon as ItemIcon).item})`;
+          name = 'Item';
           break;
         default:
           name = 'Decoration';
