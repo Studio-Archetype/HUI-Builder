@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUpdated, reactive, ref, watch } from 'vue';
 import type {
+  AnimatedTextImageIcon,
   Button,
   Component,
   Deco,
@@ -8,10 +9,10 @@ import type {
   Icon,
   TextIcon,
   TextImageIcon,
-  Toggle,
+  Toggle
 } from '@/schema';
 import { getComponentDisplay } from '@/schema';
-import { useImageStore } from '@/stores/images';
+import { ImageDef, useImageStore } from '@/stores/images';
 import { useProjectStore } from '@/stores/project';
 import type { Dimension } from '@/lib/image';
 import { getImage, imageToColorMap } from '@/lib/image';
@@ -108,6 +109,15 @@ watch(
   { deep: true }
 );
 
+async function calculateImageSize(imageDef: ImageDef): Promise<Dimension> {
+  const imageData = imageToColorMap(await getImage(imageDef));
+  const dimX = imageData[0].length;
+  const dimY = imageData.length;
+  const boundX = dimX * ICON_PX_SIZE + (dimX - 1) * ICON_PX_GAP;
+  const boundY = dimY * ICON_PX_SIZE + (dimY - 1) * ICON_PX_GAP;
+  return { width: boundX, height: boundY };
+}
+
 async function calculateIconSize(icon: Icon): Promise<Dimension> {
   const canvas = document.createElement('canvas');
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -128,14 +138,25 @@ async function calculateIconSize(icon: Icon): Promise<Dimension> {
     case 'textImage': {
       const textImageIcon = icon as TextImageIcon;
       const imageDef = imageStore.imageByPath(textImageIcon.path);
-      if (imageDef) {
-        const imageData = imageToColorMap(await getImage(imageDef));
-        const dimX = imageData[0].length;
-        const dimY = imageData.length;
-        const boundX = dimX * ICON_PX_SIZE + (dimX - 1) * ICON_PX_GAP;
-        const boundY = dimY * ICON_PX_SIZE + (dimY - 1) * ICON_PX_GAP;
-        return { width: boundX, height: boundY };
-      } else return { width: 0, height: 0 };
+      if (imageDef) return calculateImageSize(imageDef);
+      else return { width: 0, height: 0 };
+    }
+    case 'animatedTextImage': {
+      const animatedTextImageIcon = icon as AnimatedTextImageIcon;
+      const imageDef = imageStore.imageByPath(
+        Array.isArray(animatedTextImageIcon.path)
+          ? animatedTextImageIcon.path[0]
+          : animatedTextImageIcon.path
+      );
+      if (imageDef) return calculateImageSize(imageDef);
+      else return { width: 0, height: 0 };
+    }
+    case 'item': {
+      // todo: size based on assets
+      return {
+        width: 16 * ICON_PX_SIZE + (16 - 1) * ICON_PX_GAP,
+        height: 16 * ICON_PX_SIZE + (16 - 1) * ICON_PX_GAP,
+      };
     }
   }
 }
@@ -175,6 +196,36 @@ function drawBackdrop(): Promise<void> {
     });
 }
 
+async function drawImage(imageDef: ImageDef, offsetX: number, offsetY: number) {
+  if (ctx.value) {
+    const imageData = imageToColorMap(await getImage(imageDef));
+
+    let cursorY = offsetY;
+    for (const row of imageData) {
+      if (cursorY > canvas.value.height) break;
+
+      let cursorX = offsetX;
+      if (!(cursorY + ICON_PX_SIZE < 0))
+        for (const pixel of row) {
+          if (cursorX > canvas.value.width) break;
+          if (!(cursorX + ICON_PX_SIZE < 0)) {
+            ctx.value.fillStyle = `rgba(${pixel.r}, ${pixel.g}, ${pixel.b}, ${pixel.a})`;
+            ctx.value?.fillRect(
+              cursorX,
+              cursorY,
+              ICON_PX_SIZE,
+              ICON_PX_SIZE
+            );
+          }
+
+          cursorX += ICON_PX_SIZE + ICON_PX_GAP;
+        }
+
+      cursorY += ICON_PX_SIZE + ICON_PX_GAP;
+    }
+  }
+}
+
 async function drawIcon(icon: Icon, offsetX: number, offsetY: number) {
   if (canvas.value && ctx.value) {
     switch (icon.type) {
@@ -190,33 +241,21 @@ async function drawIcon(icon: Icon, offsetX: number, offsetY: number) {
       case 'textImage': {
         const textImageIcon = icon as TextImageIcon;
         const imageDef = imageStore.imageByPath(textImageIcon.path);
-        if (imageDef) {
-          const imageData = imageToColorMap(await getImage(imageDef));
-
-          let cursorY = offsetY;
-          for (const row of imageData) {
-            if (cursorY > canvas.value.height) break;
-
-            let cursorX = offsetX;
-            if (!(cursorY + ICON_PX_SIZE < 0))
-              for (const pixel of row) {
-                if (cursorX > canvas.value.width) break;
-                if (!(cursorX + ICON_PX_SIZE < 0)) {
-                  ctx.value.fillStyle = `rgba(${pixel.r}, ${pixel.g}, ${pixel.b}, ${pixel.a})`;
-                  ctx.value?.fillRect(
-                    cursorX,
-                    cursorY,
-                    ICON_PX_SIZE,
-                    ICON_PX_SIZE
-                  );
-                }
-
-                cursorX += ICON_PX_SIZE + ICON_PX_GAP;
-              }
-
-            cursorY += ICON_PX_SIZE + ICON_PX_GAP;
-          }
-        }
+        if (imageDef) await drawImage(imageDef, offsetX, offsetY);
+        break;
+      }
+      case 'animatedTextImage': {
+        const animatedTextImageIcon = icon as AnimatedTextImageIcon;
+        const imageDef = imageStore.imageByPath(
+          Array.isArray(animatedTextImageIcon.path)
+            ? animatedTextImageIcon.path[0]
+            : animatedTextImageIcon.path
+        );
+        if (imageDef) await drawImage(imageDef, offsetX, offsetY);
+        break;
+      }
+      case 'item': {
+        // todo: item draw code
         break;
       }
     }
@@ -331,13 +370,16 @@ async function redraw() {
         case 'button': {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const buttonData = component.data as Button;
-          // todo: draw logic
+          await drawIcon(buttonData.icon, componentOffsetX, componentOffsetY);
           break;
         }
         case 'toggle': {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const toggleData = component.data as Toggle;
-          // todo: draw logic
+          await drawIcon(
+            toggleData.trueIcon,
+            componentOffsetX,
+            componentOffsetY
+          );
           break;
         }
       }

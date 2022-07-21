@@ -7,16 +7,19 @@ export interface _ComponentData {
 }
 
 export interface Button extends _ComponentData {
+  type: 'button';
   actions: Action[];
   highlightModifier: number;
   icon: Icon;
 }
 
 export interface Deco extends _ComponentData {
+  type: 'decoration';
   icon: Icon;
 }
 
 export interface Toggle extends _ComponentData {
+  type: 'toggle';
   highlightModifier: number;
   condition: string;
   expectedValue: string;
