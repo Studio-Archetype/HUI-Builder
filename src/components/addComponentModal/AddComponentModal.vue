@@ -55,6 +55,7 @@ function clear() {
   newButtonTextInput.value = '';
   newButtonActions.value = [];
   newButtonIconValue.value = undefined;
+  newButtonHighlightModifier.value = 0;
   page.value = null;
 }
 

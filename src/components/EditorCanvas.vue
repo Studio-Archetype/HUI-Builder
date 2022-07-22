@@ -85,6 +85,19 @@ async function convertPlacements(): Promise<ComponentPlacement[]> {
             height: Math.round(size.height),
           };
         }
+        case 'button': {
+          const size = await calculateIconSize((it.data as Button).icon);
+          return {
+            id: it.id,
+            x: it.offset[0],
+            y:
+              (it.data as Button).icon.type === 'text'
+                ? it.offset[1] + ICON_FONT_SHIFT
+                : it.offset[1],
+            width: Math.round(size.width),
+            height: Math.round(size.height),
+          };
+        }
         default:
           return {
             id: '',
@@ -367,6 +380,60 @@ async function redraw() {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const buttonData = component.data as Button;
           await drawIcon(buttonData.icon, componentOffsetX, componentOffsetY);
+          const iconBounds = await calculateIconSize(buttonData.icon);
+
+          let boundColor = '#efefef';
+          let doBox = false;
+
+          if (props.showBounds) {
+            boundColor = 'red';
+            doBox = true;
+          }
+
+          if (
+            props.activeComponentId &&
+            props.activeComponentId === component.id
+          )
+            doBox = true;
+
+          if (buttonData.icon.type === 'textImage') {
+            const imgDef = imageStore.imageByPath(
+              (buttonData.icon as TextImageIcon).path
+            );
+            if (imgDef) {
+              const image = await getImage(imgDef);
+              const imageData = imageToColorMap(image);
+
+              if (imageData.length > 16 || imageData[0].length > 16) {
+                doBox = true;
+                boundColor = '#dc2626';
+              }
+            }
+          }
+
+          if (doBox) {
+            ctx.value.strokeStyle = boundColor;
+            ctx.value.lineWidth = 1;
+            ctx.value?.strokeRect(
+              componentOffsetX,
+              buttonData.icon.type === 'text'
+                ? componentOffsetY + ICON_FONT_SHIFT
+                : componentOffsetY,
+              iconBounds.width,
+              iconBounds.height
+            );
+
+            ctx.value.fillStyle = boundColor;
+            ctx.value.font = '12px sans-serif';
+            ctx.value.textBaseline = 'bottom';
+            ctx.value?.fillText(
+              getComponentDisplay(component),
+              componentOffsetX,
+              buttonData.icon.type === 'text'
+                ? componentOffsetY + ICON_FONT_SHIFT
+                : componentOffsetY
+            );
+          }
           break;
         }
         case 'toggle': {
