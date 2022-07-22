@@ -72,23 +72,38 @@ export interface CommandAction extends _Action {
   command: string;
   source: 'server' | 'player';
 }
+
+export type SoundSource = 'master'
+  | 'music'
+  | 'record'
+  | 'weather'
+  | 'block'
+  | 'hostile'
+  | 'neutral'
+  | 'player'
+  | 'ambient'
+  | 'voice';
+
 export interface SoundAction extends _Action {
   type: 'sound';
   sound: string;
-  source:
-    | 'master'
-    | 'music'
-    | 'record'
-    | 'weather'
-    | 'block'
-    | 'hostile'
-    | 'neutral'
-    | 'player'
-    | 'ambient'
-    | 'voice';
+  source: SoundSource;
   volume: number;
   pitch: number;
 }
+
+export const soundSources: SoundSource[] = [
+  'master',
+  'music',
+  'record',
+  'weather',
+  'block',
+  'hostile',
+  'neutral',
+  'player',
+  'ambient',
+  'voice',
+];
 
 export type Action = CommandAction | SoundAction;
 
@@ -111,7 +126,7 @@ export async function downloadSchema(
   return await resp.json();
 }
 
-export function getIconDisplayDetail(icon: Icon): string {
+export function getIconDisplayName(icon: Icon): string {
   let ret: string;
   switch (icon.type) {
     case 'text':
@@ -130,6 +145,34 @@ export function getIconDisplayDetail(icon: Icon): string {
   return ret;
 }
 
+export function getIconDetailText(icon: Icon): string {
+  let ret: string;
+  switch (icon.type) {
+    case 'text':
+      ret = `(${(icon as TextIcon).text})`;
+      break;
+    case 'textImage':
+      ret = `(${(icon as TextImageIcon).path})`;
+      break;
+    case 'animatedTextImage': {
+      const anim = icon as AnimatedTextImageIcon;
+      if (Array.isArray(anim.path)) ret = `(${anim.path[0]})`;
+      else ret = `(${anim.path})`;
+      break;
+    }
+    case 'item':
+      ret = `(${(icon as ItemIcon).item})`;
+      break;
+  }
+  return ret;
+}
+
+export function getIconDisplay(icon: Icon, detail = false): string {
+  return `${getIconDisplayName(icon)}${
+    detail ? ` ${getIconDetailText(icon)}` : ''
+  }`;
+}
+
 export function getComponentDisplay(
   component: Component,
   detail = false
@@ -139,46 +182,28 @@ export function getComponentDisplay(
 
   switch (component.data.type) {
     case 'decoration': {
-      switch ((component.data as Deco).icon.type) {
-        case 'text':
-          detailText = `(${((component.data as Deco).icon as TextIcon).text})`;
-          name = 'Text';
-          break;
-        case 'textImage':
-          name = 'Image';
-          break;
-        case 'animatedTextImage':
-          name = 'Animation';
-          break;
-        case 'item':
-          detailText = `(${((component.data as Deco).icon as ItemIcon).item})`;
-          name = 'Item';
-          break;
-        default:
-          name = 'Decoration';
-      }
-
+      const deco = component.data as Deco;
+      name = getIconDisplayName(deco.icon);
+      detailText = getIconDetailText(deco.icon);
       break;
     }
     case 'button': {
-      name = 'Button';
       const button = component.data as Button;
-      detailText = `(${getIconDisplayDetail(button.icon)})`;
+      name = 'Button';
+      detailText = `(${getIconDisplayName(button.icon)})`;
       break;
     }
     case 'toggle': {
-      name = 'Toggle';
       const toggle = component.data as Toggle;
-      const trueHalf = getIconDisplayDetail(toggle.trueIcon);
-      const falseHalf = getIconDisplayDetail(toggle.falseIcon);
+      name = 'Toggle';
 
+      const trueHalf = getIconDisplayName(toggle.trueIcon);
+      const falseHalf = getIconDisplayName(toggle.falseIcon);
       if (toggle.trueIcon.type === toggle.falseIcon.type)
         detailText = `(${trueHalf})`;
       else detailText = `(${trueHalf} / ${falseHalf})`;
       break;
     }
-    default:
-      name = 'Unknown Component';
   }
 
   return `${name}${detail ? ` ${detailText}` : ''}`;

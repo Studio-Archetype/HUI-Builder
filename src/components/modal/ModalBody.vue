@@ -8,6 +8,12 @@
 .body {
   @apply flex flex-grow flex-col overflow-y-auto; // divide-y-[1px] divide-neutral-800;
 
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
   &:first-child {
     @apply rounded-t-lg;
   }

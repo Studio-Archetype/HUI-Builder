@@ -160,8 +160,8 @@ import TreeItem from '@/components/tree/TreeItem.vue';
 import SettingsModal from '@/components/SettingsModal.vue';
 import ImagesModal from '@/components/ImagesModal.vue';
 import AboutModal from '@/components/AboutModal.vue';
-import AddComponentModal from '@/components/AddComponentModal.vue';
-import type { ComponentAddType } from '@/components/AddComponentModal.vue';
+import AddComponentModal from '@/components/addComponentModal/AddComponentModal.vue';
+import type { ComponentAddType } from '@/components/addComponentModal/AddComponentModal.vue';
 import NavBar from '@/components/NavBar.vue';
 
 import ChooseIconModal from '@/components/ChooseIconModal.vue';

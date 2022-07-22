@@ -97,7 +97,7 @@ select {
         @apply bg-opacity-0;
     }
 
-    &:hover {
+    &:hover:not([disabled]) {
         @apply bg-opacity-25;
     }
 }
