@@ -75,6 +75,8 @@ function addButton() {
       highlightModifier: newButtonHighlightModifier.value,
     },
   });
+
+  close();
 }
 
 function chooseIconModalImage(image: ImageDef) {
@@ -184,7 +186,13 @@ function newButtonDeleteAction(index: number) {
             </div>
           </div>
           <modal-footer>
-            <button class="button" :disabled="!newButtonIconValue" @click="addButton">Add</button>
+            <button
+              class="button"
+              :disabled="!newButtonIconValue"
+              @click="addButton"
+            >
+              Add
+            </button>
           </modal-footer>
         </template>
       </template>
