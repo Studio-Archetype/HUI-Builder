@@ -18,10 +18,12 @@
     "codemirror": "^5.65.2",
     "codemirror-editor-vue3": "^2.0.6",
     "pinia": "^2.0.13",
+    "pinia-plugin-persistedstate": "^1.6.3",
     "sass": "^1.50.0",
     "uuid": "^8.3.2",
     "vue": "^3.2.31",
-    "vue-router": "^4.0.14"
+    "vue-router": "^4.0.14",
+    "vue-select": "^4.0.0-beta.3"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.0",
@@ -29,6 +31,7 @@
     "@types/node": "^16.11.26",
     "@types/offscreencanvas": "^2019.7.0",
     "@types/uuid": "^8.3.4",
+    "@types/vue-select": "^3.16.1",
     "@vitejs/plugin-vue": "^2.3.1",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^11.0.0",

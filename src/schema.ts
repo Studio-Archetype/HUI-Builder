@@ -43,7 +43,7 @@ export interface TextImageIcon extends _Icon {
 }
 
 export interface AnimatedTextImageIcon extends _Icon {
-  type: 'animatedTextImage'
+  type: 'animatedTextImage';
   path: string | string[];
 }
 
@@ -73,7 +73,8 @@ export interface CommandAction extends _Action {
   source: 'server' | 'player';
 }
 
-export type SoundSource = 'master'
+export type SoundSource =
+  | 'master'
   | 'music'
   | 'record'
   | 'weather'

@@ -4,6 +4,7 @@ import ModalToolbar from '@/components/modal/ModalToolbar.vue';
 import { useSettingsStore } from '@/stores/settings';
 import ModalFooter from '@/components/modal/ModalFooter.vue';
 import ModalBody from '@/components/modal/ModalBody.vue';
+import VersionSwitcher from '@/components/VersionSwitcher.vue';
 
 const settingsStore = useSettingsStore();
 const emit = defineEmits(['close']);
@@ -35,11 +36,29 @@ function close() {
           <input
             type="checkbox"
             id="debugFramesCheck"
-            v-model="settingsStore.settings.debugFrames"
+            v-model="settingsStore.debugFrames"
           />
           <label for="debugFramesCheck">
             Debug Frames:
-            {{ settingsStore.settings.debugFrames ? 'On' : 'Off' }}
+            {{ settingsStore.debugFrames ? 'On' : 'Off' }}
+          </label>
+        </div>
+
+        <div class="inputGroup">
+          <label>Minecraft Version:</label>
+          <VersionSwitcher />
+        </div>
+
+        <div class="inputGroup">
+          <input
+            type="checkbox"
+            id="devModeCheck"
+            v-model="settingsStore.devMode"
+          />
+          <label for="devModeCheck">
+            Developer Mode:
+            {{ settingsStore.devMode ? 'On' : 'Off' }}
+            (Only enable this if you know what you're doing)
           </label>
         </div>
       </div>

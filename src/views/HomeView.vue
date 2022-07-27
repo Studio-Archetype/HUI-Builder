@@ -171,6 +171,8 @@ import ComponentTreeItem from '@/components/tree/ComponentTreeItem.vue';
 import 'codemirror/mode/javascript/javascript.js';
 import '../assets/base16-dark-modified.css';
 import { v4 as uuidV4 } from 'uuid';
+import ChooseItemDropDown from '@/components/ChooseItemDropDown.vue';
+import VersionSwitcher from '@/components/VersionSwitcher.vue';
 
 // data
 const imageStore = useImageStore();
@@ -527,7 +529,7 @@ function addImage(image: ImageDef) {
             <editor-canvas
               :data="data"
               backdrop="https://cdn.discordapp.com/attachments/897227758340542505/963623720516210738/hui_backdrop.webp"
-              :show-bounds="settingsStore.settings.debugFrames"
+              :show-bounds="settingsStore.debugFrames"
               :activeComponentId="activeComponentId ?? undefined"
               @componentSelected="componentSelectedOnCanvas"
               @deselect="canvasDeselected"
@@ -585,7 +587,7 @@ function addImage(image: ImageDef) {
             </TreeView>
           </div>
 
-          <div v-if="activeComponent" class="detailPanel">
+          <div v-if="activeComponent" class="detailPanel flex-grow">
             <div class="header">{{ activeComponentDisplay }}</div>
             <template v-if="activeComponent.data.type === 'decoration'">
               <p
@@ -662,6 +664,11 @@ function addImage(image: ImageDef) {
                 @blur="componentIdChange"
               />
             </div>
+          </div>
+          <div class="detailPanel" v-if="settingsStore.devMode">
+            <div class="header mb-4">Developer View</div>
+            <choose-item-drop-down />
+            <!-- <version-switcher /> -->
           </div>
         </aside>
       </div>

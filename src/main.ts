@@ -1,14 +1,22 @@
+// framework
 import { createApp } from 'vue';
-import { createPinia } from 'pinia';
-import './index.scss';
 
+// third-party
+import { createPinia } from 'pinia';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import { library, config } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
+// components
 import App from './App.vue';
+
+// lib
 import router from './router';
+
+// styles
+import './index.scss';
 
 config.autoReplaceSvg = 'nest';
 
@@ -27,7 +35,9 @@ library.add(fas, fab);
 
 app.component('font-awesome-icon', FontAwesomeIcon);
 
-app.use(createPinia());
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
+app.use(pinia);
 app.use(router);
 
 app.mount('#app');
