@@ -17,8 +17,6 @@ export const useItemStore = defineStore(
     const lastFetched = ref<number>();
 
     async function fetchItems(version = settingsStore.minecraftVersion) {
-
-      console.log(`Fetching items for version ${version}`)
       const res = await fetch(
         `https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/pc/${version}/items.json`,
         {

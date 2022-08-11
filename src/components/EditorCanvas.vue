@@ -9,11 +9,12 @@ import type {
   Icon,
   TextIcon,
   TextImageIcon,
-  Toggle
+  Toggle,
 } from '@/schema';
 import { getComponentDisplay } from '@/schema';
 import type { ImageDef } from '@/stores/images';
 import { useImageStore } from '@/stores/images';
+import { useItemImageCacheStore } from '@/stores/itemImageCache';
 import { useProjectStore } from '@/stores/project';
 import type { Dimension } from '@/lib/image';
 import { getImage, imageToColorMap } from '@/lib/image';
@@ -28,8 +29,10 @@ const ICON_FONT_SIZE = 36;
 // const ICON_FONT = `${ICON_FONT_SIZE}px Minecraftia`;
 const ICON_FONT_SHIFT = 0;
 const ICON_FONT = `${ICON_FONT_SIZE}px sans-serif`;
+const ITEM_SIZE = ICON_PX_SIZE * 16 + ICON_PX_GAP * 15;
 
 const imageStore = useImageStore();
+const itemImageCache = useItemImageCacheStore();
 const projectStore = useProjectStore();
 const emit = defineEmits(['componentSelected', 'deselect']);
 const props = defineProps({
@@ -153,7 +156,7 @@ async function calculateIconSize(icon: Icon): Promise<Dimension> {
   switch (icon.type) {
     case 'text': {
       ctx.font = ICON_FONT;
-      const metrics = ctx.measureText((icon as TextIcon).text);
+      const metrics = ctx.measureText(icon.text);
       return {
         width: metrics.width,
         height:
@@ -163,8 +166,7 @@ async function calculateIconSize(icon: Icon): Promise<Dimension> {
       };
     }
     case 'textImage': {
-      const textImageIcon = icon as TextImageIcon;
-      const imageDef = imageStore.imageByPath(textImageIcon.path);
+      const imageDef = imageStore.imageByPath(icon.path);
       if (imageDef) return calculateImageSize(imageDef);
       else return { width: 0, height: 0 };
     }
@@ -179,10 +181,9 @@ async function calculateIconSize(icon: Icon): Promise<Dimension> {
       else return { width: 0, height: 0 };
     }
     case 'item': {
-      // todo: size based on assets
       return {
-        width: 16 * ICON_PX_SIZE + (16 - 1) * ICON_PX_GAP,
-        height: 16 * ICON_PX_SIZE + (16 - 1) * ICON_PX_GAP,
+        width: ITEM_SIZE,
+        height: ITEM_SIZE,
       };
     }
   }
@@ -252,39 +253,53 @@ async function drawIcon(icon: Icon, offsetX: number, offsetY: number) {
   if (canvas.value && ctx.value) {
     switch (icon.type) {
       case 'text': {
-        const textIcon = icon as TextIcon;
-
         ctx.value.font = ICON_FONT;
         ctx.value.textBaseline = 'top';
         ctx.value.fillStyle = '#ffffff';
-        ctx.value?.fillText(textIcon.text, offsetX, offsetY);
+        ctx.value?.fillText(icon.text, offsetX, offsetY);
         break;
       }
       case 'textImage': {
-        const textImageIcon = icon as TextImageIcon;
-        const imageDef = imageStore.imageByPath(textImageIcon.path);
+        const imageDef = imageStore.imageByPath(icon.path);
         if (imageDef) await drawImage(imageDef, offsetX, offsetY);
         break;
       }
       case 'animatedTextImage': {
-        const animatedTextImageIcon = icon as AnimatedTextImageIcon;
         const imageDef = imageStore.imageByPath(
-          Array.isArray(animatedTextImageIcon.path)
-            ? animatedTextImageIcon.path[0]
-            : animatedTextImageIcon.path
+          Array.isArray(icon.path) ? icon.path[0] : icon.path
         );
         if (imageDef) await drawImage(imageDef, offsetX, offsetY);
         break;
       }
       case 'item': {
-        // todo: item draw code
+        const imageDef = await itemImageCache.getItemImage(icon.item);
+        const img = new Image();
+        img.onload = () => {
+          ctx.value?.drawImage(
+            img,
+            0,
+            0,
+            img.width,
+            img.height,
+            offsetX,
+            offsetY,
+            ITEM_SIZE,
+            ITEM_SIZE
+          );
+        };
+        img.src = imageDef.content;
         break;
       }
     }
   }
 }
 
-async function drawIconBounds(icon: Icon, component: Component, componentOffsetX: number, componentOffsetY: number) {
+async function drawIconBounds(
+  icon: Icon,
+  component: Component,
+  componentOffsetX: number,
+  componentOffsetY: number
+) {
   if (ctx.value) {
     const iconBounds = await calculateIconSize(icon);
 
@@ -296,16 +311,11 @@ async function drawIconBounds(icon: Icon, component: Component, componentOffsetX
       doBox = true;
     }
 
-    if (
-      props.activeComponentId &&
-      props.activeComponentId === component.id
-    )
+    if (props.activeComponentId && props.activeComponentId === component.id)
       doBox = true;
 
     if (icon.type === 'textImage') {
-      const imgDef = imageStore.imageByPath(
-        (icon as TextImageIcon).path
-      );
+      const imgDef = imageStore.imageByPath((icon as TextImageIcon).path);
       if (imgDef) {
         const image = await getImage(imgDef);
         const imageData = imageToColorMap(image);

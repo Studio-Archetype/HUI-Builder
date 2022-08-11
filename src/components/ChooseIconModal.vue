@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { v4 as uuidV4 } from 'uuid';
 import { faImage, faFont } from '@fortawesome/free-solid-svg-icons';
 
 import Modal from '@/components/modal/Modal.vue';
