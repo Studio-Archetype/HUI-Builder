@@ -282,6 +282,10 @@ async function drawIcon(icon: Icon, offsetX: number, offsetY: number) {
         break;
       }
       case 'item': {
+        ctx.value.strokeStyle = '#00ff00';
+        ctx.value.lineWidth = 2;
+        ctx.value?.strokeRect(offsetX, offsetY, ITEM_SIZE, ITEM_SIZE);
+
         ctx.value.font = ICON_FONT;
         ctx.value.textBaseline = 'top';
         ctx.value.fillStyle = '#ffffff';
