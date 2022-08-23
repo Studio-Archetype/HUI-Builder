@@ -4,7 +4,7 @@ import { getComponentDisplay } from '@/schema';
 import TreeItem from './TreeItem.vue';
 import { computed } from 'vue';
 
-export interface ComponentTreeItemProps {
+interface ComponentTreeItemProps {
   component: Component;
   selected?: boolean;
 }

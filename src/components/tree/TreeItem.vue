@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-export interface TreeItemProps {
+interface TreeItemProps {
   toggleable?: boolean;
   root?: boolean;
   open?: boolean;
@@ -26,7 +26,7 @@ function click() {
   <div
     class="treeItem"
     :class="{
-      open: opened,
+      open: props.root || opened,
       toggleable: props.toggleable,
       root: props.root,
       selected: props.selected,
