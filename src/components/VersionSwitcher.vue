@@ -7,7 +7,7 @@ const settingsStore = useSettingsStore();
 const itemStore = useItemStore();
 const options = ['1.18', '1.19'];
 
-export interface VersionSwitcherProps {
+interface VersionSwitcherProps {
   inline?: boolean;
 }
 
@@ -32,7 +32,7 @@ async function upd(value: string) {
 <template>
   <select
     :value="settingsStore.minecraftVersion"
-    @change="(e) => upd(e.target.value)"
+    @change="(e) => upd((e.target as HTMLSelectElement).value)"
     :class="dynamicClasses"
   >
     <option v-for="(version, index) in options" :key="index">

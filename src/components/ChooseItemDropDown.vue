@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import VueSelect from 'vue-select';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { ItemDef } from '@/stores/items';
 import { useItemStore } from '@/stores/items';
 import { ref } from 'vue';
 
@@ -19,7 +21,7 @@ function itemSelected(value: string) {
   <VueSelect
     class="itemChooser"
     :options="itemStore.items"
-    :reduce="(item) => item.name"
+    :reduce="(item: ItemDef) => item.name"
     :modelValue="item"
     @update:modelValue="itemSelected"
     label="displayName"

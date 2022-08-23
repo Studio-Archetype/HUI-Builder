@@ -111,7 +111,7 @@ function editVolume(index: number, newVolume: number) {
           class="flex-grow"
           placeholder="/give @s diamond_block"
           :value="action.command"
-          @change="(e) => editCommand(index, e.target.value)"
+          @change="(e) => editCommand(index, (e.target as HTMLInputElement).value)"
         />
       </template>
 
@@ -121,11 +121,11 @@ function editVolume(index: number, newVolume: number) {
           placeholder="Sound"
           :size="1"
           :value="action.sound"
-          @change="(e) => editSound(index, e.target.value)"
+          @change="(e) => editSound(index, (e.target as HTMLInputElement).value)"
         />
         <select
           id="actionSoundSource"
-          @change="(e) => editSoundSource(index, e.target.value)"
+          @change="(e) => editSoundSource(index, (e.target as HTMLSelectElement).value as SoundSource)"
           :value="action.source"
         >
           <option v-for="source in soundSources" :key="source">
@@ -141,7 +141,7 @@ function editVolume(index: number, newVolume: number) {
           :min="1"
           :max="100"
           :value="action.volume"
-          @change="(e) => editVolume(index, e.target.value)"
+          @change="(e) => editVolume(index, parseInt((e.target as HTMLInputElement).value))"
         />
         <div class="labelIcon" title="Pitch">
           <font-awesome-icon :icon="faMusic"></font-awesome-icon>
@@ -151,7 +151,7 @@ function editVolume(index: number, newVolume: number) {
           :min="1"
           :max="100"
           :value="action.pitch"
-          @change="(e) => editPitch(index, e.target.value)"
+          @change="(e) => editPitch(index, parseInt((e.target as HTMLInputElement).value))"
         />
       </template>
       <button class="actionBtn" @click="switchType(index)">
@@ -160,7 +160,7 @@ function editVolume(index: number, newVolume: number) {
           fixed-width
         ></font-awesome-icon>
       </button>
-      <button class="actionBtn delete" @click="emitDelete">
+      <button class="actionBtn delete" @click="emitDelete(index)">
         <font-awesome-icon :icon="faTrashCan" fixed-width></font-awesome-icon>
       </button>
     </div>

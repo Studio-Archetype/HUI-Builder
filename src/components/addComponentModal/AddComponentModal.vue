@@ -174,7 +174,7 @@ function newButtonDeleteAction(index: number) {
                 <input
                   id="newButtonTextInput"
                   :value="newButtonIconValue.text"
-                  @change="(e) => setButtonText(e.target.value)"
+                  @change="(e) => setButtonText((e.target as HTMLInputElement).value)"
                 />
               </template>
 
