@@ -88,6 +88,17 @@ function chooseIconModalImage(image: ImageDef) {
   }
 }
 
+function chooseIconModalItem(item: string) {
+  if (page.value === 'button') {
+    newButtonIconValue.value = {
+      type: 'item',
+      item,
+      count: 0,
+      customModelData: 0,
+    };
+  }
+}
+
 function chooseIconModalText() {
   if (page.value === 'button') {
     newButtonIconValue.value = {
@@ -131,6 +142,7 @@ function newButtonDeleteAction(index: number) {
     @close="chooseIconModalOpen = false"
     @image="chooseIconModalImage"
     @text="chooseIconModalText"
+    @item="chooseIconModalItem"
   />
   <modal :open="open" width="40%">
     <modal-toolbar>

@@ -19,12 +19,8 @@ export const useItemImageCacheStore = defineStore(
 
     async function getItemImage(itemName: string): Promise<ImageDef> {
       return new Promise((resolve, reject) => {
-        for (const image of images.value) {
-          if (image.path === itemName) {
-            console.log("have", image);
-            return resolve(image);
-          }
-        }
+        for (const image of [...images.value])
+          if (image.path === itemName) return resolve(image);
 
         // nothing matches, add it
         const image = new Image();

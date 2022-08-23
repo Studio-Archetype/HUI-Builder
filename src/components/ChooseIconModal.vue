@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { faImage, faFont } from '@fortawesome/free-solid-svg-icons';
+import { faImage, faFont, faBox } from '@fortawesome/free-solid-svg-icons';
 
 import Modal from '@/components/modal/Modal.vue';
 import ModalToolbar from '@/components/modal/ModalToolbar.vue';
@@ -9,10 +9,12 @@ import ImageList from '@/components/imageList/ImageList.vue';
 
 import type { IconType } from '@/schema';
 import type { ImageDef } from '@/stores/images';
+import ChooseItemDropDown from '@/components/ChooseItemDropDown.vue';
+import ModalFooter from '@/components/modal/ModalFooter.vue';
 
 const iconType = ref<IconType | null>(null);
 
-const emit = defineEmits(['close', 'text', 'image']);
+const emit = defineEmits(['close', 'text', 'image', 'item']);
 const props = defineProps({
   open: {
     type: Boolean,
@@ -41,6 +43,16 @@ function image(image: ImageDef) {
 function textSelected() {
   emit('text');
   close();
+}
+
+const item = ref<string>('');
+
+function itemSelected() {
+  emit('item', item.value);
+}
+
+function itemValueChanged(itemName: string) {
+  item.value = itemName;
 }
 
 watch(
@@ -77,6 +89,20 @@ watch(
             :allow-delete="false"
             @imageSelected="image"
           />
+          <template v-if="iconType === 'item'">
+            <div class="p-4">
+              <choose-item-drop-down @selected="itemValueChanged" />
+            </div>
+            <modal-footer>
+              <button
+                class="button"
+                :disabled="!item"
+                @click="itemSelected"
+              >
+                Add
+              </button>
+            </modal-footer>
+          </template>
         </template>
         <div v-else>
           <div class="choice" role="button" @click="iconType = 'textImage'">
@@ -94,6 +120,14 @@ watch(
               class="mr-4"
             ></font-awesome-icon>
             Text
+          </div>
+          <div class="choice" role="button" @click="iconType = 'item'">
+            <font-awesome-icon
+              fixed-width
+              :icon="faBox"
+              class="mr-4"
+            ></font-awesome-icon>
+            Item
           </div>
         </div>
       </div>

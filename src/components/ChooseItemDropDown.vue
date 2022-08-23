@@ -1,9 +1,18 @@
 <script setup lang="ts">
 import VueSelect from 'vue-select';
 import { useItemStore } from '@/stores/items';
+import { ref } from 'vue';
 
 const itemStore = useItemStore();
 
+const emit = defineEmits(['selected']);
+
+const item = ref<string>();
+
+function itemSelected(value: string) {
+  item.value = value;
+  emit('selected', value);
+}
 </script>
 
 <template>
@@ -11,6 +20,8 @@ const itemStore = useItemStore();
     class="itemChooser"
     :options="itemStore.items"
     :reduce="(item) => item.name"
+    :modelValue="item"
+    @update:modelValue="itemSelected"
     label="displayName"
     placeholder="Select an item"
   ></VueSelect>

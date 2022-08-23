@@ -1758,10 +1758,10 @@ vue-router@^4.0.14:
   dependencies:
     "@vue/devtools-api" "^6.1.4"
 
-vue-select@^4.0.0-beta.3:
-  version "4.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/vue-select/-/vue-select-4.0.0-beta.3.tgz#12096cdc5701af94bac66a60e7bbe560d5ef1d54"
-  integrity sha512-sXufbTDluz26a39UUZE9jeh9Hojnn8zr9qDDUlVEBc7E0F+h3+Nzy8YzyFHuVNrrYLmK0zrPkb7hWFulAEW41Q==
+vue-select@^4.0.0-beta.4:
+  version "4.0.0-beta.4"
+  resolved "https://registry.yarnpkg.com/vue-select/-/vue-select-4.0.0-beta.4.tgz#51953ec7e2d44f2e5cefd0bffc39da3aca8beb51"
+  integrity sha512-gXde+UJy3eS3VxnGyutCVDZ0zP2jI9bdTFwhFHyNWt0depr3cU9rx5HrtmC9EVSFUV2Efjn0Pm6q0HWVIfaOag==
 
 vue-tsc@^0.38.5:
   version "0.38.5"

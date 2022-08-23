@@ -454,6 +454,24 @@ function addImage(image: ImageDef) {
     },
   });
 }
+
+function addItem(item: string) {
+  projectStore.addComponent({
+    id: uuidV4(),
+    offset: [0, 0, 0],
+    data: {
+      type: 'decoration',
+      icon: {
+        type: 'item',
+        item,
+        count: 0,
+        customModelData: 0,
+      },
+    },
+  });
+
+  chooseIconStaticModalOpen.value = false;
+}
 </script>
 
 <template>
@@ -477,8 +495,9 @@ function addImage(image: ImageDef) {
       :open="chooseIconStaticModalOpen"
       @close="chooseIconStaticModalOpen = false"
       title="Add a Static Component"
-      @text="addText()"
+      @text="addText"
       @image="addImage"
+      @item='addItem'
     />
     <about-modal :open="aboutModalOpen" @close="aboutModalOpen = false" />
 

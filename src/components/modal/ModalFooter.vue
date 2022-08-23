@@ -6,6 +6,6 @@
 
 <style scoped>
 .footer {
-  @apply flex flex-grow-0 justify-end p-2 bg-neutral-800;
+  @apply flex flex-grow-0 justify-end p-2 bg-neutral-800 rounded-b-lg;
 }
 </style>

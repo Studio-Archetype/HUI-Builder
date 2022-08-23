@@ -29,7 +29,7 @@ const ICON_FONT_SIZE = 36;
 // const ICON_FONT = `${ICON_FONT_SIZE}px Minecraftia`;
 const ICON_FONT_SHIFT = 0;
 const ICON_FONT = `${ICON_FONT_SIZE}px sans-serif`;
-const ITEM_SIZE = ICON_PX_SIZE * 16 + ICON_PX_GAP * 15;
+const ITEM_SIZE = 50;
 
 const imageStore = useImageStore();
 const itemImageCache = useItemImageCacheStore();
@@ -181,10 +181,20 @@ async function calculateIconSize(icon: Icon): Promise<Dimension> {
       else return { width: 0, height: 0 };
     }
     case 'item': {
+      ctx.font = ICON_FONT;
+      const metrics = ctx.measureText(icon.item);
       return {
-        width: ITEM_SIZE,
-        height: ITEM_SIZE,
+        width: metrics.width,
+        height:
+          metrics.actualBoundingBoxAscent +
+          metrics.actualBoundingBoxDescent +
+          2,
       };
+
+      // return {
+      //   width: ITEM_SIZE,
+      //   height: ITEM_SIZE,
+      // };
     }
   }
 }
@@ -272,22 +282,36 @@ async function drawIcon(icon: Icon, offsetX: number, offsetY: number) {
         break;
       }
       case 'item': {
-        const imageDef = await itemImageCache.getItemImage(icon.item);
-        const img = new Image();
-        img.onload = () => {
-          ctx.value?.drawImage(
-            img,
-            0,
-            0,
-            img.width,
-            img.height,
-            offsetX,
-            offsetY,
-            ITEM_SIZE,
-            ITEM_SIZE
-          );
-        };
-        img.src = imageDef.content;
+        ctx.value.font = ICON_FONT;
+        ctx.value.textBaseline = 'top';
+        ctx.value.fillStyle = '#ffffff';
+        ctx.value?.fillText(icon.item, offsetX, offsetY);
+
+        // old, broken (somehow?) code
+        // const context = ctx.value!;
+        // const imageDef = await itemImageCache.getItemImage(icon.item);
+        // const img = new Image();
+        // img.onload = (event) => {
+        //   console.log(event);
+        //   console.log(img);
+        //   // img.style.position = 'absolute';
+        //   // img.style.zIndex = '9000';
+        //   // img.style.top = '0';
+        //   // img.style.left = '0';
+        //   // document.body.appendChild(img);
+        //   context.drawImage(
+        //     img,
+        //     // 0,
+        //     // 0,
+        //     // img.naturalWidth,
+        //     // img.naturalHeight,
+        //     offsetX,
+        //     offsetY,
+        //     ITEM_SIZE,
+        //     ITEM_SIZE
+        //   );
+        // };
+        // img.src = (await import('../assets/dirt.png?url')).default as unknown as string;
         break;
       }
     }
