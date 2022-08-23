@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Modal from '@/components/modal/Modal.vue';
+import Modal from '@/components/modal/ModalBase.vue';
 import ModalToolbar from '@/components/modal/ModalToolbar.vue';
 import { useSettingsStore } from '@/stores/settings';
 import ModalFooter from '@/components/modal/ModalFooter.vue';

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import Modal from '@/components/modal/Modal.vue';
+import Modal from '@/components/modal/ModalBase.vue';
 import ModalToolbar from '@/components/modal/ModalToolbar.vue';
 import ModalBody from '@/components/modal/ModalBody.vue';
 import ModalFooter from '@/components/modal/ModalFooter.vue';
 import ChooseIconModal from '@/components/ChooseIconModal.vue';
-import { computed, ref, watch } from 'vue';
 import type { PropType } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { Action, Icon } from '@/schema';
 import { getIconDisplay } from '@/schema';
 import type { ImageDef } from '@/stores/images';
@@ -70,6 +70,7 @@ function addButton() {
     offset: [0, 0, 0],
     data: {
       type: 'button',
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       icon: newButtonIconValue.value!,
       actions: newButtonActions.value,
       highlightModifier: newButtonHighlightModifier.value,

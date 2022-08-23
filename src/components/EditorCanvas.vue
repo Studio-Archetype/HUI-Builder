@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUpdated, reactive, ref, watch } from 'vue';
+import { onMounted, onUpdated, reactive, ref, watch } from 'vue';
 import type {
   AnimatedTextImageIcon,
   Button,
@@ -7,7 +7,6 @@ import type {
   Deco,
   HuiData,
   Icon,
-  TextIcon,
   TextImageIcon,
   Toggle,
 } from '@/schema';
@@ -32,6 +31,7 @@ const ICON_FONT = `${ICON_FONT_SIZE}px sans-serif`;
 const ITEM_SIZE = 50;
 
 const imageStore = useImageStore();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const itemImageCache = useItemImageCacheStore();
 const projectStore = useProjectStore();
 const emit = defineEmits(['componentSelected', 'deselect']);

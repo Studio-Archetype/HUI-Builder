@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { faImage, faFont, faBox } from '@fortawesome/free-solid-svg-icons';
+import { faBox, faFont, faImage } from '@fortawesome/free-solid-svg-icons';
 
-import Modal from '@/components/modal/Modal.vue';
+import Modal from '@/components/modal/ModalBase.vue';
 import ModalToolbar from '@/components/modal/ModalToolbar.vue';
 import ModalBody from '@/components/modal/ModalBody.vue';
 import ImageList from '@/components/imageList/ImageList.vue';
@@ -94,11 +94,7 @@ watch(
               <choose-item-drop-down @selected="itemValueChanged" />
             </div>
             <modal-footer>
-              <button
-                class="button"
-                :disabled="!item"
-                @click="itemSelected"
-              >
+              <button class="button" :disabled="!item" @click="itemSelected">
                 Add
               </button>
             </modal-footer>

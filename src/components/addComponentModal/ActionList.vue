@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
 import type { Action, CommandAction, SoundAction, SoundSource } from '@/schema';
+import { soundSources } from '@/schema';
 import {
   faAdd,
-  faTrashCan,
-  faTerminal,
-  faVolumeHigh,
   faMusic,
+  faTerminal,
+  faTrashCan,
+  faVolumeHigh,
 } from '@fortawesome/free-solid-svg-icons';
-import { soundSources } from '@/schema';
 
 const emit = defineEmits(['edit', 'new', 'delete']);
 const props = defineProps({

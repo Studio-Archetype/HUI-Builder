@@ -140,11 +140,10 @@ import type { Editor, EditorConfiguration } from 'codemirror';
 import type {
   Component,
   Deco,
-  TextIcon,
   HuiData,
+  TextIcon,
   TextImageIcon,
 } from '@/schema';
-
 // lib
 import { downloadSchema, getComponentDisplay } from '@/schema';
 import type { ImageDef } from '@/stores/images';
@@ -160,8 +159,8 @@ import TreeItem from '@/components/tree/TreeItem.vue';
 import SettingsModal from '@/components/SettingsModal.vue';
 import ImagesModal from '@/components/ImagesModal.vue';
 import AboutModal from '@/components/AboutModal.vue';
-import AddComponentModal from '@/components/addComponentModal/AddComponentModal.vue';
 import type { ComponentAddType } from '@/components/addComponentModal/AddComponentModal.vue';
+import AddComponentModal from '@/components/addComponentModal/AddComponentModal.vue';
 import NavBar from '@/components/NavBar.vue';
 
 import ChooseIconModal from '@/components/ChooseIconModal.vue';
@@ -172,7 +171,6 @@ import 'codemirror/mode/javascript/javascript.js';
 import '../assets/base16-dark-modified.css';
 import { v4 as uuidV4 } from 'uuid';
 import ChooseItemDropDown from '@/components/ChooseItemDropDown.vue';
-import VersionSwitcher from '@/components/VersionSwitcher.vue';
 
 // data
 const imageStore = useImageStore();
@@ -497,7 +495,7 @@ function addItem(item: string) {
       title="Add a Static Component"
       @text="addText"
       @image="addImage"
-      @item='addItem'
+      @item="addItem"
     />
     <about-modal :open="aboutModalOpen" @close="aboutModalOpen = false" />
 

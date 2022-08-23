@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Modal from '@/components/modal/Modal.vue';
+import Modal from '@/components/modal/ModalBase.vue';
 import ModalToolbar from '@/components/modal/ModalToolbar.vue';
 import ModalFooter from '@/components/modal/ModalFooter.vue';
 import ModalBody from '@/components/modal/ModalBody.vue';
-import { faGithub, faDiscord } from '@fortawesome/free-brands-svg-icons';
+import { faDiscord, faGithub } from '@fortawesome/free-brands-svg-icons';
 
 export interface AboutModalProps {
   open?: boolean;

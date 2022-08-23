@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
-import type { ImageDef } from '@/stores/images';
 import { ref } from 'vue';
+import type { ImageDef } from '@/stores/images';
+import { useImageStore } from '@/stores/images';
 import ContextMenu from '@/components/contextMenu/ContextMenu.vue';
 import ContextMenuItem from '@/components/contextMenu/ContextMenuItem.vue';
 import { ensurePath, getImage, imageToColorMap } from '@/lib/image';
 import { asyncComputed } from '@vueuse/core';
-import { useImageStore } from '@/stores/images';
 
 const imageStore = useImageStore();
 const emit = defineEmits(['click', 'delete']);

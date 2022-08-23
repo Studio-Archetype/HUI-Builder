@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useImageStore } from '@/stores/images';
 import type { ImageDef } from '@/stores/images';
+import { useImageStore } from '@/stores/images';
 import { ref, withDefaults } from 'vue';
 import ImageList from '@/components/imageList/ImageList.vue';
-import Modal from '@/components/modal/Modal.vue';
+import Modal from '@/components/modal/ModalBase.vue';
 import ModalToolbar from '@/components/modal/ModalToolbar.vue';
 import ModalFooter from '@/components/modal/ModalFooter.vue';
 import ModalBody from '@/components/modal/ModalBody.vue';

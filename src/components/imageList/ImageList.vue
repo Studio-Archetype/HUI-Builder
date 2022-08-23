@@ -1,10 +1,9 @@
 <script setup lang="ts">
-
 import ImageListItem from '@/components/imageList/ImageListItem.vue';
 
 import type { ImageDef } from '@/stores/images';
-import { ensurePath } from '@/lib/image';
 import { useImageStore } from '@/stores/images';
+import { ensurePath } from '@/lib/image';
 
 const imageStore = useImageStore();
 const emit = defineEmits(['imageSelected', 'delete']);
