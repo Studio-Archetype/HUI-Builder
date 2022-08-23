@@ -3,16 +3,15 @@ import VueSelect from 'vue-select';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { ItemDef } from '@/stores/items';
 import { useItemStore } from '@/stores/items';
-import { ref } from 'vue';
 
 const itemStore = useItemStore();
 
+const props = defineProps<{
+  item: string;
+}>();
+
 const emit = defineEmits(['selected']);
-
-const item = ref<string>();
-
 function itemSelected(value: string) {
-  item.value = value;
   emit('selected', value);
 }
 </script>
@@ -22,7 +21,7 @@ function itemSelected(value: string) {
     class="itemChooser"
     :options="itemStore.items"
     :reduce="(item: ItemDef) => item.name"
-    :modelValue="item"
+    :modelValue="props.item"
     @update:modelValue="itemSelected"
     label="displayName"
     placeholder="Select an item"

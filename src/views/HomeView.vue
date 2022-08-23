@@ -650,6 +650,16 @@ function addItem(item: string) {
               </div>
             </div>
 
+            <div class="inputGroup">
+              <label for="componentId">Name</label>
+              <input
+                id="componentId"
+                type="text"
+                :value="activeComponent.id"
+                @blur="componentIdChange"
+              />
+            </div>
+
             <template v-if="activeComponent.data.type === 'decoration'">
               <div
                 v-if="(activeComponent.data as Deco).icon.type === 'textImage'"
@@ -671,20 +681,10 @@ function addItem(item: string) {
                 </select>
               </div>
             </template>
-
-            <div class="inputGroup">
-              <label for="componentId">Name</label>
-              <input
-                id="componentId"
-                type="text"
-                :value="activeComponent.id"
-                @blur="componentIdChange"
-              />
-            </div>
           </div>
           <div class="detailPanel" v-if="settingsStore.devMode">
             <div class="header mb-4">Developer View</div>
-            <choose-item-drop-down />
+            <!-- <choose-item-drop-down />-->
             <!-- <version-switcher /> -->
           </div>
         </aside>

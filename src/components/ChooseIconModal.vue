@@ -91,7 +91,10 @@ watch(
           />
           <template v-if="iconType === 'item'">
             <div class="p-4">
-              <choose-item-drop-down @selected="itemValueChanged" />
+              <choose-item-drop-down
+                :item="item"
+                @selected="itemValueChanged"
+              />
             </div>
             <modal-footer>
               <button class="button" :disabled="!item" @click="itemSelected">
