@@ -23,7 +23,7 @@ function backgroundClicked(e: MouseEvent) {
 
 <template>
   <div class="modalContainer" :class="{ open }" @click="backgroundClicked">
-    <section class="modal" :style="{ width, height }">
+    <section class="modal" :style="{ minWidth: width, minHeight: height }">
       <slot />
     </section>
   </div>
