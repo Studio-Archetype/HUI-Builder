@@ -96,10 +96,6 @@ main {
             @apply font-bold text-xl;
           }
 
-          .textIconText {
-            @apply mt-3;
-          }
-
           .offset {
             @apply flex flex-col items-start mt-4;
 
@@ -141,6 +137,7 @@ import type {
   Component,
   Deco,
   HuiData,
+  Icon,
   TextIcon,
   TextImageIcon,
 } from '@/schema';
@@ -170,7 +167,7 @@ import ComponentTreeItem from '@/components/tree/ComponentTreeItem.vue';
 import 'codemirror/mode/javascript/javascript.js';
 import '../assets/base16-dark-modified.css';
 import { v4 as uuidV4 } from 'uuid';
-import ChooseItemDropDown from '@/components/ChooseItemDropDown.vue';
+import IconDataSidebar from '@/components/IconDataSidebar.vue';
 
 // data
 const imageStore = useImageStore();
@@ -289,32 +286,15 @@ function componentClickedInTreeView(component: Component) {
   activeComponentId.value = component.id;
 }
 
-function textIconTextChange(e: Event) {
-  const newText = (e.target as HTMLElement).innerText;
-
+function decoIconChange(icon: Icon) {
+  console.log(icon);
   // write the data to the component
   const copyData: HuiData = data.value;
   const componentIndex = copyData.components.findIndex(
     (value: Component) => value.id === activeComponentId.value
   );
 
-  ((copyData.components[componentIndex].data as Deco).icon as TextIcon).text =
-    newText;
-  projectStore.setProject(copyData);
-}
-
-function textImageIconPathChange(e: Event) {
-  const newPath = (e.target as HTMLInputElement).value;
-
-  // write the data to the component
-  const copyData: HuiData = data.value;
-  const componentIndex = copyData.components.findIndex(
-    (value: Component) => value.id === activeComponentId.value
-  );
-
-  (
-    (copyData.components[componentIndex].data as Deco).icon as TextImageIcon
-  ).path = newPath;
+  (copyData.components[componentIndex].data as Deco).icon = icon;
   projectStore.setProject(copyData);
 }
 
@@ -606,16 +586,6 @@ function addItem(item: string) {
 
           <div v-if="activeComponent" class="detailPanel flex-grow">
             <div class="header">{{ activeComponentDisplay }}</div>
-            <template v-if="activeComponent.data.type === 'decoration'">
-              <p
-                class="textIconText"
-                v-if="(activeComponent.data as Deco).icon.type === 'text'"
-                contenteditable
-                @input="textIconTextChange"
-              >
-                {{ ((activeComponent.data as Deco).icon as TextIcon).text }}
-              </p>
-            </template>
 
             <div class="offset">
               <label for="positionField">Position</label>
@@ -660,27 +630,11 @@ function addItem(item: string) {
               />
             </div>
 
-            <template v-if="activeComponent.data.type === 'decoration'">
-              <div
-                v-if="(activeComponent.data as Deco).icon.type === 'textImage'"
-                class="inputGroup"
-              >
-                <label for="textImageIconPathInput">Path</label>
-
-                <select
-                  id="textImageIconPathInput"
-                  @change="textImageIconPathChange"
-                  :value="((activeComponent.data as Deco).icon as TextImageIcon).path"
-                >
-                  <option
-                    v-for="image in imageStore.allImages"
-                    :key="image.path"
-                  >
-                    {{ image.path }}
-                  </option>
-                </select>
-              </div>
-            </template>
+            <icon-data-sidebar
+              v-if="activeComponent.data.type === 'decoration'"
+              :icon="(activeComponent.data as Deco).icon"
+              @iconChanged="decoIconChange"
+            />
           </div>
           <div class="detailPanel" v-if="settingsStore.devMode">
             <div class="header mb-4">Developer View</div>
