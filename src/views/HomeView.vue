@@ -133,7 +133,15 @@ import Codemirror from 'codemirror-editor-vue3';
 
 // types
 import type { Editor, EditorConfiguration } from 'codemirror';
-import type { Component, Deco, Button, Toggle, HuiData, Icon } from '@/schema';
+import type {
+  Component,
+  Deco,
+  Button,
+  Toggle,
+  HuiData,
+  Icon,
+  Action,
+} from '@/schema';
 // lib
 import { downloadSchema, getComponentDisplay } from '@/schema';
 import type { ImageDef } from '@/stores/images';
@@ -161,6 +169,7 @@ import 'codemirror/mode/javascript/javascript.js';
 import '../assets/base16-dark-modified.css';
 import { v4 as uuidV4 } from 'uuid';
 import IconDataSidebar from '@/components/IconDataSidebar.vue';
+import ActionList from '@/components/addComponentModal/ActionList.vue';
 
 // data
 const imageStore = useImageStore();
@@ -292,7 +301,6 @@ function decoIconChange(icon: Icon) {
 }
 
 function buttonIconChange(icon: Icon) {
-  console.log(icon);
   // write the data to the component
   const copyData: HuiData = data.value;
   const componentIndex = copyData.components.findIndex(
@@ -300,6 +308,50 @@ function buttonIconChange(icon: Icon) {
   );
 
   (copyData.components[componentIndex].data as Button).icon = icon;
+  projectStore.setProject(copyData);
+}
+
+function buttonEditAction(index: number, newAction: Action) {
+  console.log(newAction);
+  const copyData: HuiData = data.value;
+  const componentIndex = copyData.components.findIndex(
+    (value: Component) => value.id === activeComponentId.value
+  );
+
+  const oldActions = (copyData.components[componentIndex].data as Button)
+    .actions;
+  oldActions[index] = newAction;
+  (copyData.components[componentIndex].data as Button).actions = oldActions;
+  projectStore.setProject(copyData);
+}
+
+function buttonCreateAction() {
+  const copyData: HuiData = data.value;
+  const componentIndex = copyData.components.findIndex(
+    (value: Component) => value.id === activeComponentId.value
+  );
+
+  const oldActions = (copyData.components[componentIndex].data as Button)
+    .actions;
+  oldActions.push({
+    type: 'command',
+    command: '',
+    source: 'server',
+  });
+  (copyData.components[componentIndex].data as Button).actions = oldActions;
+  projectStore.setProject(copyData);
+}
+
+function buttonDeleteAction(index: number) {
+  const copyData: HuiData = data.value;
+  const componentIndex = copyData.components.findIndex(
+    (value: Component) => value.id === activeComponentId.value
+  );
+
+  const oldActions = (copyData.components[componentIndex].data as Button)
+    .actions;
+  oldActions.splice(index, 1);
+  (copyData.components[componentIndex].data as Button).actions = oldActions;
   projectStore.setProject(copyData);
 }
 
@@ -671,6 +723,14 @@ function addItem(item: string) {
               <icon-data-sidebar
                 :icon="(activeComponent.data as Button).icon"
                 @iconChanged="buttonIconChange"
+              />
+              <span class="inputHeading">Actions</span>
+              <ActionList
+                class="mt-4"
+                :actions="(activeComponent.data as Button).actions"
+                @edit="buttonEditAction"
+                @new="buttonCreateAction"
+                @delete="buttonDeleteAction"
               />
             </template>
             <template v-if="activeComponent.data.type === 'toggle'">
