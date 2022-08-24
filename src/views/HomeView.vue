@@ -355,6 +355,94 @@ function buttonDeleteAction(index: number) {
   projectStore.setProject(copyData);
 }
 
+function toggleEditTrueAction(index: number, newAction: Action) {
+  console.log(newAction);
+  const copyData: HuiData = data.value;
+  const componentIndex = copyData.components.findIndex(
+    (value: Component) => value.id === activeComponentId.value
+  );
+
+  const oldActions = (copyData.components[componentIndex].data as Toggle)
+    .trueActions;
+  oldActions[index] = newAction;
+  (copyData.components[componentIndex].data as Toggle).trueActions = oldActions;
+  projectStore.setProject(copyData);
+}
+
+function toggleCreateTrueAction() {
+  const copyData: HuiData = data.value;
+  const componentIndex = copyData.components.findIndex(
+    (value: Component) => value.id === activeComponentId.value
+  );
+
+  const oldActions = (copyData.components[componentIndex].data as Toggle)
+    .trueActions;
+  oldActions.push({
+    type: 'command',
+    command: '',
+    source: 'server',
+  });
+  (copyData.components[componentIndex].data as Toggle).trueActions = oldActions;
+  projectStore.setProject(copyData);
+}
+
+function toggleDeleteTrueAction(index: number) {
+  const copyData: HuiData = data.value;
+  const componentIndex = copyData.components.findIndex(
+    (value: Component) => value.id === activeComponentId.value
+  );
+
+  const oldActions = (copyData.components[componentIndex].data as Toggle)
+    .trueActions;
+  oldActions.splice(index, 1);
+  (copyData.components[componentIndex].data as Toggle).trueActions = oldActions;
+  projectStore.setProject(copyData);
+}
+
+function toggleEditFalseAction(index: number, newAction: Action) {
+  console.log(newAction);
+  const copyData: HuiData = data.value;
+  const componentIndex = copyData.components.findIndex(
+    (value: Component) => value.id === activeComponentId.value
+  );
+
+  const oldActions = (copyData.components[componentIndex].data as Toggle)
+    .falseActions;
+  oldActions[index] = newAction;
+  (copyData.components[componentIndex].data as Toggle).falseActions = oldActions;
+  projectStore.setProject(copyData);
+}
+
+function toggleCreateFalseAction() {
+  const copyData: HuiData = data.value;
+  const componentIndex = copyData.components.findIndex(
+    (value: Component) => value.id === activeComponentId.value
+  );
+
+  const oldActions = (copyData.components[componentIndex].data as Toggle)
+    .falseActions;
+  oldActions.push({
+    type: 'command',
+    command: '',
+    source: 'server',
+  });
+  (copyData.components[componentIndex].data as Toggle).falseActions = oldActions;
+  projectStore.setProject(copyData);
+}
+
+function toggleDeleteFalseAction(index: number) {
+  const copyData: HuiData = data.value;
+  const componentIndex = copyData.components.findIndex(
+    (value: Component) => value.id === activeComponentId.value
+  );
+
+  const oldActions = (copyData.components[componentIndex].data as Toggle)
+    .falseActions;
+  oldActions.splice(index, 1);
+  (copyData.components[componentIndex].data as Toggle).falseActions = oldActions;
+  projectStore.setProject(copyData);
+}
+
 function toggleTrueIconChange(icon: Icon) {
   console.log(icon);
   // write the data to the component
@@ -744,6 +832,24 @@ function addItem(item: string) {
               <icon-data-sidebar
                 :icon="(activeComponent.data as Toggle).falseIcon"
                 @iconChanged="toggleFalseIconChange"
+              />
+
+              <span class="inputHeading">True Actions</span>
+              <ActionList
+                class="mt-4"
+                :actions="(activeComponent.data as Toggle).trueActions"
+                @edit="toggleEditTrueAction"
+                @new="toggleCreateTrueAction"
+                @delete="toggleDeleteTrueAction"
+              />
+
+              <span class="inputHeading">False Actions</span>
+              <ActionList
+                class="mt-4"
+                :actions="(activeComponent.data as Toggle).falseActions"
+                @edit="toggleEditFalseAction"
+                @new="toggleCreateFalseAction"
+                @delete="toggleDeleteFalseAction"
               />
             </template>
           </div>
