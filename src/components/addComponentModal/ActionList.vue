@@ -121,7 +121,7 @@ function editVolume(index: number, newVolume: number) {
           placeholder="Sound"
           :size="1"
           :value="action.sound"
-          @inpit="(e) => editSound(index, (e.target as HTMLInputElement).value)"
+          @input="(e) => editSound(index, (e.target as HTMLInputElement).value)"
         />
         <select
           id="actionSoundSource"

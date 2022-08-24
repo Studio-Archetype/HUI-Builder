@@ -28,9 +28,12 @@ const props = defineProps({
   },
 });
 
-const chooseIconModalOpen = ref<boolean>(false);
+const chooseButtonIconModalOpen = ref<boolean>(false);
+const chooseToggleTrueIconModalOpen = ref<boolean>(false);
+const chooseToggleFalseIconModalOpen = ref<boolean>(false);
 const page = ref<ComponentAddType | null>(props.type);
-const newButtonTextInput = ref('');
+const newToggleExpectedValue = ref('');
+const newToggleCondition = ref('');
 
 watch(
   () => props.type,
@@ -51,8 +54,30 @@ const newButtonIconDisplay = computed<string>(() => {
   else return 'Choose';
 });
 
+const newToggleTrueIconValue = ref<Icon>();
+const newToggleTrueActions = ref<Action[]>([]);
+const newToggleHighlightModifier = ref<number>(0);
+const newToggleTrueIconDisplay = computed<string>(() => {
+  if (newToggleTrueIconValue.value)
+    return getIconDisplay(
+      newToggleTrueIconValue.value,
+      newToggleTrueIconValue.value.type !== 'text'
+    );
+  else return 'Choose';
+});
+
+const newToggleFalseIconValue = ref<Icon>();
+const newToggleFalseActions = ref<Action[]>([]);
+const newToggleFalseIconDisplay = computed<string>(() => {
+  if (newToggleFalseIconValue.value)
+    return getIconDisplay(
+      newToggleFalseIconValue.value,
+      newToggleFalseIconValue.value.type !== 'text'
+    );
+  else return 'Choose';
+});
+
 function clear() {
-  newButtonTextInput.value = '';
   newButtonActions.value = [];
   newButtonIconValue.value = undefined;
   newButtonHighlightModifier.value = 0;
@@ -80,7 +105,29 @@ function addButton() {
   close();
 }
 
-function chooseIconModalImage(image: ImageDef) {
+function addToggle() {
+  projectStore.addComponent({
+    id: uuidV4(),
+    offset: [0, 0, 0],
+    data: {
+      type: 'toggle',
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      trueIcon: newToggleTrueIconValue.value!,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      falseIcon: newToggleFalseIconValue.value!,
+
+      trueActions: newToggleTrueActions.value,
+      falseActions: newToggleTrueActions.value,
+      highlightModifier: newToggleHighlightModifier.value,
+      expectedValue: newToggleExpectedValue.value,
+      condition: newToggleCondition.value,
+    },
+  });
+
+  close();
+}
+
+function chooseButtonIconModalImage(image: ImageDef) {
   if (page.value === 'button') {
     newButtonIconValue.value = {
       type: 'textImage',
@@ -89,7 +136,7 @@ function chooseIconModalImage(image: ImageDef) {
   }
 }
 
-function chooseIconModalItem(item: string) {
+function chooseButtonIconModalItem(item: string) {
   if (page.value === 'button') {
     newButtonIconValue.value = {
       type: 'item',
@@ -100,11 +147,69 @@ function chooseIconModalItem(item: string) {
   }
 }
 
-function chooseIconModalText() {
+function chooseButtonIconModalText() {
   if (page.value === 'button') {
     newButtonIconValue.value = {
       type: 'text',
       text: 'Button text',
+    };
+  }
+}
+
+function chooseToggleTrueIconModalImage(image: ImageDef) {
+  if (page.value === 'toggle') {
+    newToggleTrueIconValue.value = {
+      type: 'textImage',
+      path: image.path,
+    };
+  }
+}
+
+function chooseToggleTrueIconModalItem(item: string) {
+  if (page.value === 'toggle') {
+    newToggleTrueIconValue.value = {
+      type: 'item',
+      item,
+      count: 0,
+      customModelData: 0,
+    };
+  }
+}
+
+function chooseToggleTrueIconModalText() {
+  if (page.value === 'toggle') {
+    newToggleTrueIconValue.value = {
+      type: 'text',
+      text: 'True icon text',
+    };
+  }
+}
+
+function chooseToggleFalseIconModalImage(image: ImageDef) {
+  if (page.value === 'toggle') {
+    newToggleFalseIconValue.value = {
+      type: 'textImage',
+      path: image.path,
+    };
+  }
+}
+
+function chooseToggleFalseIconModalItem(item: string) {
+  if (page.value === 'toggle') {
+    newToggleFalseIconValue.value = {
+      type: 'item',
+      item,
+      count: 0,
+      customModelData: 0,
+    };
+  }
+}
+
+function chooseToggleFalseIconModalText() {
+  if (page.value === 'toggle') {
+    newToggleFalseIconValue.value = {
+      type: 'text',
+      text: 'False icon text',
     };
   }
 }
@@ -116,8 +221,21 @@ function setButtonText(text: string) {
   };
 }
 
+function setToggleTrueIconText(text: string) {
+  newToggleTrueIconValue.value = {
+    type: 'text',
+    text,
+  };
+}
+
+function setToggleFalseIconText(text: string) {
+  newToggleFalseIconValue.value = {
+    type: 'text',
+    text,
+  };
+}
+
 function newButtonEditAction(index: number, newAction: Action) {
-  console.log(newAction);
   const oldActions = [...newButtonActions.value];
   oldActions[index] = newAction;
   newButtonActions.value = oldActions;
@@ -134,17 +252,72 @@ function newButtonCreateAction() {
 function newButtonDeleteAction(index: number) {
   newButtonActions.value.splice(index, 1);
 }
+
+function newToggleEditTrueAction(index: number, newAction: Action) {
+  const oldActions = [...newToggleTrueActions.value];
+  oldActions[index] = newAction;
+  newToggleTrueActions.value = oldActions;
+}
+
+function newToggleCreateTrueAction() {
+  newToggleTrueActions.value.push({
+    type: 'command',
+    command: '',
+    source: 'server',
+  });
+}
+
+function newToggleDeleteTrueAction(index: number) {
+  newToggleTrueActions.value.splice(index, 1);
+}
+
+function newToggleEditFalseAction(index: number, newAction: Action) {
+  const oldActions = [...newToggleFalseActions.value];
+  oldActions[index] = newAction;
+  newToggleFalseActions.value = oldActions;
+}
+
+function newToggleCreateFalseAction() {
+  newToggleFalseActions.value.push({
+    type: 'command',
+    command: '',
+    source: 'server',
+  });
+}
+
+function newToggleDeleteFalseAction(index: number) {
+  newToggleFalseActions.value.splice(index, 1);
+}
 </script>
 
 <template>
   <choose-icon-modal
     style="z-index: 9999"
-    :open="chooseIconModalOpen"
-    @close="chooseIconModalOpen = false"
-    @image="chooseIconModalImage"
-    @text="chooseIconModalText"
-    @item="chooseIconModalItem"
+    :open="chooseButtonIconModalOpen"
+    @close="chooseButtonIconModalOpen = false"
+    @image="chooseButtonIconModalImage"
+    @text="chooseButtonIconModalText"
+    @item="chooseButtonIconModalItem"
   />
+
+  <choose-icon-modal
+    style="z-index: 9999"
+    :open="chooseToggleTrueIconModalOpen"
+    @close="chooseToggleTrueIconModalOpen = false"
+    @image="chooseToggleTrueIconModalImage"
+    @text="chooseToggleTrueIconModalText"
+    @item="chooseToggleTrueIconModalItem"
+  />
+
+  <choose-icon-modal
+    style="z-index: 9999"
+    :open="chooseToggleFalseIconModalOpen"
+    @close="chooseToggleFalseIconModalOpen = false"
+    @image="chooseToggleFalseIconModalImage"
+    @text="chooseToggleFalseIconModalText"
+    @item="chooseToggleFalseIconModalItem"
+  />
+
   <modal :open="open" width="40%">
     <modal-toolbar>
       <template #title>Add Component{{ page ? ` // ${page}` : '' }}</template>
@@ -163,7 +336,7 @@ function newButtonDeleteAction(index: number) {
               <button
                 class="button"
                 id="newButtonIconChoice"
-                @click="chooseIconModalOpen = true"
+                @click="chooseButtonIconModalOpen = true"
               >
                 {{ newButtonIconDisplay }}
               </button>
@@ -204,7 +377,113 @@ function newButtonDeleteAction(index: number) {
               :disabled="!newButtonIconValue"
               @click="addButton"
             >
-              Add
+              Add Button
+            </button>
+          </modal-footer>
+        </template>
+        <template v-if="page === 'toggle'">
+          <div class="page">
+            <div class="form w-full">
+              <label for="newToggleTrueIconChoice">True Icon</label>
+              <button
+                class="button"
+                id="newToggleTrueIconChoice"
+                @click="chooseToggleTrueIconModalOpen = true"
+              >
+                {{ newToggleTrueIconDisplay }}
+              </button>
+
+              <template
+                v-if="
+                  newToggleTrueIconValue &&
+                  newToggleTrueIconValue.type === 'text'
+                "
+              >
+                <label for="newToggleTrueIconTextInput">True Icon Text</label>
+                <input
+                  id="newToggleTrueIconTextInput"
+                  :value="newToggleTrueIconValue.text"
+                  @input="(e) => setToggleTrueIconText((e.target as HTMLInputElement).value)"
+                />
+              </template>
+
+              <label for="newToggleFalseIconChoice">False Icon</label>
+              <button
+                class="button"
+                id="newToggleFalseIconChoice"
+                @click="chooseToggleFalseIconModalOpen = true"
+              >
+                {{ newToggleFalseIconDisplay }}
+              </button>
+
+              <template
+                v-if="
+                  newToggleFalseIconValue &&
+                  newToggleFalseIconValue.type === 'text'
+                "
+              >
+                <label for="newToggleFalseIconTextInput">False Icon Text</label>
+                <input
+                  id="newToggleFalseIconTextInput"
+                  :value="newToggleFalseIconValue.text"
+                  @input="(e) => setToggleFalseIconText((e.target as HTMLInputElement).value)"
+                />
+              </template>
+
+              <label for="newToggleTrueActions">True Actions</label>
+              <ActionList
+                :actions="newToggleTrueActions"
+                id="newToggleTrueActions"
+                @edit="newToggleEditTrueAction"
+                @new="newToggleCreateTrueAction"
+                @delete="newToggleDeleteTrueAction"
+              />
+
+              <label for="newToggleTrueActions">False Actions</label>
+              <ActionList
+                :actions="newToggleFalseActions"
+                id="newToggleTrueActions"
+                @edit="newToggleEditFalseAction"
+                @new="newToggleCreateFalseAction"
+                @delete="newToggleDeleteFalseAction"
+              />
+
+              <label for="newToggleHighlightModifier">
+                Highlight Modifier
+              </label>
+              <input
+                id="newToggleHighlightModifier"
+                type="number"
+                v-model="newToggleHighlightModifier"
+              />
+
+              <label for="newToggleExpectedValue"> Expected Value </label>
+              <input
+                id="newToggleExpectedValue"
+                v-model="newToggleExpectedValue"
+                placeholder="true"
+              />
+
+              <label for="newToggleCondition"> Condition </label>
+              <input
+                id="newToggleCondition"
+                v-model="newToggleCondition"
+                placeholder="x == y"
+              />
+            </div>
+          </div>
+          <modal-footer>
+            <button
+              class="button"
+              :disabled="
+                !newToggleTrueIconValue ||
+                !newToggleFalseIconValue ||
+                newToggleCondition === '' ||
+                newToggleExpectedValue === ''
+              "
+              @click="addToggle"
+            >
+              Add Toggle
             </button>
           </modal-footer>
         </template>
