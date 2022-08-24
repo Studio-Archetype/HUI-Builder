@@ -169,6 +169,12 @@ import '../assets/base16-dark-modified.css';
 import { v4 as uuidV4 } from 'uuid';
 import IconDataSidebar from '@/components/IconDataSidebar.vue';
 import ActionList from '@/components/addComponentModal/ActionList.vue';
+import {
+  fromMappedMinecraft,
+  projectFromMappedMinecraft,
+  projectToMappedMinecraft,
+  toMappedMinecraft
+} from '@/lib/numConversion';
 
 // data
 const projectStore = useProjectStore();
@@ -209,10 +215,10 @@ const activeComponentDisplay = computed<string>(() => {
 });
 const dataJson = computed<string>({
   get(): string {
-    return JSON.stringify(data.value, null, 2);
+    return JSON.stringify(projectToMappedMinecraft(data.value), null, 2);
   },
   set(newValue: string) {
-    projectStore.setProject(JSON.parse(newValue));
+    projectStore.setProject(projectFromMappedMinecraft(JSON.parse(newValue)));
   },
 });
 
@@ -407,7 +413,8 @@ function toggleEditFalseAction(index: number, newAction: Action) {
   const oldActions = (copyData.components[componentIndex].data as Toggle)
     .falseActions;
   oldActions[index] = newAction;
-  (copyData.components[componentIndex].data as Toggle).falseActions = oldActions;
+  (copyData.components[componentIndex].data as Toggle).falseActions =
+    oldActions;
   projectStore.setProject(copyData);
 }
 
@@ -424,7 +431,8 @@ function toggleCreateFalseAction() {
     command: '',
     source: 'server',
   });
-  (copyData.components[componentIndex].data as Toggle).falseActions = oldActions;
+  (copyData.components[componentIndex].data as Toggle).falseActions =
+    oldActions;
   projectStore.setProject(copyData);
 }
 
@@ -437,7 +445,8 @@ function toggleDeleteFalseAction(index: number) {
   const oldActions = (copyData.components[componentIndex].data as Toggle)
     .falseActions;
   oldActions.splice(index, 1);
-  (copyData.components[componentIndex].data as Toggle).falseActions = oldActions;
+  (copyData.components[componentIndex].data as Toggle).falseActions =
+    oldActions;
   projectStore.setProject(copyData);
 }
 
@@ -465,7 +474,7 @@ function toggleFalseIconChange(icon: Icon) {
   projectStore.setProject(copyData);
 }
 
-function offsetChange(index: number, e: Event) {
+function offsetChange(index: number, e: Event, map?: 'x' | 'y') {
   const newValue = parseInt((e.target as HTMLInputElement).value);
 
   // write the data to the component
@@ -473,7 +482,18 @@ function offsetChange(index: number, e: Event) {
   const componentIndex = copyData.components.findIndex(
     (value: Component) => value.id === activeComponentId.value
   );
-  copyData.components[componentIndex].offset[index] = newValue;
+  if (map) {
+    if (map === 'x')
+      copyData.components[componentIndex].offset[index] = fromMappedMinecraft(
+        newValue,
+        0
+      ).x;
+    if (map === 'y')
+      copyData.components[componentIndex].offset[index] = fromMappedMinecraft(
+        0,
+        newValue
+      ).y;
+  } else copyData.components[componentIndex].offset[index] = newValue;
   projectStore.setProject(copyData);
 }
 
@@ -762,8 +782,9 @@ function addItem(item: string) {
                   <input
                     type="number"
                     id="offsetX"
-                    :value="activeComponent.offset[0]"
-                    @change="offsetChange(0, $event)"
+                    step="any"
+                    :value="toMappedMinecraft(activeComponent.offset[0], 0).x"
+                    @change="offsetChange(0, $event, 'x')"
                   />
                 </div>
                 <div class="group">
@@ -771,8 +792,9 @@ function addItem(item: string) {
                   <input
                     type="number"
                     id="offsetY"
-                    :value="activeComponent.offset[1]"
-                    @change="offsetChange(1, $event)"
+                    step="any"
+                    :value="toMappedMinecraft(0, activeComponent.offset[1]).y"
+                    @change="offsetChange(1, $event, 'y')"
                   />
                 </div>
                 <div class="group">
