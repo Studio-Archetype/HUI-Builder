@@ -145,7 +145,6 @@ import type {
 // lib
 import { downloadSchema, getComponentDisplay } from '@/schema';
 import type { ImageDef } from '@/stores/images';
-import { useImageStore } from '@/stores/images';
 import { useProjectStore } from '@/stores/project';
 import { storeToRefs } from 'pinia';
 import { useSettingsStore } from '@/stores/settings';
@@ -172,7 +171,6 @@ import IconDataSidebar from '@/components/IconDataSidebar.vue';
 import ActionList from '@/components/addComponentModal/ActionList.vue';
 
 // data
-const imageStore = useImageStore();
 const projectStore = useProjectStore();
 const settingsStore = useSettingsStore();
 const visualMode = ref(true);
@@ -185,7 +183,7 @@ const errorMessage = ref('Validation error');
 const cmOptions = ref<EditorConfiguration>({
   mode: { name: 'javascript', json: true }, // Language mode
   theme: 'base16-dark', // Theme
-  lineNumbers: true, // Show line number
+  lineNumbers: true, // Show line numbers
   smartIndent: true, // Smart indent
   indentUnit: 2, // The smart indent unit is 2 spaces in length
 });

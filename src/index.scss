@@ -2,10 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+
 @font-face {
     font-family: 'Minecraftia';
     src: url('/Minecraftia-Regular.ttf');
 }
+
+.CodeMirror {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+}
+
 
 .fa-fw {
     width: 1rem !important;
