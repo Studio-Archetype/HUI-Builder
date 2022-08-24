@@ -133,14 +133,7 @@ import Codemirror from 'codemirror-editor-vue3';
 
 // types
 import type { Editor, EditorConfiguration } from 'codemirror';
-import type {
-  Component,
-  Deco,
-  HuiData,
-  Icon,
-  TextIcon,
-  TextImageIcon,
-} from '@/schema';
+import type { Component, Deco, Button, Toggle, HuiData, Icon } from '@/schema';
 // lib
 import { downloadSchema, getComponentDisplay } from '@/schema';
 import type { ImageDef } from '@/stores/images';
@@ -295,6 +288,42 @@ function decoIconChange(icon: Icon) {
   );
 
   (copyData.components[componentIndex].data as Deco).icon = icon;
+  projectStore.setProject(copyData);
+}
+
+function buttonIconChange(icon: Icon) {
+  console.log(icon);
+  // write the data to the component
+  const copyData: HuiData = data.value;
+  const componentIndex = copyData.components.findIndex(
+    (value: Component) => value.id === activeComponentId.value
+  );
+
+  (copyData.components[componentIndex].data as Button).icon = icon;
+  projectStore.setProject(copyData);
+}
+
+function toggleTrueIconChange(icon: Icon) {
+  console.log(icon);
+  // write the data to the component
+  const copyData: HuiData = data.value;
+  const componentIndex = copyData.components.findIndex(
+    (value: Component) => value.id === activeComponentId.value
+  );
+
+  (copyData.components[componentIndex].data as Toggle).trueIcon = icon;
+  projectStore.setProject(copyData);
+}
+
+function toggleFalseIconChange(icon: Icon) {
+  console.log(icon);
+  // write the data to the component
+  const copyData: HuiData = data.value;
+  const componentIndex = copyData.components.findIndex(
+    (value: Component) => value.id === activeComponentId.value
+  );
+
+  (copyData.components[componentIndex].data as Toggle).falseIcon = icon;
   projectStore.setProject(copyData);
 }
 
@@ -630,11 +659,33 @@ function addItem(item: string) {
               />
             </div>
 
-            <icon-data-sidebar
-              v-if="activeComponent.data.type === 'decoration'"
-              :icon="(activeComponent.data as Deco).icon"
-              @iconChanged="decoIconChange"
-            />
+            <template v-if="activeComponent.data.type === 'decoration'">
+              <span class="inputHeading">Icon</span>
+              <icon-data-sidebar
+                :icon="(activeComponent.data as Deco).icon"
+                @iconChanged="decoIconChange"
+              />
+            </template>
+            <template v-if="activeComponent.data.type === 'button'">
+              <span class="inputHeading">Icon</span>
+              <icon-data-sidebar
+                :icon="(activeComponent.data as Button).icon"
+                @iconChanged="buttonIconChange"
+              />
+            </template>
+            <template v-if="activeComponent.data.type === 'toggle'">
+              <span class="inputHeading">True Icon</span>
+              <icon-data-sidebar
+                :icon="(activeComponent.data as Toggle).trueIcon"
+                @iconChanged="toggleTrueIconChange"
+              />
+
+              <span class="inputHeading">False Icon</span>
+              <icon-data-sidebar
+                :icon="(activeComponent.data as Toggle).falseIcon"
+                @iconChanged="toggleFalseIconChange"
+              />
+            </template>
           </div>
           <div class="detailPanel" v-if="settingsStore.devMode">
             <div class="header mb-4">Developer View</div>

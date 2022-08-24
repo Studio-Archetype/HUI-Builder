@@ -102,6 +102,10 @@ select {
     }
 }
 
+.inputHeading {
+    @apply font-semibold mt-6;
+}
+
 .inputGroup {
     @apply flex items-center;
 
