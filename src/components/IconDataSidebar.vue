@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Icon, TextImageIcon, TextIcon, ItemIcon } from '@/schema';
+import type { Icon, ItemIcon, TextIcon, TextImageIcon } from '@/schema';
 import { useImageStore } from '@/stores/images';
 import ChooseItemDropDown from '@/components/ChooseItemDropDown.vue';
 
