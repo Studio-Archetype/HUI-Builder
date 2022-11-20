@@ -173,7 +173,7 @@ import {
   fromMappedMinecraft,
   projectFromMappedMinecraft,
   projectToMappedMinecraft,
-  toMappedMinecraft
+  toMappedMinecraft,
 } from '@/lib/numConversion';
 
 // data
@@ -225,6 +225,18 @@ const dataJson = computed<string>({
 // methods
 function toggleMode() {
   visualMode.value = !visualMode.value;
+
+  if (visualMode.value) {
+    projectStore.setProject(
+      projectFromMappedMinecraft(JSON.parse(dataJson.value))
+    );
+  } else {
+    dataJson.value = JSON.stringify(
+      projectToMappedMinecraft(data.value),
+      null,
+      2
+    );
+  }
 }
 
 function upload() {
@@ -244,8 +256,8 @@ function upload() {
   element.click();
 }
 
-function validate() {
-  const schema = downloadSchema();
+async function validate() {
+  const schema = await downloadSchema();
   const ajv = new Ajv();
   const validateSchema = ajv.compile(schema);
 

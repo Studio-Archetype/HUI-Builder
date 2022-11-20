@@ -7,7 +7,7 @@ function convertRange(
   newMin: number,
   newMax: number
 ): number {
-  return ((oldValue - oldMin) / (oldMax - oldMin) ) * (newMax - newMin) + newMin
+  return ((oldValue - oldMin) / (oldMax - oldMin)) * (newMax - newMin) + newMin;
 }
 
 export function toMappedMinecraft(
