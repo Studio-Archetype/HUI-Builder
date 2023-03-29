@@ -35,8 +35,7 @@ const buildNumber = 1;
       <div class="page topology">
         <h2>HUI Builder</h2>
         <p>
-          &copy; {{ new Date().getFullYear() }} Studio Archetype, All Rights
-          Reserved.
+          On MacOS, use FN+Delete to delete items.
         </p>
 
         <div class="buttons">
@@ -74,6 +73,13 @@ const buildNumber = 1;
             Docs
           </a>
         </div>
+
+        <div class="flex-grow" />
+        
+        <p>
+          &copy; {{ new Date().getFullYear() }} Studio Archetype, All Rights
+          Reserved.
+        </p>
       </div>
 
       <modal-footer>
