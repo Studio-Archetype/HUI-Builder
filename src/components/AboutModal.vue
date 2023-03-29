@@ -18,7 +18,7 @@ function close() {
   emit('close');
 }
 
-const buildNumber = 1;
+const buildNumber = __GIT_REV;
 </script>
 
 <template>

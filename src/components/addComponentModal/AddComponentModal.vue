@@ -13,7 +13,7 @@ import ActionList from '@/components/addComponentModal/ActionList.vue';
 import { v4 as uuidV4 } from 'uuid';
 import { useProjectStore } from '@/stores/project';
 
-type ComponentAddType = 'button' | 'toggle';
+export type ComponentAddType = 'button' | 'toggle';
 
 const projectStore = useProjectStore();
 const emit = defineEmits(['close']);
