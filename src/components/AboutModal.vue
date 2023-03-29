@@ -49,7 +49,7 @@ const buildNumber = 1;
 
           <a
             class="button"
-            href="https://github.com/Studio-Archetype/HUI-Builder"
+            href="https://discord.gg/xaeKYQ4aqt"
           >
             <font-awesome-icon
               fixed-width
