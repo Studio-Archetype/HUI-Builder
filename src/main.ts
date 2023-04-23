@@ -22,7 +22,7 @@ config.autoReplaceSvg = 'nest';
 
 const minecraftiaFont = new FontFace(
   'Minecraftia',
-  'url(/Minecraftia-Regular.ttf)'
+  'url(/MinecraftRegular-Bmg3.ttf)'
 );
 
 minecraftiaFont.load().then((font) => {
