@@ -14,8 +14,8 @@ export function toMappedMinecraft(
   xInput: number,
   yInput: number
 ): { x: number; y: number } {
-  const newXValue = convertRange(xInput, 0, 1280, -7, 7);
-  const newYValue = convertRange(yInput, 0, 720, -5, 5);
+  const newXValue = convertRange(xInput, 0, 1280, 7, -7);
+  const newYValue = convertRange(yInput, 0, 720, 5, -5);
 
   return {
     x: newXValue,
@@ -27,8 +27,8 @@ export function fromMappedMinecraft(
   xInput: number,
   yInput: number
 ): { x: number; y: number } {
-  const newXValue = convertRange(xInput, -7, 7, 0, 1280);
-  const newYValue = convertRange(yInput, -5, 5, 0, 720);
+  const newXValue = convertRange(xInput, 7, -7, 0, 1280);
+  const newYValue = convertRange(yInput, 5, -5, 0, 720);
 
   return {
     x: newXValue,
