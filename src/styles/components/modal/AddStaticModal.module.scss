@@ -1,0 +1,140 @@
+.content {
+  // Display
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  // Spacing
+  padding: 0 0 1rem 0;
+
+  // Sizing
+  flex: 1;
+
+  .option {
+    // Display
+    display: flex;
+    align-items: center;
+
+    // Sizing
+    width: 100%;
+
+    // Spacing
+    gap: .5rem;
+    padding: .5rem;
+
+    &.column {
+      // Display
+      align-items: flex-start;
+      justify-content: center;
+      flex-direction: column;
+    }
+  }
+
+  .images {
+    // Display
+    display: flex;
+    flex-direction: column;
+
+    // Sizing
+    width: 100%;
+    flex: 1;
+
+    // Spacing
+    gap: .5rem;
+    padding: .5rem;
+
+    .imageSelector {
+      // Sizing
+      overflow-y: auto;
+
+      // Sizing
+      max-width: calc(1000px - 2rem);
+      max-height: 20rem;
+
+      // Background
+      background: #111;
+    }
+  }
+
+  .createButton {
+    button {
+      // Display
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      // Sizing
+      width: 100%;
+
+      // Spacing
+      gap: .5rem;
+      padding: 1rem;
+
+      // Border
+      border: none;
+      border-radius: 8px;
+
+      // Text
+      font-family: inherit;
+
+      // Background
+      background: rgba(255, 255, 255, .1);
+
+      // Cursor
+      cursor: pointer;
+
+      // Transition
+      transition: all .15s ease-in-out;
+
+      svg {
+        // Text
+        font-size: large;
+      }
+
+      &:hover {
+        // Background
+        background: rgba(255, 255, 255, .2);
+      }
+    }
+  }
+
+  .typeSelector {
+    // Display
+    display: flex;
+    align-items: center;
+
+    // Border
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, .1);
+
+    .type {
+      // Spacing
+      padding: .5rem 1rem;
+
+      // Background
+      background: rgba(0, 0, 0, .2);
+
+      // Border
+      border-right: 2px solid rgba(255, 255, 255, .1);
+
+      // Cursor
+      cursor: pointer;
+
+      &:first-of-type {
+        // Border
+        border-radius: 8px 0 0 8px;
+      }
+
+      &:last-of-type {
+        // Border
+        border-right: none;
+        border-radius: 0 8px 8px 0;
+      }
+
+      &:hover, &.selected {
+        // Background
+        background: rgba(255, 255, 255, .1);
+      }
+    }
+  }
+}
