@@ -24,10 +24,8 @@ const fixedHeight = 720;
 const ICON_PX_GAP = 1;
 const ICON_PX_SIZE = 6;
 const ICON_FONT_SIZE = 36;
-// const ICON_FONT_SHIFT = -62;
-// const ICON_FONT = `${ICON_FONT_SIZE}px Minecraftia`;
 const ICON_FONT_SHIFT = 0;
-const ICON_FONT = `${ICON_FONT_SIZE}px sans-serif`;
+const ICON_FONT = `${ICON_FONT_SIZE}px Minecraftia, sans-serif`;
 const ITEM_SIZE = 50;
 
 const imageStore = useImageStore();
