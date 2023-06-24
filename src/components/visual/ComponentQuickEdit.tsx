@@ -19,7 +19,7 @@ export default function ComponentQuickEdit() {
         }
 
         setComponent(component);
-    }, [selectedComponent]);
+    }, [selectedComponent, data]);
 
     if (!selectedComponent || !data || !component) {
         return (<></>);
@@ -134,9 +134,8 @@ export default function ComponentQuickEdit() {
                             id="component-x"
                             name="component-x"
                             type="number"
-                            step={0.1}
-                            defaultValue={component.offset[0]}
-                            onBlur={(e) => handleOffsetChange(e, 0)}
+                            value={component.offset[0]}
+                            onChange={(e) => handleOffsetChange(e, 0)}
                         />
                     </div>
                 </Column>
@@ -153,9 +152,8 @@ export default function ComponentQuickEdit() {
                             id="component-y"
                             name="component-y"
                             type="number"
-                            step={0.1}
-                            defaultValue={component.offset[1]}
-                            onBlur={(e) => handleOffsetChange(e, 1)}
+                            value={component.offset[1]}
+                            onChange={(e) => handleOffsetChange(e, 1)}
                         />
                     </div>
                 </Column>
@@ -171,9 +169,8 @@ export default function ComponentQuickEdit() {
                             id="component-z"
                             name="component-z"
                             type="number"
-                            step={0.1}
-                            defaultValue={component.offset[2]}
-                            onBlur={(e) => handleOffsetChange(e, 2)}
+                            value={component.offset[2]}
+                            onChange={(e) => handleOffsetChange(e, 2)}
                         />
                     </div>
                 </Column>
