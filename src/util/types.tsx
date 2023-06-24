@@ -104,7 +104,7 @@ export interface HoloUITextIcon extends HoloUIIcon {
 
 }
 
-interface HoloUIAction {
+export interface HoloUIAction {
 
     type: 'command' | 'sound';
 
@@ -202,3 +202,32 @@ export interface HoloUIData {
 }
 
 export type HoloUISchema = JSONSchemaType<HoloUIAction>;
+
+/**
+ * Convert an icon to a HoloUIIcon
+ *
+ * @param iconType the type of icon
+ * @param icon the icon
+ */
+export function convertToIcon(iconType: 'text' | 'image' | 'item', icon: string): HoloUIIcon {
+    if (iconType === 'text') {
+        return {
+            type: 'text',
+            text: icon,
+        } as HoloUITextIcon;
+    }
+
+    if (iconType === 'image') {
+        return {
+            type: 'textImage',
+            path: icon,
+        } as HoloUITextImageIcon;
+    }
+
+    return {
+        type: 'item',
+        item: icon,
+        count: 1,
+        customModelData: 0
+    } as HoloUIItemIcon;
+}
