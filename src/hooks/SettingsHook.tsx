@@ -1,7 +1,7 @@
 "use client";
 
 import {createContext, ReactNode, useContext, useEffect, useState} from "react";
-import {MinecraftVersion} from "@/util/types";
+import {MCItem, MinecraftVersion} from "@/util/types";
 
 interface SettingsProviderProps {
 
@@ -23,10 +23,7 @@ export type SettingsContextType = {
 
     setMinecraftVersion: (version: MinecraftVersion) => void;
 
-    items: {
-        name: string;
-        texture: string | null;
-    }[]
+    items: MCItem[]
 
 }
 
@@ -38,10 +35,7 @@ export function SettingsProvider({children}: SettingsProviderProps) {
     const [debugFramesEnabled, setDebugFramesEnabled] = useState(false);
     const [developerModeEnabled, setDeveloperModeEnabled] = useState(false);
     const [minecraftVersion, setMinecraftVersion] = useState<MinecraftVersion>("1.18");
-    const [items, setItems] = useState<{
-        name: string;
-        texture: string | null;
-    }[]>([]);
+    const [items, setItems] = useState<MCItem[]>([]);
 
     useEffect(() => {
         const settings = localStorage.getItem("settings") || JSON.stringify({
