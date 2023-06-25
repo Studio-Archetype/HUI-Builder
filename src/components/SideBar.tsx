@@ -4,7 +4,7 @@ import {FaImage, FaQuestion, FaSave, FaUpload} from "react-icons/fa";
 import {BsBoxes, BsCodeSlash, BsGear} from "react-icons/bs";
 import styles from "@/styles/components/SideBar.module.scss";
 import {useContent} from "@/hooks/ContentHook";
-import {ContentType, HoloUIData, ModalData} from "@/util/types";
+import {ContentType, type HoloUIData, type ModalData} from "@/util/types";
 import {joinedClassNames} from "@/util/classes";
 import {useModal} from "@/hooks/ModalHook";
 import ImageManagerModal from "@/components/modal/ImageManagerModal";
@@ -83,7 +83,7 @@ export default function SideBar() {
             return;
         }
 
-        function handleInputChange(e: Event) {
+        function handleInputChange() {
             if (!current) {
                 return;
             }

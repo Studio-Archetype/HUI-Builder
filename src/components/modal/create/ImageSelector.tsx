@@ -3,7 +3,7 @@ import Column from "@/components/grid/Column";
 import {BiCheck, BiMouse, BiPlus, BiTrash} from "react-icons/bi";
 import {useContent} from "@/hooks/ContentHook";
 import {createRef, useEffect} from "react";
-import {ImageData} from "@/util/types";
+import {type ImageData} from "@/util/types";
 import styles from "@/styles/components/modal/create/ImageSelector.module.scss";
 
 interface ImageSelectorProps {
@@ -93,7 +93,7 @@ export default function ImageSelector({currentImage, onImageChange}: ImageSelect
     return (
         <Row start>
             {
-                images.map((image, index) => (
+                images.map((image) => (
                     <Column
                         xs={24}
                         lg={6}

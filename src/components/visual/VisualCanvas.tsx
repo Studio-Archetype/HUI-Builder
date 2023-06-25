@@ -1,7 +1,7 @@
 import styles from "@/styles/components/visual/VisualCanvas.module.scss";
 import {useEffect, useRef, useState} from "react";
 import {useContent} from "@/hooks/ContentHook";
-import {Vector2} from "@/util/types";
+import {type Vector2} from "@/util/types";
 import {convertToVector, drawComponent, drawComponentOutline, isMouseOverComponent} from "@/util/component";
 import {useSettings} from "@/hooks/SettingsHook";
 
@@ -97,9 +97,8 @@ export default function VisualCanvas() {
     /**
      * Handles the mouse up event.
      *
-     * @param event The mouse event.
      */
-    function handleMouseUp(event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
+    function handleMouseUp() {
         if (!dragging) {
             return;
         }
@@ -114,7 +113,7 @@ export default function VisualCanvas() {
      * @param event The mouse event.
      */
     function handleMouseMove(event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
-        if (!dragging || !data) {
+        if (!dragging || !data || !draggingOffset) {
             return;
         }
 
@@ -123,8 +122,8 @@ export default function VisualCanvas() {
             return;
         }
 
-        const mouseX = event.nativeEvent.offsetX - draggingOffset![0];
-        const mouseY = event.nativeEvent.offsetY - draggingOffset![1];
+        const mouseX = event.nativeEvent.offsetX - draggingOffset[0];
+        const mouseY = event.nativeEvent.offsetY - draggingOffset[1];
         const component = data.components.find((component) => component.id === dragging);
         if (!component) {
             return;
@@ -156,9 +155,8 @@ export default function VisualCanvas() {
     /**
      * Handles the mouse out event.
      *
-     * @param event The mouse event.
      */
-    function handleMouseOut(event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
+    function handleMouseOut() {
         // Disable dragging
         setDragging(undefined);
     }
@@ -198,7 +196,7 @@ export default function VisualCanvas() {
             drawComponents();
 
             console.log(`Canvas initialized with width ${canvas.width} and height ${canvas.height}`);
-        });
+        }).catch(console.error);
     }, [canvasRef, canvasRef.current]);
 
     // Load the window resize event

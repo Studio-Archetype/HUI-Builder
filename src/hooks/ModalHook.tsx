@@ -1,10 +1,10 @@
 "use client";
 
-import {createContext, ReactNode, useContext, useEffect, useState} from "react";
+import {createContext, type ReactNode, useContext, useEffect, useState} from "react";
 import {BiX} from "react-icons/bi";
 import styles from "@/styles/hooks/ModalHook.module.scss";
 import {conditionalClassNames} from "@/util/classes";
-import {ModalData} from "@/util/types";
+import {type ModalData} from "@/util/types";
 
 interface ModalProviderProps {
 

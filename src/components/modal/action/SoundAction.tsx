@@ -1,5 +1,5 @@
-import {HoloUIAction, HoloUICommandAction, HoloUISoundAction} from "@/util/types";
-import {Dispatch, SetStateAction} from "react";
+import {type HoloUIAction, type HoloUICommandAction, type HoloUISoundAction} from "@/util/types";
+import {type Dispatch, type SetStateAction} from "react";
 import {BiNote, BiTrash} from "react-icons/bi";
 import {AiFillSound} from "react-icons/ai";
 import {HiOutlineCommandLine} from "react-icons/hi2";

@@ -1,7 +1,15 @@
 "use client";
 
-import {createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState} from "react";
-import {ContentType, HoloUIData, HoloUISchema, ImageData} from "@/util/types";
+import {
+    createContext,
+    type Dispatch,
+    type ReactNode,
+    type SetStateAction,
+    useContext,
+    useEffect,
+    useState
+} from "react";
+import {ContentType, type HoloUIData, type HoloUISchema, type ImageData} from "@/util/types";
 import Ajv from "ajv";
 
 const ajv = new Ajv();

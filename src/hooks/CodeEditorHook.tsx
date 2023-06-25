@@ -1,7 +1,7 @@
 "use client";
 
-import {CursorData} from "@/util/types";
-import {createContext, ReactNode, useContext, useState} from "react";
+import {type CursorData} from "@/util/types";
+import {createContext, type ReactNode, useContext, useState} from "react";
 
 interface CodeEditorProviderProps {
 

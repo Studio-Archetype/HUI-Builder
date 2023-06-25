@@ -1,4 +1,4 @@
-import {ReactNode} from "react";
+import {type ReactNode} from "react";
 import {CodeEditorProvider} from "@/hooks/CodeEditorHook";
 import {ModalProvider} from "@/hooks/ModalHook";
 import {ContentProvider} from "@/hooks/ContentHook";

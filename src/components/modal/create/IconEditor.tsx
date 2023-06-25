@@ -1,4 +1,4 @@
-import {Dispatch, SetStateAction, useState} from "react";
+import {type Dispatch, type SetStateAction, useState} from "react";
 import Row from "@/components/grid/Row";
 import Column from "@/components/grid/Column";
 import {useSettings} from "@/hooks/SettingsHook";

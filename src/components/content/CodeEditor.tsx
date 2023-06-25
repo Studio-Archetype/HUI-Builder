@@ -3,9 +3,9 @@ import styles from "@/styles/components/PageContent.module.scss";
 import {vscodeDark} from "@uiw/codemirror-theme-vscode";
 import {json} from "@codemirror/lang-json";
 import {useContent} from "@/hooks/ContentHook";
-import {ViewUpdate} from "@codemirror/view";
+import {type ViewUpdate} from "@codemirror/view";
 import {useCodeEditor} from "@/hooks/CodeEditorHook";
-import {HoloUIData} from "@/util/types";
+import {type HoloUIData} from "@/util/types";
 
 export default function CodeEditor() {
     const {validateData, data, setData} = useContent();
@@ -62,7 +62,7 @@ export default function CodeEditor() {
             }}
             extensions={[json()]}
             onChange={handleDataChange}
-            // onUpdate={handleCursorChange}
+            onUpdate={handleCursorChange}
         />
     )
 }

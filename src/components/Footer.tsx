@@ -12,7 +12,7 @@ export default function Footer() {
     return (
         <footer className={styles.footer}>
             <p>
-                Changes are automatically saved to your browser's local storage.
+                Changes are automatically saved to your browser&apos;s local storage.
             </p>
             {
                 (contentType === ContentType.CODE_EDITOR && cursorData !== undefined) && (

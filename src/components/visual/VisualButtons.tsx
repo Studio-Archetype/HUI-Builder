@@ -1,7 +1,7 @@
 import Row from "@/components/grid/Row";
 import Column from "@/components/grid/Column";
 import styles from "@/styles/components/visual/VisualButtons.module.scss";
-import {ModalData} from "@/util/types";
+import {type ModalData} from "@/util/types";
 import AddStaticModal from "@/components/modal/create/AddStaticModal";
 import {useModal} from "@/hooks/ModalHook";
 import AddButtonModal from "@/components/modal/create/AddButtonModal";

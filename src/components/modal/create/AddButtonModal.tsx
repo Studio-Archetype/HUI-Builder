@@ -8,11 +8,11 @@ import Row from "@/components/grid/Row";
 import Column from "@/components/grid/Column";
 import {
     convertToIcon,
-    HoloUIAction,
-    HoloUIButtonData,
-    HoloUICommandAction,
-    HoloUIComponent,
-    HoloUISoundAction
+    type HoloUIAction,
+    type HoloUIButtonData,
+    type HoloUICommandAction,
+    type HoloUIComponent,
+    type HoloUISoundAction
 } from "@/util/types";
 import {useModal} from "@/hooks/ModalHook";
 import IconEditor from "@/components/modal/create/IconEditor";
@@ -40,7 +40,7 @@ export default function AddButtonModal() {
         }
 
         // Validate the actions
-        for (let action of actions) {
+        for (const action of actions) {
             const type = action.type;
             if (type === 'command') {
                 const commandData = action as HoloUICommandAction;
@@ -62,7 +62,7 @@ export default function AddButtonModal() {
             }
         }
 
-        let component: HoloUIComponent = {
+        const component: HoloUIComponent = {
             id: id,
             offset: [0, 0, 0],
             data: {

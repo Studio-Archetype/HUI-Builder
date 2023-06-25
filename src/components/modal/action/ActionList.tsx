@@ -1,6 +1,6 @@
-import {HoloUIAction, HoloUICommandAction, HoloUISoundAction} from "@/util/types";
+import {type HoloUIAction, type HoloUICommandAction, type HoloUISoundAction} from "@/util/types";
 import CommandAction from "@/components/modal/action/CommandAction";
-import {Dispatch, SetStateAction} from "react";
+import {type Dispatch, type SetStateAction} from "react";
 import SoundAction from "@/components/modal/action/SoundAction";
 import styles from "@/styles/components/modal/action/ActionList.module.scss";
 

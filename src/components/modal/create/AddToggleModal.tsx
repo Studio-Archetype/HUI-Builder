@@ -11,11 +11,11 @@ import IconEditor from "@/components/modal/create/IconEditor";
 import ActionList from "@/components/modal/action/ActionList";
 import {
     convertToIcon,
-    HoloUIAction,
-    HoloUICommandAction,
-    HoloUIComponent,
-    HoloUISoundAction,
-    HoloUIToggleData
+    type HoloUIAction,
+    type HoloUICommandAction,
+    type HoloUIComponent,
+    type HoloUISoundAction,
+    type HoloUIToggleData
 } from "@/util/types";
 import styles from "@/styles/components/modal/AddToggleModal.module.scss";
 
@@ -79,7 +79,7 @@ export default function AddToggleModal() {
 
         // Verify the actions
         const allActions = [...trueActions, ...falseActions];
-        for (let action of allActions) {
+        for (const action of allActions) {
             const type = action.type;
             if (type === 'command') {
                 const commandData = action as HoloUICommandAction;
@@ -100,7 +100,7 @@ export default function AddToggleModal() {
             }
         }
 
-        let component: HoloUIComponent = {
+        const component: HoloUIComponent = {
             id: id,
             offset: [0, 0, 0],
             data: {

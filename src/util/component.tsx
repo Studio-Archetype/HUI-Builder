@@ -1,15 +1,15 @@
 import {
-    BoundingBox2,
-    HoloUIButtonData,
-    HoloUIComponent,
-    HoloUIDecorationData,
-    HoloUIItemIcon,
-    HoloUITextIcon,
-    HoloUITextImageIcon,
-    HoloUIToggleData,
-    ImageData,
-    MCItem,
-    Vector2
+    type BoundingBox2,
+    type HoloUIButtonData,
+    type HoloUIComponent,
+    type HoloUIDecorationData,
+    type HoloUIItemIcon,
+    type HoloUITextIcon,
+    type HoloUITextImageIcon,
+    type HoloUIToggleData,
+    type ImageData,
+    type MCItem,
+    type Vector2
 } from "@/util/types";
 
 const offsetValueX = 7;
@@ -153,7 +153,7 @@ export function getImageBoundingBox(canvas: HTMLCanvasElement, vector: Vector2, 
  * @param images the images
  */
 export function isMouseOverComponent(component: HoloUIComponent, canvas: HTMLCanvasElement, mouseVector: Vector2, images: ImageData[]): boolean {
-    let icon = component.data.type === 'button' || component.data.type === 'decoration' ?
+    const icon = component.data.type === 'button' || component.data.type === 'decoration' ?
         (component.data as (HoloUIDecorationData | HoloUIButtonData)).icon :
         (component.data as HoloUIToggleData).trueIcon;
     if (!icon) {
@@ -249,7 +249,7 @@ export function isMouseInBoundingBox(boundingBox: BoundingBox2, mouseVector: Vec
  * @param items the items to use
  */
 export function drawComponent(component: HoloUIComponent, canvas: HTMLCanvasElement, images: ImageData[], items: MCItem[]): void {
-    let icon = component.data.type === 'button' || component.data.type === 'decoration' ?
+    const icon = component.data.type === 'button' || component.data.type === 'decoration' ?
         (component.data as (HoloUIDecorationData | HoloUIButtonData)).icon :
         (component.data as HoloUIToggleData).trueIcon;
     if (!icon) {
@@ -338,7 +338,7 @@ export function drawComponent(component: HoloUIComponent, canvas: HTMLCanvasElem
  * @param isSelected whether the component is selected
  */
 export function drawComponentOutline(component: HoloUIComponent, canvas: HTMLCanvasElement, images: ImageData[], isSelected: boolean): void {
-    let icon = component.data.type === 'button' || component.data.type === 'decoration' ?
+    const icon = component.data.type === 'button' || component.data.type === 'decoration' ?
         (component.data as (HoloUIDecorationData | HoloUIButtonData)).icon :
         (component.data as HoloUIToggleData).trueIcon;
     if (!icon) {

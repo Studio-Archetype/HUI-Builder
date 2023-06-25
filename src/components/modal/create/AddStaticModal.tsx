@@ -3,7 +3,7 @@
 import {useState} from "react";
 import styles from "@/styles/components/modal/AddStaticModal.module.scss";
 import {BiPlus} from "react-icons/bi";
-import {convertToIcon, HoloUIComponent, HoloUIDecorationData} from "@/util/types";
+import {convertToIcon, type HoloUIComponent, type HoloUIDecorationData} from "@/util/types";
 import {useContent} from "@/hooks/ContentHook";
 import {useModal} from "@/hooks/ModalHook";
 import IconEditor from "@/components/modal/create/IconEditor";
@@ -23,7 +23,7 @@ export default function AddStaticModal() {
             return;
         }
 
-        let component: HoloUIComponent = {
+        const component: HoloUIComponent = {
             id: id,
             offset: [0, 0, 0],
             data: {

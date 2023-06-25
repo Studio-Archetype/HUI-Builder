@@ -1,9 +1,9 @@
 import CheckBox from "@/components/form/CheckBox";
 import styles from "@/styles/components/modal/SettingsModal.module.scss";
 import {joinedClassNames} from "@/util/classes";
-import {MinecraftVersion, minecraftVersions} from "@/util/types";
+import {type MinecraftVersion, minecraftVersions} from "@/util/types";
 import {useSettings} from "@/hooks/SettingsHook";
-import {ChangeEvent} from "react";
+import {type ChangeEvent} from "react";
 
 export default function SettingsModal() {
     const {

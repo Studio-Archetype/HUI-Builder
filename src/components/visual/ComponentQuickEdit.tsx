@@ -2,7 +2,7 @@ import {useContent} from "@/hooks/ContentHook";
 import Row from "@/components/grid/Row";
 import Column from "@/components/grid/Column";
 import styles from "@/styles/components/visual/ComponentQuickEdit.module.scss";
-import {HoloUIComponent, HoloUIData} from "@/util/types";
+import {type HoloUIComponent, type HoloUIData} from "@/util/types";
 import {useEffect, useState} from "react";
 
 export default function ComponentQuickEdit() {

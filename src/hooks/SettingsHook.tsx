@@ -1,7 +1,7 @@
 "use client";
 
-import {createContext, ReactNode, useContext, useEffect, useState} from "react";
-import {MCItem, MinecraftVersion} from "@/util/types";
+import {createContext, type ReactNode, useContext, useEffect, useState} from "react";
+import {type MCItem, type MinecraftVersion} from "@/util/types";
 
 interface SettingsProviderProps {
 
@@ -70,7 +70,10 @@ export function SettingsProvider({children}: SettingsProviderProps) {
         fetch(`/assets/versions/${minecraftVersion}.json`)
             .then(response => response.json())
             .then(data => {
-                setItems(data);
+                setItems(data as MCItem[]);
+            })
+            .catch(error => {
+                console.error(error);
             });
     }, [debugFramesEnabled, developerModeEnabled, minecraftVersion]);
 

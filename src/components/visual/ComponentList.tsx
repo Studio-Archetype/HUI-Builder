@@ -6,7 +6,7 @@ import styles from "@/styles/components/visual/ComponentList.module.scss";
 import {BiFolderOpen} from "react-icons/bi";
 import {conditionalClassNames} from "@/util/classes";
 import {useEffect} from "react";
-import {HoloUIData} from "@/util/types";
+import {type HoloUIData} from "@/util/types";
 
 export default function ComponentList() {
     const {data, setData, selectedComponent, setSelectedComponent} = useContent();
@@ -66,7 +66,7 @@ export default function ComponentList() {
             </div>
             <div className={styles.components}>
                 {
-                    data.components.map((component, index) => {
+                    data.components.map((component) => {
                         const id = component.id;
                         const type = component.data.type;
 

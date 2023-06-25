@@ -7,7 +7,7 @@ import CodeEditor from "@/components/content/CodeEditor";
 import VisualEditor from "@/components/content/VisualEditor";
 
 export default function PageContent() {
-    const {contentType, validateData, data, setData} = useContent();
+    const {contentType} = useContent();
 
     return (
         <div className={styles.content}>

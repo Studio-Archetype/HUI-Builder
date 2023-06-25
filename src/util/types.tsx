@@ -1,5 +1,5 @@
-import {JSONSchemaType} from "ajv";
-import {ReactNode} from "react";
+import {type JSONSchemaType} from "ajv";
+import {type ReactNode} from "react";
 
 export enum Breakpoint {
 
