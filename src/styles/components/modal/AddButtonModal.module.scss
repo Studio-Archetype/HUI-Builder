@@ -1,0 +1,10 @@
+@import "AddModal";
+
+.actions {
+  // Sizing
+  width: 100%;
+  max-height: 15rem;
+
+  // Overflow
+  overflow-y: auto;
+}

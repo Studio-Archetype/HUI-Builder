@@ -1,0 +1,21 @@
+.inputGroup {
+  // Display
+  display: flex;
+  flex-direction: column;
+
+  // Sizing
+  width: 100%;
+
+  // Spacing
+  gap: .5rem;
+
+  label {
+    // Text
+    font-weight: 600;
+  }
+
+  input {
+    // Sizing
+    width: 100%;
+  }
+}
