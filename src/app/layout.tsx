@@ -7,9 +7,9 @@ export const metadata: Metadata = {
     title: 'HoloUI Builder',
     description: 'Web builder for creating and previewing HUI configs.',
     icons: [
-        "/HUI-Builder/favicon-16x16.png",
-        "/HUI-Builder/favicon-32x32.png",
-        "/HUI-Builder/favicon.ico",
+        "/favicon-16x16.png",
+        "/favicon-32x32.png",
+        "/favicon.ico",
     ],
     metadataBase: new URL(process.env.NODE_ENV === "production" ? "https://holoui.studioarchetype.net" : "http://localhost:3000"),
     viewport: 'width=device-width, initial-scale=1.0',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
         description: 'Web builder for creating and previewing HUI configs.',
         url: 'https://holoui.studioarchetype.net/',
         images: [
-            "/HUI-Builder/logo.webp"
+            "/logo.webp"
         ],
     },
     twitter: {
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
         description: 'Web builder for creating and previewing HUI configs.',
         site: '@studioarchetype',
         images: [
-            "/HUI-Builder/logo.webp"
+            "/logo.webp"
         ],
     },
     keywords: [
