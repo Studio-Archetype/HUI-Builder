@@ -17,6 +17,13 @@ const nextConfig = {
     reactStrictMode: true,
 
     /**
+     * Set base path. This is usually the slug of your repository.
+     *
+     * @see https://nextjs.org/docs/app/api-reference/next-config-js/basePath
+     */
+    basePath: "/HUI-Builder",
+
+    /**
      * Disable server-based image optimization. Next.js does not support
      * dynamic features with static exports.
      *
