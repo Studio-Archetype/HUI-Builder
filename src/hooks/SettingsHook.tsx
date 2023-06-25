@@ -67,7 +67,7 @@ export function SettingsProvider({children}: SettingsProviderProps) {
         }));
 
         // Load the minecraft version item icons from /assets/versions/<version>.json
-        fetch(`/HUI-Builder/assets/versions/${minecraftVersion}.json`)
+        fetch(`/assets/versions/${minecraftVersion}.json`)
             .then(response => response.json())
             .then(data => {
                 setItems(data as MCItem[]);
