@@ -12,6 +12,7 @@ export default function VisualCanvas() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const {selectedComponent, setSelectedComponent, images, setData, data} = useContent();
     const {items} = useSettings();
+    const {debugFramesEnabled} = useSettings();
 
     /**
      * Draw all components on the canvas.
@@ -39,14 +40,16 @@ export default function VisualCanvas() {
         // Clear canvas
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw a crosshair in the center of the canvas
-        context.beginPath();
-        context.moveTo(canvas.width / 2, 0);
-        context.lineTo(canvas.width / 2, canvas.height);
-        context.moveTo(0, canvas.height / 2);
-        context.lineTo(canvas.width, canvas.height / 2);
-        context.strokeStyle = "red";
-        context.stroke();
+        if (debugFramesEnabled) {
+            // Draw a crosshair in the center of the canvas
+            context.beginPath();
+            context.moveTo(canvas.width / 2, 0);
+            context.lineTo(canvas.width / 2, canvas.height);
+            context.moveTo(0, canvas.height / 2);
+            context.lineTo(canvas.width, canvas.height / 2);
+            context.strokeStyle = "red";
+            context.stroke();
+        }
 
 
         // Draw components
@@ -220,7 +223,7 @@ export default function VisualCanvas() {
     // Redraw components when data changes
     useEffect(() => {
         drawComponents();
-    }, [data, selectedComponent]);
+    }, [data, selectedComponent, debugFramesEnabled]);
 
     return (
         <div className={styles.visualCanvas}>
