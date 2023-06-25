@@ -7,7 +7,7 @@ export default function Header() {
             <a className={styles.brand} href="https://studioarchetype.net/" target={"_blank"}>
                 <div className={styles.brandImage}>
                     <Image
-                        src={"/logo.svg"}
+                        src={"/nextjs-github-pages/logo.svg"}
                         alt={"StudioArchetype Logo"}
                         fill
                     />
