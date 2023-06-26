@@ -1,0 +1,151 @@
+.image {
+  // Display
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  // Sizing
+  width: 100%;
+
+  // Overflow
+  overflow-x: hidden;
+
+  // Transition
+  transition: background-color .2s ease-in-out;
+
+  // Background
+  background-color: rgba(255, 255, 255, .1);
+
+  // Border
+  border-radius: 12px;
+
+  input {
+    // Display
+    display: none;
+  }
+
+  .img {
+    // Display
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    // Sizing
+    height: 10rem;
+    width: 100%;
+
+    img {
+      // Sizing
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .information {
+    // Display
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    // Sizing
+    width: 100%;
+
+    // Spacing
+    gap: .5rem;
+
+    // Background
+    background-color: #111;
+
+    .buttons {
+      // Display
+      display: flex;
+
+      // Sizing
+      width: 100%;
+
+      .select, .remove {
+        // Display
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        // Sizing
+        width: 50%;
+
+        // Spacing
+        padding: .5rem;
+
+        // Border
+        border: none;
+
+        // Background
+        background-color: rgba(255, 255, 255, .1);
+
+        // Transition
+        transition: all .15s ease-in-out;
+
+        // Cursor
+        cursor: pointer;
+
+        &:hover {
+          // Background
+          background-color: rgba(255, 255, 255, .2);
+        }
+      }
+
+      .select {
+        // Border
+        border-right: 1px solid rgba(255, 255, 255, .1);
+      }
+
+      .remove {
+        // Border
+        border-left: 1px solid rgba(255, 255, 255, .1);
+      }
+    }
+  }
+}
+
+.addButton {
+  // Display
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+
+  // Sizing
+  width: 100%;
+  height: 100%;
+
+  // Spacing
+  padding: 1rem;
+
+  // Border
+  border: none;
+  border-radius: 8px;
+
+  // Text
+  font-family: inherit;
+
+  // Background
+  background: rgba(255, 255, 255, .1);
+
+  // Cursor
+  cursor: pointer;
+
+  // Transition
+  transition: all .15s ease-in-out;
+
+  input {
+    display: none;
+  }
+
+  &:hover {
+    // Background
+    background: rgba(255, 255, 255, .2);
+  }
+}
