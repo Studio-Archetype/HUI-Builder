@@ -14,7 +14,7 @@ import {
 } from "@/util/types";
 
 const offsetValueX = 7;
-const offsetValueY = 5;
+const offsetValueY = -5;
 
 const ITEM_HEIGHT = 24;
 const ITEM_WIDTH = 24;
