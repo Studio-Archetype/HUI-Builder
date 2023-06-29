@@ -51,7 +51,7 @@ export default function AddButtonModal() {
                     return;
                 }
 
-                return;
+                continue;
             }
 
             const soundData = action as HoloUISoundAction;
@@ -75,6 +75,7 @@ export default function AddButtonModal() {
 
         setData(prevState => {
             if (!prevState) {
+                alert("Error: Data is undefined")
                 return undefined;
             }
 

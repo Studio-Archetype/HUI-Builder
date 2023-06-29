@@ -25,7 +25,7 @@ export enum ContentType {
 
 export interface ModalData {
 
-    title?: string | undefined;
+    title?: string | undefined | ReactNode;
 
     content?: ReactNode | undefined;
 

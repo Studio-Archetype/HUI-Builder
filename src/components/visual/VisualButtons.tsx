@@ -6,6 +6,7 @@ import AddStaticModal from "@/components/modal/create/AddStaticModal";
 import {useModal} from "@/hooks/ModalHook";
 import AddButtonModal from "@/components/modal/create/AddButtonModal";
 import AddToggleModal from "@/components/modal/create/AddToggleModal";
+import {BsQuestionLg} from "react-icons/bs";
 
 const addStaticModal: ModalData = {
     title: "Add Static Component",
@@ -16,7 +17,21 @@ const addButtonModal: ModalData = {
     content: <AddButtonModal/>,
 };
 const addToggleModal: ModalData = {
-    title: "Add Toggle Component",
+    title: (
+        <div className={styles.modalHeaderTitle}>
+            <h3>
+                Add Toggle Component
+            </h3>
+            <a
+                href={"https://docs.studioarchetype.net/en/utilities/holoui"}
+                target={"_blank"}
+                referrerPolicy={"no-referrer"}
+                data-label={"Toggle Documentation"}
+            >
+                <BsQuestionLg/>
+            </a>
+        </div>
+    ),
     content: <AddToggleModal/>,
 }
 

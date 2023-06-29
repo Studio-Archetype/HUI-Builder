@@ -139,20 +139,18 @@ export function ContentProvider({children}: ContentProviderProps) {
         downloadSchema();
 
         // Load data from local storage
-        const data = localStorage.getItem("data") || JSON.stringify({
+        const storageData = localStorage.getItem("data") ?? JSON.stringify({
             offset: [0, 0, 0],
             components: [],
             lockPosition: false
         });
+        if (!storageData) {
+            return;
+        }
 
         try {
-            setData(JSON.parse(data));
+            setData(JSON.parse(storageData));
         } catch (ignored) {
-            setData({
-                offset: [0, 0, 0],
-                components: [],
-                lockPosition: false
-            });
         }
 
         // Load images from local storage

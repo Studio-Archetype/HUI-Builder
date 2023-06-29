@@ -163,7 +163,7 @@ export default function ComponentQuickEdit() {
                 >
                     <div className={styles.inputGroup}>
                         <label htmlFor="component-z">
-                            X
+                            Z
                         </label>
                         <input
                             id="component-z"
