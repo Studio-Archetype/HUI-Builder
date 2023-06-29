@@ -105,6 +105,8 @@ export default function VisualCanvas() {
 
         // Disable dragging
         setDragging(undefined);
+        // Redraw components 1 more time
+        drawComponents();
     }
 
     /**

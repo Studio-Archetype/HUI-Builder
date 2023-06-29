@@ -70,6 +70,14 @@ export interface CursorData {
 export type Vector2 = [number, number]; // x, y
 export type Vector3 = [number, number, number]; // x, y, z
 
+export interface Vector4 {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+}
+
+
 export interface HoloUIIcon {
 
     type: 'textImage' | 'item' | 'text';

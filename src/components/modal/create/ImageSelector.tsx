@@ -1,10 +1,10 @@
 import Row from "@/components/grid/Row";
 import Column from "@/components/grid/Column";
 import {BiCheck, BiMouse, BiPlus, BiTrash} from "react-icons/bi";
-import {useContent} from "@/hooks/ContentHook";
 import {createRef, useEffect} from "react";
 import {type ImageData} from "@/util/types";
 import styles from "@/styles/components/modal/create/ImageSelector.module.scss";
+import {useContent} from "@/hooks/ContentHook";
 
 interface ImageSelectorProps {
 

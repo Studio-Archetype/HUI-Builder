@@ -9,14 +9,18 @@ import {
     type HoloUIToggleData,
     type ImageData,
     type MCItem,
-    type Vector2
+    type Vector2,
+    Vector4
 } from "@/util/types";
 
 const offsetValueX = 7;
 const offsetValueY = 5;
 
-const itemHeight = 24;
-const itemWidth = 24;
+const ITEM_HEIGHT = 24;
+const ITEM_WIDTH = 24;
+
+const ICON_PX_GAP = 1;
+const ICON_PX_SIZE = 6;
 
 /**
  * Draws text on a canvas, with the center of the text at the vector.
@@ -44,12 +48,75 @@ export default function drawText(canvas: HTMLCanvasElement, text: string, vector
  * @param canvas the canvas
  * @param image the image
  * @param vector the vector
- * @param width the width
- * @param height the height
  */
-export function drawImage(canvas: HTMLCanvasElement, image: string, vector: Vector2, width?: number, height?: number) {
+export function drawImage(canvas: HTMLCanvasElement, image: string, vector: Vector2) {
     const context = canvas.getContext("2d");
     if (!context) {
+        return;
+    }
+
+    const canvasVector = convertToCanvasLocation(canvas, vector);
+    let x = canvasVector[0];
+    let y = canvasVector[1];
+    const imageElement = new Image();
+    imageElement.src = image;
+
+    // Center x and y
+    const imageWidth = imageElement.width;
+    const imageHeight = imageElement.height;
+
+    x -= imageWidth / 2 * ICON_PX_SIZE + imageWidth / 2 * ICON_PX_GAP;
+    y -= imageHeight / 2 * ICON_PX_SIZE + imageHeight / 2 * ICON_PX_GAP;
+
+    imageElement.onload = () => {
+        const colorMap = imageToColorMap(imageElement);
+        let cursorY = y;
+
+        for (const row of colorMap) {
+            // If the row is out of bounds, break
+            if (cursorY > canvas.height) {
+                break;
+            }
+
+            let cursorX = x;
+            if (cursorY + ICON_PX_SIZE < 0) {
+                cursorY += ICON_PX_GAP + ICON_PX_SIZE;
+                continue;
+
+            }
+
+            for (const pixel of row) {
+                // If the pixel is out of bounds, break
+                if (cursorX > canvas.width) {
+                    break;
+                }
+
+                if (cursorX + ICON_PX_SIZE < 0) {
+                    continue;
+                }
+
+                context.fillStyle = `rgba(${pixel.r}, ${pixel.g}, ${pixel.b}, ${pixel.a})`;
+                context.fillRect(cursorX, cursorY, ICON_PX_SIZE, ICON_PX_SIZE);
+
+                cursorX += ICON_PX_GAP + ICON_PX_SIZE;
+            }
+
+            cursorY += ICON_PX_GAP + ICON_PX_SIZE;
+        }
+
+    }
+}
+
+/**
+ * Draws a item on a canvas, with the center of the item at the vector.
+ *
+ * @param canvas the canvas
+ * @param item the item
+ * @param vector the vector
+ */
+export function drawItem(canvas: HTMLCanvasElement, item: MCItem, vector: Vector2) {
+    const context = canvas.getContext("2d");
+    if (!context || !item.texture) {
         return;
     }
 
@@ -57,14 +124,55 @@ export function drawImage(canvas: HTMLCanvasElement, image: string, vector: Vect
     const x = canvasVector[0];
     const y = canvasVector[1];
     const imageElement = new Image();
-    imageElement.src = image;
+
+    imageElement.src = item.texture;
 
     imageElement.onload = () => {
-        const imageWidth = width || imageElement.width;
-        const imageHeight = height || imageElement.height;
+        const imageWidth = ITEM_WIDTH;
+        const imageHeight = ITEM_HEIGHT;
 
         context.drawImage(imageElement, x - imageWidth / 2, y - imageHeight / 2, imageWidth, imageHeight);
     }
+
+}
+
+export function imageToColorMap(image: HTMLImageElement): Vector4[][] {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+        return [];
+    }
+
+    canvas.width = image.width;
+    canvas.height = image.height;
+
+    ctx?.drawImage(image, 0, 0);
+    const {data} = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    const imageOut: Vector4[][] = [];
+    let cursorX = 0,
+        cursorY = 0,
+        cursorTotal = 0;
+
+    while (cursorY < image.height) {
+        const row: Vector4[] = [];
+        while (cursorX < image.width) {
+            row.push({
+                r: data[cursorTotal] ?? 0,
+                g: data[cursorTotal + 1] ?? 0,
+                b: data[cursorTotal + 2] ?? 0,
+                a: data[cursorTotal + 3] ?? 0,
+            });
+
+            cursorTotal += 4;
+            cursorX++;
+        }
+
+        imageOut.push(row);
+        cursorX = 0;
+        cursorY++;
+    }
+    return imageOut;
 }
 
 
@@ -121,22 +229,42 @@ export function getTextBoundingBox(canvas: HTMLCanvasElement, vector: Vector2, w
 }
 
 /**
- * Gets the bounding box of an image.
+ * Gets the bounding box of an item.
  *
  * @param canvas the canvas
  * @param vector the vector
- * @param width the width
- * @param height the height
  */
-export function getImageBoundingBox(canvas: HTMLCanvasElement, vector: Vector2, width: number, height: number): BoundingBox2 {
+export function getItemBoundingBox(canvas: HTMLCanvasElement, vector: Vector2): BoundingBox2 {
     const canvasVector = convertToCanvasLocation(canvas, vector);
     const x = canvasVector[0];
     const y = canvasVector[1];
 
-    const minX = Math.min(x - width / 2, x + width / 2);
-    const maxX = Math.max(x - width / 2, x + width / 2);
-    const minY = Math.min(y - height / 2, y + height / 2);
-    const maxY = Math.max(y - height / 2, y + height / 2);
+    const minX = Math.min(x - ITEM_WIDTH / 2, x + ITEM_WIDTH / 2);
+    const maxX = Math.max(x - ITEM_WIDTH / 2, x + ITEM_WIDTH / 2);
+    const minY = Math.min(y - ITEM_HEIGHT / 2, y + ITEM_HEIGHT / 2);
+    const maxY = Math.max(y - ITEM_HEIGHT / 2, y + ITEM_HEIGHT / 2);
+
+    return {
+        min: [minX, minY],
+        max: [maxX, maxY]
+    };
+}
+
+function getImageBoundingBox(canvas: HTMLCanvasElement, vector: Vector2, image: ImageData): BoundingBox2 {
+    const canvasVector = convertToCanvasLocation(canvas, vector);
+    const x = canvasVector[0];
+    const y = canvasVector[1];
+
+    const imageElement = new Image();
+    imageElement.src = image.base64;
+
+    const imageWidth = ICON_PX_SIZE * imageElement.width + ICON_PX_GAP * (imageElement.width - 1);
+    const imageHeight = ICON_PX_SIZE * imageElement.height + ICON_PX_GAP * (imageElement.height - 1);
+
+    const minX = Math.min(x - imageWidth / 2, x + imageWidth / 2);
+    const maxX = Math.max(x - imageWidth / 2, x + imageWidth / 2);
+    const minY = Math.min(y - imageHeight / 2, y + imageHeight / 2);
+    const maxY = Math.max(y - imageHeight / 2, y + imageHeight / 2);
 
     return {
         min: [minX, minY],
@@ -174,25 +302,15 @@ export function isMouseOverComponent(component: HoloUIComponent, canvas: HTMLCan
             return false;
         }
 
-        // Get the image from the image manager
-        const imgBase64 = image.base64;
-        const img = new Image();
-
-        img.src = imgBase64;
-
-        // Get the width and height of the image
-        const width = img.width;
-        const height = img.height;
-
         // Get the bounding box of the image
-        const boundingBox = getImageBoundingBox(canvas, componentVector, width, height);
+        const boundingBox = getImageBoundingBox(canvas, componentVector, image);
 
         // Check if the mouse is in the bounding box
         return isMouseInBoundingBox(boundingBox, mouseVector);
     }
 
     if (icon.type === 'item') {
-        const boundingBox = getImageBoundingBox(canvas, componentVector, itemWidth, itemHeight);
+        const boundingBox = getItemBoundingBox(canvas, componentVector);
 
         return isMouseInBoundingBox(boundingBox, mouseVector);
     }
@@ -283,9 +401,7 @@ export function drawComponent(component: HoloUIComponent, canvas: HTMLCanvasElem
         drawImage(
             canvas,
             imgBase64,
-            offset,
-            itemWidth,
-            itemHeight
+            offset
         );
         return;
     }
@@ -301,19 +417,11 @@ export function drawComponent(component: HoloUIComponent, canvas: HTMLCanvasElem
             return;
         }
 
-        const imgTexture = itemInfo.texture;
-        // Ensure the image exists
-        if (!imgTexture) {
-            return;
-        }
-
         // Draw the image on the canvas
-        drawImage(
+        drawItem(
             canvas,
-            imgTexture,
-            offset,
-            itemWidth,
-            itemHeight
+            itemInfo,
+            offset
         );
         return;
     }
@@ -365,17 +473,8 @@ export function drawComponentOutline(component: HoloUIComponent, canvas: HTMLCan
             return;
         }
 
-        // Get the image from the image manager
-        const imgBase64 = image.base64;
-        const img = new Image();
-
-        img.src = imgBase64;
-
-        // Get the width and height of the image
-        const width = img.width;
-        const height = img.height;
         // Get the bounding box of the image
-        const boundingBox = getImageBoundingBox(canvas, offset, width, height);
+        const boundingBox = getImageBoundingBox(canvas, offset, image);
 
         // Draw bounding box (Green if selected, red if not)
         ctx.strokeStyle = isSelected ? 'green' : 'white';
@@ -389,7 +488,7 @@ export function drawComponentOutline(component: HoloUIComponent, canvas: HTMLCan
     }
 
     if (icon.type === 'item') {
-        const boundingBox = getImageBoundingBox(canvas, offset, itemWidth, itemHeight);
+        const boundingBox = getItemBoundingBox(canvas, offset);
 
         // Draw bounding box (Green if selected, red if not)
         ctx.strokeStyle = isSelected ? 'green' : 'white';

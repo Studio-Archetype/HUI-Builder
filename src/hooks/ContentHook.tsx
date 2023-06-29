@@ -101,6 +101,9 @@ export function ContentProvider({children}: ContentProviderProps) {
      */
     function addImage(image: ImageData) {
         setImages([...images, image]);
+
+        // Save the images to local storage
+        localStorage.setItem("images", JSON.stringify([...images, image]));
     }
 
     /**
@@ -110,6 +113,9 @@ export function ContentProvider({children}: ContentProviderProps) {
      */
     function removeImage(id: string) {
         setImages(images.filter(image => image.id !== id));
+
+        // Save the images to local storage
+        localStorage.setItem("images", JSON.stringify(images.filter(image => image.id !== id)));
     }
 
     /**
@@ -139,27 +145,24 @@ export function ContentProvider({children}: ContentProviderProps) {
         downloadSchema();
 
         // Load data from local storage
-        const storageData = localStorage.getItem("data") ?? JSON.stringify({
-            offset: [0, 0, 0],
-            components: [],
-            lockPosition: false
-        });
-        if (!storageData) {
-            return;
-        }
-
-        try {
-            setData(JSON.parse(storageData));
-        } catch (ignored) {
+        const storageData = localStorage.getItem("data");
+        if (storageData) {
+            try {
+                setData(JSON.parse(storageData));
+            } catch (ignored) {
+            }
         }
 
         // Load images from local storage
-        const images = localStorage.getItem("images") || JSON.stringify([]);
-
-        try {
-            setImages(JSON.parse(images));
-        } catch (ignored) {
-            setImages([]);
+        const images = localStorage.getItem("images");
+        if (images) {
+            try {
+                console.log(`Loading images from local storage`);
+                const parsedImages = JSON.parse(images);
+                setImages(parsedImages);
+                console.log(`Loaded ${images.length} images from local storage`);
+            } catch (ignored) {
+            }
         }
     }, []);
 
@@ -175,12 +178,6 @@ export function ContentProvider({children}: ContentProviderProps) {
         localStorage.setItem("data", JSON.stringify(data));
         console.log("Saved data to local storage")
     }, [data, setData]);
-
-    useEffect(() => {
-        // Load images from local storage
-        localStorage.setItem("images", JSON.stringify(images));
-    }, [images]);
-
 
     return (
         <ContentContext.Provider value={{
