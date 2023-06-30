@@ -1,5 +1,4 @@
 import {type HoloUIAction, type HoloUICommandAction, type HoloUISoundAction} from "@/util/types";
-import {type Dispatch, type SetStateAction} from "react";
 import {BiServer, BiTrash, BiUser} from "react-icons/bi";
 import {AiFillSound} from "react-icons/ai";
 import styles from "@/styles/components/modal/action/CommandAction.module.scss";
@@ -18,27 +17,27 @@ export interface CommandActionProps {
 
     action: HoloUICommandAction;
 
-    setActions: Dispatch<SetStateAction<HoloUIAction[]>>;
+    actions: HoloUIAction[];
+
+    setActions: (actions: HoloUIAction[]) => void;
 
 }
 
-export default function CommandAction({index, action, setActions}: CommandActionProps) {
+export default function CommandAction({index, action, actions, setActions}: CommandActionProps) {
 
     function handleSourceChange() {
         const newSource = action.source === 'player' ? 'server' : 'player';
 
-        setActions((actions) => {
-            return actions.map((action, actionIndex) => {
-                if (actionIndex === index) {
-                    return {
-                        ...action,
-                        source: newSource
-                    };
-                }
+        setActions(actions.map((action, actionIndex) => {
+            if (actionIndex === index) {
+                return {
+                    ...action,
+                    source: newSource
+                };
+            }
 
-                return action;
-            });
-        });
+            return action;
+        }));
     }
 
     /**
@@ -47,18 +46,16 @@ export default function CommandAction({index, action, setActions}: CommandAction
      * @param command The command
      */
     function handleCommandChange(command: string) {
-        setActions((actions) => {
-            return actions.map((action, actionIndex) => {
-                if (actionIndex === index) {
-                    return {
-                        ...action,
-                        command
-                    };
-                }
+        setActions(actions.map((action, actionIndex) => {
+            if (actionIndex === index) {
+                return {
+                    ...action,
+                    command
+                };
+            }
 
-                return action;
-            });
-        });
+            return action;
+        }));
     }
 
 
@@ -66,26 +63,22 @@ export default function CommandAction({index, action, setActions}: CommandAction
      * Handle the switch action type.
      */
     function handleSwitchActionType() {
-        setActions((actions) => {
-            return actions.map((action, actionIndex) => {
-                if (actionIndex === index) {
-                    return soundAction;
-                }
+        setActions(actions.map((action, actionIndex) => {
+            if (actionIndex === index) {
+                return soundAction;
+            }
 
-                return action;
-            });
-        });
+            return action;
+        }));
     }
 
     /**
      * Handle the delete action.
      */
     function handleDeleteAction() {
-        setActions((actions) => {
-            return actions.filter((action, actionIndex) => {
-                return actionIndex !== index;
-            });
-        });
+        setActions(actions.filter((action, actionIndex) => {
+            return actionIndex !== index;
+        }));
     }
 
     return (

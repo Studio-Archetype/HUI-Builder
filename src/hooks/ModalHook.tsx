@@ -54,6 +54,7 @@ export function ModalProvider({children}: ModalProviderProps) {
                 return;
             }
 
+            event.preventDefault();
             handleCloseClick();
         }
 

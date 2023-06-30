@@ -17,14 +17,15 @@ import {
     HoloUITextImageIcon,
     HoloUIToggleData
 } from "@/util/types";
+import {useModal} from "@/hooks/ModalHook";
 
 export default function ComponentList() {
     const {data, setData, selectedComponent, setSelectedComponent} = useContent();
-
+    const {modal} = useModal();
 
     useEffect(() => {
         function handleKeyDown(e: KeyboardEvent) {
-            if (!selectedComponent) {
+            if (!selectedComponent || modal !== undefined || e.defaultPrevented) {
                 return;
             }
 
@@ -55,12 +56,12 @@ export default function ComponentList() {
             return;
         }
 
-        window.addEventListener("keydown", handleKeyDown);
+        window.addEventListener("keydown", handleKeyDown,);
 
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
         };
-    }, [selectedComponent, setSelectedComponent, setData]);
+    }, [selectedComponent, setSelectedComponent, setData, modal]);
 
     /**
      * Gets the display value of a component

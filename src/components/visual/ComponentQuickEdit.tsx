@@ -2,12 +2,62 @@ import {useContent} from "@/hooks/ContentHook";
 import Row from "@/components/grid/Row";
 import Column from "@/components/grid/Column";
 import styles from "@/styles/components/visual/ComponentQuickEdit.module.scss";
-import {type HoloUIComponent, type HoloUIData} from "@/util/types";
-import {useEffect, useState} from "react";
+import {type HoloUIComponent, type HoloUIData, ModalData} from "@/util/types";
+import {type ChangeEvent, useEffect, useState} from "react";
+import {useModal} from "@/hooks/ModalHook";
+import StaticComponentModal from "@/components/modal/edit/type/static/StaticComponentModal";
+import ButtonComponentModal from "@/components/modal/edit/type/button/ButtonComponentModal";
+import {BsQuestionLg} from "react-icons/bs";
+import ToggleComponentModal from "@/components/modal/edit/type/toggle/ToggleComponentModal";
+
+function getEditStaticModal(component: HoloUIComponent): ModalData {
+    return {
+        title: "Edit Static Component",
+        content: <StaticComponentModal
+            isCreate={false}
+            defaultValue={component}
+        />,
+    };
+}
+
+function getEditButtonModal(component: HoloUIComponent): ModalData {
+    return {
+        title: "Edit Button Component",
+        content: <ButtonComponentModal
+            isCreate={false}
+            defaultValue={component}
+        />,
+    };
+}
+
+function getEditToggleModal(component: HoloUIComponent): ModalData {
+    return {
+        title: (
+            <div className={styles.modalHeaderTitle}>
+                <h3>
+                    Edit Toggle Component
+                </h3>
+                <a
+                    href={"https://docs.studioarchetype.net/en/utilities/holoui"}
+                    target={"_blank"}
+                    referrerPolicy={"no-referrer"}
+                    data-label={"Toggle Documentation"}
+                >
+                    <BsQuestionLg/>
+                </a>
+            </div>
+        ),
+        content: <ToggleComponentModal
+            isCreate={false}
+            defaultValue={component}
+        />,
+    };
+}
 
 export default function ComponentQuickEdit() {
     const {selectedComponent, setSelectedComponent, data, setData} = useContent();
     const [component, setComponent] = useState<HoloUIComponent | undefined>(undefined);
+    const {setModal} = useModal();
     useEffect(() => {
         if (!data || !selectedComponent) {
             return;
@@ -25,7 +75,12 @@ export default function ComponentQuickEdit() {
         return (<></>);
     }
 
-    function handleIDChange(e: React.ChangeEvent<HTMLInputElement>) {
+    /**
+     * Handle the ID being changed
+     *
+     * @param e The change event
+     */
+    function handleIDChange(e: ChangeEvent<HTMLInputElement>) {
         if (!data || !component) {
             return;
         }
@@ -65,7 +120,13 @@ export default function ComponentQuickEdit() {
         setSelectedComponent(newID);
     }
 
-    function handleOffsetChange(e: React.ChangeEvent<HTMLInputElement>, index: number) {
+    /**
+     * Handle the offset being changed
+     *
+     * @param e  The change event
+     * @param index The index of the offset to change
+     */
+    function handleOffsetChange(e: ChangeEvent<HTMLInputElement>, index: number) {
         if (!data || !component) {
             return;
         }
@@ -100,6 +161,25 @@ export default function ComponentQuickEdit() {
                 })
             } as HoloUIData;
         });
+    }
+
+    function handleEditComponent() {
+        if (!component || !component.data) {
+            return;
+        }
+
+        const data = component.data;
+        if (data.type === 'toggle') {
+            setModal(getEditToggleModal(component));
+            return;
+        }
+
+        if (data.type === 'button') {
+            setModal(getEditButtonModal(component));
+            return;
+        }
+
+        setModal(getEditStaticModal(component));
     }
 
     return (
@@ -173,6 +253,16 @@ export default function ComponentQuickEdit() {
                             onChange={(e) => handleOffsetChange(e, 2)}
                         />
                     </div>
+                </Column>
+                <Column
+                    xs={24}
+                >
+                    <button
+                        className={styles.editButton}
+                        onClick={() => handleEditComponent()}
+                    >
+                        Edit Component
+                    </button>
                 </Column>
             </Row>
         </div>

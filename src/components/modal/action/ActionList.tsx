@@ -1,6 +1,5 @@
 import {type HoloUIAction, type HoloUICommandAction, type HoloUISoundAction} from "@/util/types";
 import CommandAction from "@/components/modal/action/CommandAction";
-import {type Dispatch, type SetStateAction} from "react";
 import SoundAction from "@/components/modal/action/SoundAction";
 import styles from "@/styles/components/modal/action/ActionList.module.scss";
 
@@ -14,7 +13,7 @@ interface ActionListProps {
 
     actions: HoloUIAction[];
 
-    setActions: Dispatch<SetStateAction<HoloUIAction[]>>
+    setActions: (actions: HoloUIAction[]) => void;
 
 }
 
@@ -24,9 +23,7 @@ export default function ActionList({actions, setActions}: ActionListProps) {
      * Handle the add action.
      */
     function handleAddAction() {
-        setActions((actions) => {
-            return [...actions, commandAction];
-        });
+        setActions([...actions, commandAction]);
     }
 
     return (
@@ -39,6 +36,7 @@ export default function ActionList({actions, setActions}: ActionListProps) {
                                 key={index}
                                 index={index}
                                 action={action as HoloUICommandAction}
+                                actions={actions}
                                 setActions={setActions}
                             />
                         );
@@ -49,6 +47,7 @@ export default function ActionList({actions, setActions}: ActionListProps) {
                             index={index}
                             key={index}
                             action={action as HoloUISoundAction}
+                            actions={actions}
                             setActions={setActions}
                         />
                     );
