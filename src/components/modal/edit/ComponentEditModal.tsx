@@ -50,7 +50,7 @@ export default function ComponentEditModal({
         }
 
         // Ensure the ID is not already taken
-        if (currentData?.components.find((comp) => comp.id === component.id)) {
+        if (currentData?.components.find((comp) => comp.id === component.id) && isCreate) {
             alert('Component with ID already exists!');
             return;
         }
