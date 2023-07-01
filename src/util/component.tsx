@@ -39,6 +39,7 @@ export default function drawText(canvas: HTMLCanvasElement, text: string, vector
     const x = canvasVector[0];
     const y = canvasVector[1];
 
+    context.textAlign = "center";
     context.fillText(text, x, y);
 }
 
@@ -223,8 +224,8 @@ export function getTextBoundingBox(canvas: HTMLCanvasElement, vector: Vector2, w
     const y = canvasVector[1];
 
     return {
-        min: [x, y - height],
-        max: [x + width, y]
+        min: [x - width / 2, y - height],
+        max: [x + (width / 2), y]
     };
 }
 

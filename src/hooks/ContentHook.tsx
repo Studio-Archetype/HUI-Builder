@@ -151,6 +151,12 @@ export function ContentProvider({children}: ContentProviderProps) {
                 setData(JSON.parse(storageData));
             } catch (ignored) {
             }
+        } else {
+            setData({
+                offset: [0, 1.7, 5],
+                lockPosition: false,
+                components: [],
+            });
         }
 
         // Load images from local storage
@@ -163,6 +169,8 @@ export function ContentProvider({children}: ContentProviderProps) {
                 console.log(`Loaded ${images.length} images from local storage`);
             } catch (ignored) {
             }
+        } else {
+            setImages([]);
         }
     }, []);
 

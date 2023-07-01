@@ -192,7 +192,7 @@ export default function VisualCanvas() {
             // Set font
             context.font = "20px Minecraftia";
             context.fillStyle = "white";
-            context.textAlign = "start";
+            context.textAlign = "center";
 
             // Draw components
             drawComponents();
