@@ -9,9 +9,9 @@ import {useEffect, useState} from "react";
 import {LuTextCursor} from "react-icons/lu";
 import {FaAppleAlt} from "react-icons/fa";
 import {BsCardImage} from "react-icons/bs";
-import {useSettings} from "@/hooks/SettingsHook";
 import styles from "@/styles/components/modal/edit/IconEditor.module.scss";
 import ImageSelector from "@/components/modal/edit/ImageSelector";
+import {useContent} from "@/hooks/ContentHook";
 
 const DEFAULT_TEXT_ICON: HoloUITextIcon = {
     type: 'text',
@@ -39,7 +39,7 @@ interface IconEditorProps {
 export default function IconEditor({currentIcon, onUpdate}: IconEditorProps) {
     const [icon, setIcon] = useState<HoloUIIcon>(currentIcon);
     const [selectingImage, setSelectingImage] = useState(false);
-    const {items} = useSettings();
+    const {items} = useContent();
 
     /**
      * Switches the icon type.

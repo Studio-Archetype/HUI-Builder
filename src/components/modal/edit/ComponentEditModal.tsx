@@ -1,9 +1,9 @@
 import {type HoloUIComponent} from "@/util/types";
 import {createContext, type Dispatch, type ReactNode, type SetStateAction, useContext, useState} from "react";
 import {BiPlus, BiSave} from "react-icons/bi";
-import {useContent} from "@/hooks/ContentHook";
 import {useModal} from "@/hooks/ModalHook";
 import styles from "@/styles/components/modal/edit/ComponentEditModal.module.scss";
+import {useComponent} from "@/hooks/ComponentHook";
 
 interface ComponentEditModalProps {
 
@@ -35,7 +35,7 @@ export default function ComponentEditModal({
                                            }: ComponentEditModalProps) {
     const originalID = defaultValue.id;
     const [component, setComponent] = useState<HoloUIComponent>(defaultValue);
-    const {setData, data: currentData} = useContent();
+    const {setData, data: currentData} = useComponent();
     const {closeModal} = useModal();
 
     /**

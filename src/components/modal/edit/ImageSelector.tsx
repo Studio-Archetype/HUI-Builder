@@ -1,4 +1,3 @@
-import {useContent} from "@/hooks/ContentHook";
 import {createRef, useEffect, useState} from "react";
 import {BiCheck, BiMouse, BiPlus, BiTrash, BiX} from "react-icons/bi";
 import Row from "@/components/grid/Row";
@@ -6,6 +5,7 @@ import Column from "@/components/grid/Column";
 import styles from "@/styles/components/modal/edit/ImageSelector.module.scss";
 import {joinedClassNames} from "@/util/classes";
 import {ImageData} from "@/util/types";
+import {useImage} from "@/hooks/ImageHook";
 
 interface ImageSelectorProps {
 
@@ -18,7 +18,7 @@ interface ImageSelectorProps {
 }
 
 export default function ImageSelector({currentImage, onUpdate, close}: ImageSelectorProps) {
-    const {images, addImage, removeImage} = useContent();
+    const {images, addImage, removeImage} = useImage();
     const uploadInputRef = createRef<HTMLInputElement>();
     const [currentImageId, setCurrentImageId] = useState<string | undefined>(currentImage);
 

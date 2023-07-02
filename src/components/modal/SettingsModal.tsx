@@ -2,8 +2,8 @@ import CheckBox from "@/components/form/CheckBox";
 import styles from "@/styles/components/modal/SettingsModal.module.scss";
 import {joinedClassNames} from "@/util/classes";
 import {type MinecraftVersion, minecraftVersions} from "@/util/types";
-import {useSettings} from "@/hooks/SettingsHook";
 import {type ChangeEvent} from "react";
+import {useContent} from "@/hooks/ContentHook";
 
 export default function SettingsModal() {
     const {
@@ -13,7 +13,7 @@ export default function SettingsModal() {
         setDeveloperModeEnabled,
         minecraftVersion,
         setMinecraftVersion
-    } = useSettings();
+    } = useContent();
 
     /**
      * Handle the change of the minecraft version

@@ -1,18 +1,19 @@
 import styles from "@/styles/components/visual/VisualCanvas.module.scss";
 import {useEffect, useRef, useState} from "react";
-import {useContent} from "@/hooks/ContentHook";
 import {type Vector2} from "@/util/types";
 import {convertToVector, drawComponent, drawComponentOutline, isMouseOverComponent} from "@/util/component";
-import {useSettings} from "@/hooks/SettingsHook";
+import {useComponent} from "@/hooks/ComponentHook";
+import {useImage} from "@/hooks/ImageHook";
+import {useContent} from "@/hooks/ContentHook";
 
 
 export default function VisualCanvas() {
     const [dragging, setDragging] = useState<string | undefined>();
     const [draggingOffset, setDraggingOffset] = useState<Vector2 | undefined>(); // The offset of the cursor from the bottom left of the component
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const {selectedComponent, setSelectedComponent, images, setData, data} = useContent();
-    const {items} = useSettings();
-    const {debugFramesEnabled} = useSettings();
+    const {selectedComponent, setSelectedComponent, setData, data} = useComponent();
+    const {images} = useImage();
+    const {items, debugFramesEnabled} = useContent();
 
     /**
      * Draw all components on the canvas.

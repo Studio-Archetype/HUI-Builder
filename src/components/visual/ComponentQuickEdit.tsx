@@ -1,4 +1,3 @@
-import {useContent} from "@/hooks/ContentHook";
 import Row from "@/components/grid/Row";
 import Column from "@/components/grid/Column";
 import styles from "@/styles/components/visual/ComponentQuickEdit.module.scss";
@@ -9,6 +8,7 @@ import StaticComponentModal from "@/components/modal/edit/type/static/StaticComp
 import ButtonComponentModal from "@/components/modal/edit/type/button/ButtonComponentModal";
 import {BsQuestionLg} from "react-icons/bs";
 import ToggleComponentModal from "@/components/modal/edit/type/toggle/ToggleComponentModal";
+import {useComponent} from "@/hooks/ComponentHook";
 
 function getEditStaticModal(component: HoloUIComponent): ModalData {
     return {
@@ -55,7 +55,7 @@ function getEditToggleModal(component: HoloUIComponent): ModalData {
 }
 
 export default function ComponentQuickEdit() {
-    const {selectedComponent, setSelectedComponent, data, setData} = useContent();
+    const {selectedComponent, setSelectedComponent, data, setData} = useComponent();
     const [component, setComponent] = useState<HoloUIComponent | undefined>(undefined);
     const {setModal} = useModal();
     useEffect(() => {

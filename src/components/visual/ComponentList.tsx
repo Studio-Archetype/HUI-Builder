@@ -1,4 +1,3 @@
-import {useContent} from "@/hooks/ContentHook";
 import {GiButtonFinger} from "react-icons/gi";
 import {RxSwitch} from "react-icons/rx";
 import {BsBoxes} from "react-icons/bs";
@@ -18,12 +17,11 @@ import {
     HoloUIToggleData
 } from "@/util/types";
 import {useModal} from "@/hooks/ModalHook";
-import {useSettings} from "@/hooks/SettingsHook";
+import {useComponent} from "@/hooks/ComponentHook";
 
 export default function ComponentList() {
-    const {data, setData, selectedComponent, setSelectedComponent} = useContent();
+    const {data, setData, selectedComponent, setSelectedComponent} = useComponent();
     const {modal} = useModal();
-    const {items} = useSettings();
 
     useEffect(() => {
         function handleKeyDown(e: KeyboardEvent) {

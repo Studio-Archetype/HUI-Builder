@@ -1,18 +1,7 @@
 "use client";
 
-import {
-    createContext,
-    type Dispatch,
-    type ReactNode,
-    type SetStateAction,
-    useContext,
-    useEffect,
-    useState
-} from "react";
-import {ContentType, type HoloUIData, type HoloUISchema, type ImageData} from "@/util/types";
-import Ajv from "ajv";
-
-const ajv = new Ajv();
+import {createContext, type ReactNode, useContext, useEffect, useState} from "react";
+import {ContentType, MCItem, MinecraftVersion} from "@/util/types";
 
 interface ContentProviderProps {
 
@@ -26,23 +15,21 @@ export type ContentContextType = {
 
     setContentType: (contentType: ContentType) => void;
 
-    data: HoloUIData | undefined;
-
-    setData: Dispatch<SetStateAction<HoloUIData | undefined>>
-
-    selectedComponent: string | undefined;
-
-    setSelectedComponent: Dispatch<SetStateAction<string | undefined>>;
-
-    images: ImageData[];
-
-    addImage: (image: ImageData) => void;
-
-    removeImage: (id: string) => void;
-
-    validateData: (rawData: string) => string | undefined;
-
     switchContentType: () => void;
+
+    debugFramesEnabled: boolean;
+
+    setDebugFramesEnabled: (enabled: boolean) => void;
+
+    developerModeEnabled: boolean;
+
+    setDeveloperModeEnabled: (enabled: boolean) => void;
+
+    minecraftVersion: MinecraftVersion;
+
+    setMinecraftVersion: (version: MinecraftVersion) => void;
+
+    items: MCItem[]
 
 }
 
@@ -52,33 +39,10 @@ const ContentContext = createContext<ContentContextType | null>(null);
 // Provider component for the content type
 export function ContentProvider({children}: ContentProviderProps) {
     const [contentType, setContentType] = useState<ContentType>(ContentType.VISUAL_EDITOR);
-    const [data, setData] = useState<HoloUIData | undefined>();
-    const [selectedComponent, setSelectedComponent] = useState<string | undefined>();
-    const [images, setImages] = useState<ImageData[]>([]);
-    const [schema, setSchema] = useState<HoloUISchema | undefined>();
-
-    /**
-     * Downloads the schema from the schema URL.
-     */
-    function downloadSchema() {
-        const url = 'https://raw.githubusercontent.com/Studio-Archetype/HoloUi/master/schema/holoui.schema.json';
-        if (!url) {
-            console.log("Schema URL not set");
-            return;
-        }
-
-        console.log(`Downloading schema from ${url}`);
-
-        fetch(url)
-            .then(response => response.json())
-            .then(json => {
-                // Set the schema
-                setSchema(json);
-                // Log the success
-                console.log(`Downloaded schema from ${url}`);
-            })
-            .catch(error => console.log(error));
-    }
+    const [debugFramesEnabled, setDebugFramesEnabled] = useState(false);
+    const [developerModeEnabled, setDeveloperModeEnabled] = useState(false);
+    const [minecraftVersion, setMinecraftVersion] = useState<MinecraftVersion>("1.18");
+    const [items, setItems] = useState<MCItem[]>([]);
 
     /**
      * Switches the content type.
@@ -94,112 +58,58 @@ export function ContentProvider({children}: ContentProviderProps) {
         }
     }
 
-    /**
-     * Adds an image to the list of images.
-     *
-     * @param image The image to add
-     */
-    function addImage(image: ImageData) {
-        setImages([...images, image]);
-
-        // Save the images to local storage
-        localStorage.setItem("images", JSON.stringify([...images, image]));
-    }
-
-    /**
-     * Removes an image from the list of images.
-     *
-     * @param id The ID of the image to remove
-     */
-    function removeImage(id: string) {
-        setImages(images.filter(image => image.id !== id));
-
-        // Save the images to local storage
-        localStorage.setItem("images", JSON.stringify(images.filter(image => image.id !== id)));
-    }
-
-    /**
-     * Validates the data.
-     *
-     * @param rawData The data to validate as a string
-     */
-    function validateData(rawData: string): string | undefined {
-        if (!schema || !rawData) {
-            return "No schema or data";
+    useEffect(() => {
+        const settings = localStorage.getItem("settings") || JSON.stringify({
+            debugFramesEnabled: false,
+            developerModeEnabled: false,
+            minecraftVersion: "1.18",
+        });
+        if (!settings) {
+            return;
         }
 
         try {
-            const data = JSON.parse(rawData);
-            // Compile the schema
-            const validate = ajv.compile(schema);
+            const parsedSettings = JSON.parse(settings);
 
-            // Validate the data
-            return validate(data) ? undefined : "Invalid data";
+            // Set the settings
+            setDebugFramesEnabled(parsedSettings.debugFramesEnabled);
+            setDeveloperModeEnabled(parsedSettings.developerModeEnabled);
+            setMinecraftVersion(parsedSettings.minecraftVersion);
         } catch (ignored) {
-            return "Invalid JSON";
-        }
-    }
-
-    // Download the schema on first render
-    useEffect(() => {
-        downloadSchema();
-
-        // Load data from local storage
-        const storageData = localStorage.getItem("data");
-        if (storageData) {
-            try {
-                setData(JSON.parse(storageData));
-            } catch (ignored) {
-            }
-        } else {
-            setData({
-                offset: [0, 1.7, 5],
-                lockPosition: false,
-                components: [],
-            });
-        }
-
-        // Load images from local storage
-        const images = localStorage.getItem("images");
-        if (images) {
-            try {
-                console.log(`Loading images from local storage`);
-                const parsedImages = JSON.parse(images);
-                setImages(parsedImages);
-                console.log(`Loaded ${images.length} images from local storage`);
-            } catch (ignored) {
-            }
-        } else {
-            setImages([]);
+            localStorage.removeItem("settings");
         }
     }, []);
 
     useEffect(() => {
-        // Make sure that the selected component is valid
-        if (data && selectedComponent) {
-            if (!data.components.find(component => component.id === selectedComponent)) {
-                setSelectedComponent(undefined);
-            }
-        }
+        localStorage.setItem("settings", JSON.stringify({
+            debugFramesEnabled,
+            developerModeEnabled,
+            minecraftVersion,
+        }));
 
-        // Save the data to local storage
-        localStorage.setItem("data", JSON.stringify(data));
-        console.log("Saved data to local storage")
-    }, [data, setData]);
+        // Load the minecraft version item icons from /assets/versions/<version>.json
+        fetch(`/assets/versions/${minecraftVersion}.json`)
+            .then(response => response.json())
+            .then(data => {
+                setItems(data as MCItem[]);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }, [debugFramesEnabled, developerModeEnabled, minecraftVersion]);
 
     return (
         <ContentContext.Provider value={{
             contentType,
             setContentType,
-            data,
-            setData,
-            selectedComponent,
-            setSelectedComponent,
-            images,
-            addImage,
-            removeImage,
-            validateData,
-            switchContentType
+            switchContentType,
+            debugFramesEnabled,
+            setDebugFramesEnabled,
+            developerModeEnabled,
+            setDeveloperModeEnabled,
+            minecraftVersion,
+            setMinecraftVersion,
+            items,
         }}>
             {children}
         </ContentContext.Provider>
