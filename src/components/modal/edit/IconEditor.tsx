@@ -86,7 +86,7 @@ export default function IconEditor({currentIcon, onUpdate}: IconEditorProps) {
 
             setIcon({
                 type: 'item',
-                item: mcItem.texture,
+                item: mcItem.name,
                 count: 1,
                 customModelData: 0,
             } as HoloUIItemIcon);
@@ -104,6 +104,16 @@ export default function IconEditor({currentIcon, onUpdate}: IconEditorProps) {
     useEffect(() => {
         onUpdate(icon);
     }, [icon]);
+
+    function getItemIconValue() {
+        const itemIcon = icon as HoloUIItemIcon;
+        const item = items.find(item => item.texture === itemIcon.item);
+        if (!item) {
+            return "";
+        }
+
+        return item.name;
+    }
 
     return (
         <div className={styles.iconEditor}>
@@ -142,7 +152,7 @@ export default function IconEditor({currentIcon, onUpdate}: IconEditorProps) {
                         ) : icon.type === 'item' ? (
                             <input
                                 type={'text'}
-                                defaultValue={(icon as HoloUIItemIcon).item}
+                                defaultValue={getItemIconValue()}
                                 onBlur={(e) => onValueChange(e.target.value)}
                                 list={'item-list'}
                             />

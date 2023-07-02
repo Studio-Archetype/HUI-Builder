@@ -407,6 +407,7 @@ export function drawComponent(component: HoloUIComponent, canvas: HTMLCanvasElem
         return;
     }
 
+
     if (icon.type === 'item') {
         if (!items) {
             return;

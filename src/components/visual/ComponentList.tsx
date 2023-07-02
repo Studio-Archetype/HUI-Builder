@@ -18,10 +18,12 @@ import {
     HoloUIToggleData
 } from "@/util/types";
 import {useModal} from "@/hooks/ModalHook";
+import {useSettings} from "@/hooks/SettingsHook";
 
 export default function ComponentList() {
     const {data, setData, selectedComponent, setSelectedComponent} = useContent();
     const {modal} = useModal();
+    const {items} = useSettings();
 
     useEffect(() => {
         function handleKeyDown(e: KeyboardEvent) {
