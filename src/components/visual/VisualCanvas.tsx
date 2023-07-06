@@ -57,7 +57,11 @@ export default function VisualCanvas() {
         data.components.forEach((component) => {
             // Draw the component
             drawComponent(component, canvas, images, items);
-            drawComponentOutline(component, canvas, images, selectedComponent === component.id);
+
+            // Draw the outline if debug frames are enabled
+            if (debugFramesEnabled) {
+                drawComponentOutline(component, canvas, images, selectedComponent === component.id);
+            }
         });
     }
 
