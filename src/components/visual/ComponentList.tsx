@@ -1,4 +1,3 @@
-import {useContent} from "@/hooks/ContentHook";
 import {GiButtonFinger} from "react-icons/gi";
 import {RxSwitch} from "react-icons/rx";
 import {BsBoxes} from "react-icons/bs";
@@ -6,15 +5,27 @@ import styles from "@/styles/components/visual/ComponentList.module.scss";
 import {BiFolderOpen} from "react-icons/bi";
 import {conditionalClassNames} from "@/util/classes";
 import {useEffect} from "react";
-import {type HoloUIData} from "@/util/types";
+import {
+    HoloUIButtonData,
+    HoloUIComponent,
+    type HoloUIData,
+    HoloUIDecorationData,
+    HoloUIIcon,
+    HoloUIItemIcon,
+    HoloUITextIcon,
+    HoloUITextImageIcon,
+    HoloUIToggleData
+} from "@/util/types";
+import {useModal} from "@/hooks/ModalHook";
+import {useComponent} from "@/hooks/ComponentHook";
 
 export default function ComponentList() {
-    const {data, setData, selectedComponent, setSelectedComponent} = useContent();
-
+    const {data, setData, selectedComponent, setSelectedComponent} = useComponent();
+    const {modal} = useModal();
 
     useEffect(() => {
         function handleKeyDown(e: KeyboardEvent) {
-            if (!selectedComponent) {
+            if (!selectedComponent || modal !== undefined || e.defaultPrevented) {
                 return;
             }
 
@@ -45,12 +56,62 @@ export default function ComponentList() {
             return;
         }
 
-        window.addEventListener("keydown", handleKeyDown);
+        window.addEventListener("keydown", handleKeyDown,);
 
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
         };
-    }, [selectedComponent, setSelectedComponent, setData]);
+    }, [selectedComponent, setSelectedComponent, setData, modal]);
+
+    /**
+     * Gets the display value of a component
+     *
+     * @param component The component to get the display value of
+     */
+    function getComponentDisplayValue(component: HoloUIComponent) {
+        const componentData = component.data;
+        if (component.data.type === "button") {
+            const buttonData = componentData as HoloUIButtonData;
+            const icon = buttonData.icon;
+
+            return getIconDisplayValue(icon);
+        }
+
+        if (component.data.type === "toggle") {
+            const toggleData = componentData as HoloUIToggleData;
+            const trueIcon = toggleData.trueIcon;
+
+            return getIconDisplayValue(trueIcon);
+        }
+
+        const decorationData = componentData as HoloUIDecorationData;
+        const icon = decorationData.icon;
+
+        return getIconDisplayValue(icon);
+    }
+
+    /**
+     * Gets the display value of an icon
+     *
+     * @param icon The icon to get the display value of
+     */
+    function getIconDisplayValue(icon: HoloUIIcon) {
+        if (icon.type === "text") {
+            const textIcon = icon as HoloUITextIcon;
+
+            return textIcon.text;
+        }
+
+        if (icon.type === "textImage") {
+            const textImageIcon = icon as HoloUITextImageIcon;
+
+            return textImageIcon.path;
+        }
+
+        const itemIcon = icon as HoloUIItemIcon;
+
+        return itemIcon.item;
+    }
 
     if (!data) {
         return (<></>);
@@ -69,6 +130,7 @@ export default function ComponentList() {
                     data.components.map((component) => {
                         const id = component.id;
                         const type = component.data.type;
+                        const value = getComponentDisplayValue(component);
 
                         return (
                             <div
@@ -89,10 +151,10 @@ export default function ComponentList() {
                                 }
                                 {
                                     // Max length of 10 characters (id)
-                                    id.length > 10 ? (
-                                        <span>{id.substring(0, 20)}...</span>
+                                    value.length > 10 ? (
+                                        <span>{value.substring(0, 25)}...</span>
                                     ) : (
-                                        <span>{id}</span>
+                                        <span>{value}</span>
                                     )
                                 } ({type})
                             </div>

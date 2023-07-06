@@ -74,6 +74,43 @@ select {
   }
 }
 
+
+// If has attribute: data-label add a label on hover
+[data-label] {
+  // Positioning
+  position: relative;
+
+  &:hover::after {
+    // Content
+    content: attr(data-label);
+
+    // Display
+    display: block;
+
+    // Positioning
+    position: absolute;
+    top: 0;
+    left: 2.5rem;
+
+    // Spacing
+    padding: .5rem;
+
+    // Border
+    border-radius: 8px;
+
+    // Background
+    background-color: rgba(0, 0, 0, .8);
+
+    // Text
+    font-size: small;
+    font-weight: 700;
+    text-transform: capitalize;
+
+    // Index
+    z-index: 10000;
+  }
+}
+
 // Custom scrollbar
 ::-webkit-scrollbar {
   // Sizing

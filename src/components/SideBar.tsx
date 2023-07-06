@@ -11,6 +11,7 @@ import ImageManagerModal from "@/components/modal/ImageManagerModal";
 import AboutModal from "@/components/modal/AboutModal";
 import {createRef, useEffect} from "react";
 import SettingsModal from "@/components/modal/SettingsModal";
+import {useComponent} from "@/hooks/ComponentHook";
 
 const imageManagerModal: ModalData = {
     title: "Image Management",
@@ -29,7 +30,8 @@ const settingsModal: ModalData = {
 }
 
 export default function SideBar() {
-    const {contentType, switchContentType, data, setData, validateData} = useContent();
+    const {contentType, switchContentType} = useContent();
+    const {data, setData, validateData} = useComponent();
     const {setModal} = useModal();
     const importInputRef = createRef<HTMLInputElement>();
     const exportAnchorRef = createRef<HTMLAnchorElement>();

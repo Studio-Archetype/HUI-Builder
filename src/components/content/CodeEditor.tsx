@@ -2,13 +2,13 @@ import CodeMirror from "@uiw/react-codemirror";
 import styles from "@/styles/components/PageContent.module.scss";
 import {vscodeDark} from "@uiw/codemirror-theme-vscode";
 import {json} from "@codemirror/lang-json";
-import {useContent} from "@/hooks/ContentHook";
 import {type ViewUpdate} from "@codemirror/view";
 import {useCodeEditor} from "@/hooks/CodeEditorHook";
 import {type HoloUIData} from "@/util/types";
+import {useComponent} from "@/hooks/ComponentHook";
 
 export default function CodeEditor() {
-    const {validateData, data, setData} = useContent();
+    const {validateData, data, setData} = useComponent();
     const {setCursorData, setError} = useCodeEditor();
 
     /**

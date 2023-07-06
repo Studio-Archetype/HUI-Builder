@@ -2,7 +2,8 @@ import {type ReactNode} from "react";
 import {CodeEditorProvider} from "@/hooks/CodeEditorHook";
 import {ModalProvider} from "@/hooks/ModalHook";
 import {ContentProvider} from "@/hooks/ContentHook";
-import {SettingsProvider} from "@/hooks/SettingsHook";
+import {ComponentProvider} from "@/hooks/ComponentHook";
+import {ImageProvider} from "@/hooks/ImageHook";
 
 interface ContentProviderProps {
 
@@ -12,14 +13,16 @@ interface ContentProviderProps {
 
 export default function ContextProviders({children}: ContentProviderProps) {
     return (
-        <SettingsProvider>
-            <ContentProvider>
-                <CodeEditorProvider>
-                    <ModalProvider>
-                        {children}
-                    </ModalProvider>
-                </CodeEditorProvider>
-            </ContentProvider>
-        </SettingsProvider>
+        <ContentProvider>
+            <ImageProvider>
+                <ComponentProvider>
+                    <CodeEditorProvider>
+                        <ModalProvider>
+                            {children}
+                        </ModalProvider>
+                    </CodeEditorProvider>
+                </ComponentProvider>
+            </ImageProvider>
+        </ContentProvider>
     );
 }

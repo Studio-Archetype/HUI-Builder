@@ -2,13 +2,13 @@ import {BiTrash, BiUpload} from "react-icons/bi";
 import styles from "@/styles/components/modal/ImageManagerModal.module.scss";
 import {createRef, useEffect} from "react";
 import {type ImageData} from "@/util/types";
-import {useContent} from "@/hooks/ContentHook";
 import Column from "@/components/grid/Column";
 import Row from "@/components/grid/Row";
+import {useImage} from "@/hooks/ImageHook";
 
 export default function ImageManagerModal() {
     const uploadInputRef = createRef<HTMLInputElement>();
-    const {images, addImage, removeImage} = useContent();
+    const {images, addImage, removeImage} = useImage();
 
     /**
      * Handles the upload button click event.
