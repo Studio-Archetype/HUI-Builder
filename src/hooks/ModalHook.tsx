@@ -54,6 +54,7 @@ export function ModalProvider({children}: ModalProviderProps) {
                 return;
             }
 
+            event.preventDefault();
             handleCloseClick();
         }
 
@@ -90,7 +91,18 @@ export function ModalProvider({children}: ModalProviderProps) {
             >
                 <div className={styles.modalContent}>
                     <div className={styles.header}>
-                        <h3>{modal?.title}</h3>
+                        {
+                            // Modal.title && modal title === string
+                            (modal && modal.title && typeof modal.title === "string") && (
+                                <h3>{modal.title}</h3>
+                            )
+                        }
+                        {
+                            // Modal.title && modal title === react node
+                            (modal && modal.title && typeof modal.title !== "string") && (
+                                modal.title
+                            )
+                        }
                         <div className={styles.closeButton} onClick={handleCloseClick}>
                             <BiX/>
                         </div>
